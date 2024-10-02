@@ -1,0 +1,38 @@
+nav {
+  padding: 1rem 1rem;
+  background-color: #ff9800;
+}
+
+.navbar-brand img.navbar-logo {
+  height: 50px;
+  width: auto;
+}
+
+
+.navbar .nav-link {
+  font-size: 1.1rem;
+  font-weight: 500;
+  transition: color 0.3s ease-in-out;
+  margin-left: 20px;
+}
+
+.navbar .nav-link:hover {
+  color: #ddd;
+}
+
+
+.navbar .form-control {
+  border-radius: 10px;
+}
+
+.navbar .btn-outline-primary {
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+  border: 1px solid #000;
+  color: white;
+}
+
+.navbar .btn-outline-primary:hover {
+  background-color: #000;
+  color: white;
+  border: 1px solid #000;
+}

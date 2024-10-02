@@ -1,0 +1,9 @@
+@import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
+.App {
+  text-align: center;
+}
+
+button {
+  margin: 10px;
+}
+
