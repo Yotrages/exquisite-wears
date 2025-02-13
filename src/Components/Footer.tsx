@@ -9,7 +9,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useState } from "react";
 import { URL } from "../Api/AdminApi";
-
 type SubscribeForm = z.infer<typeof SubSchema>
 const Footer = () => {
   const [success, setSuccess] = useState('')
