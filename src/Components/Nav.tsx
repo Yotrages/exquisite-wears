@@ -1,7 +1,6 @@
 import { FaArrowDown, FaSearch } from "react-icons/fa";
 import { close, menu, Nigeria } from "../assets";
 import React, { useState, useEffect } from "react";
-import { FaDeleteLeft } from "react-icons/fa6";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import Logout from "./Logout";

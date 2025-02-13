@@ -7,7 +7,7 @@ import axios from "axios";
 import { URL } from "./AdminApi";
 
 
- const AllNotifications = () => {
+ const AllNotifications  = () => {
   type Notifications = z.infer<typeof NotificationSchema>;
   const {
     formState: { errors },

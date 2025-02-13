@@ -1,4 +1,3 @@
-import React from 'react'
 import { Layout } from '../Components'
 import About from '../Components/About'
 
