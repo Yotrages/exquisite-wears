@@ -7,17 +7,21 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import Logout from "./Logout";
 
-
-
-const Nav = ({change, setChange} : {change: Boolean, setChange: React.Dispatch<React.SetStateAction<boolean>>}) => {
+const Nav = ({
+  change,
+  setChange,
+}: {
+  change: Boolean;
+  setChange: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
   const navigate = useNavigate();
   const [searchToggle, setSearchToggle] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [data, setData] = useState<{ name: string, image: string }[]>([]);
+  const [data, setData] = useState<{ name: string; image: string }[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [toggle, setToggle] = useState(false)
+  const [toggle, setToggle] = useState(false);
 
-  setChange(() => searchToggle)
+  setChange(() => searchToggle);
 
   const URL = "https://ecommerce-9wqc.onrender.com/api/products/search";
   useEffect(() => {
@@ -51,8 +55,6 @@ const Nav = ({change, setChange} : {change: Boolean, setChange: React.Dispatch<R
     setSearchToggle((prev) => !prev);
   };
 
-  
-
   const handleLogout = () => {
     window.localStorage.removeItem("userName");
     window.localStorage.removeItem("admin");
@@ -76,10 +78,10 @@ const Nav = ({change, setChange} : {change: Boolean, setChange: React.Dispatch<R
   };
 
   useEffect(() => {
-    window.addEventListener('scroll', () => {
-      setSearchToggle(false)
-    })
-  })
+    window.addEventListener("scroll", () => {
+      setSearchToggle(false);
+    });
+  });
 
   const user = localStorage.getItem("userName");
   const userName = user?.charAt(0).toUpperCase();
@@ -88,7 +90,11 @@ const Nav = ({change, setChange} : {change: Boolean, setChange: React.Dispatch<R
     <>
       {/* Main Navbar */}
       <nav
-        className={`w-full flex top-0  justify-between ${searchToggle && change ? 'translate-x-[w-full] z-[1] overflow-hidden' : 'fixed top-0 py-4 z-[10]'} items-center sm:px-8 xs:px-5 px-3 bg-[#f2f2f2] bg-shadow text-black ${
+        className={`w-full flex top-0  justify-between ${
+          searchToggle && change
+            ? "translate-x-[w-full] z-[1] overflow-hidden"
+            : "fixed top-0 py-4 z-[10]"
+        } items-center sm:px-8 xs:px-5 px-3 bg-[#f2f2f2] bg-shadow text-black ${
           user ? "pt-5" : "pt-4"
         } `}
       >
@@ -120,15 +126,24 @@ const Nav = ({change, setChange} : {change: Boolean, setChange: React.Dispatch<R
 
           {/* Display Search Results */}
           {(data.length > 0 || error) && (
-              <ul className="absolute md:flex flex-col hidden h-[85%] top-full left-0 w-full bg-white text-black z-[1] overflow-y-scroll shadow-md px-3 py-1 rounded-md">
-                {data.map((item, index) => (
-                  <li key={index} className="py-3 flex flex-row min-h-fit items-center w-full justify-between border-b">
-                    <div className=""><img src={item.image} alt="" className="size-16 object-contain"/></div>
-                    <div>{item.name}</div>
-                  </li>
-                ))}
-                {error && <li className="py-2 text-red-500">{error}</li>}
-              </ul>
+            <ul className="absolute md:flex flex-col hidden max-h-[85vh] top-full left-0 w-full bg-white text-black z-[1] overflow-y-auto shadow-md px-3 py-1 rounded-md">
+              {data.map((item, index) => (
+                <li
+                  key={index}
+                  className="py-3 flex flex-row min-h-fit items-center w-full justify-between border-b"
+                >
+                  <div>
+                    <img
+                      src={item.image}
+                      alt=""
+                      className="size-16 object-contain"
+                    />
+                  </div>
+                  <div>{item.name}</div>
+                </li>
+              ))}
+              {error && <li className="py-2 text-red-500">{error}</li>}
+            </ul>
           )}
         </div>
         {/* Desktop and Mobile Nav */}
@@ -176,9 +191,10 @@ const Nav = ({change, setChange} : {change: Boolean, setChange: React.Dispatch<R
               Login
             </Link>
 
-             <CgMenuGridO className="text-black size-9 cursor-pointer ss:hidden flex hover:scale-105" onClick={() => setToggle((prev) => (!prev))}/>
-            
-
+            <CgMenuGridO
+              className="text-black size-9 cursor-pointer ss:hidden flex hover:scale-105"
+              onClick={() => setToggle((prev) => !prev)}
+            />
 
             {/* <div className="relative items-center">
               <FaShoppingCart className="text-[25px]" />
@@ -188,65 +204,94 @@ const Nav = ({change, setChange} : {change: Boolean, setChange: React.Dispatch<R
         )}
       </nav>
 
-             
-                <div className={`text-black transition-all duration-500 ease-in fixed top-0 right-0 py-3 bg-white bg-shadow flex flex-col h-full gap-5 z-[10] overflow-x-hidden ${toggle ? 'w-[250px] opacity-100' : 'w-0 opacity-0'}`} onClick={() => setToggle((prev) => (!prev))}>
-                  <div className="flex items-end justify-end px-3"><IoMdClose className="text-black size-10 hover:scale-105" /></div>
-                  <ul className="flex flex-col gap-3 px-3">
-                    <Link className="text-lg font-semibold hover:text-gray-500 active:text-green-600 transition-all duration-150 hover:ml-2 " to='/'>Home</Link>
-                    <Link className="text-lg font-semibold hover:text-gray-500 active:text-green-600 transition-all duration-150 hover:ml-2 " to='/About'>About</Link>
-                    <Link className="text-lg font-semibold hover:text-gray-500 active:text-green-600 transition-all duration-150 hover:ml-2 " to='/Login'>Login</Link>
-                    <Link className="text-lg font-semibold hover:text-gray-500 active:text-green-600 transition-all duration-150 hover:ml-2 " to='/Register'>Register</Link>
-                  </ul>
-              
-                </div>
+      <div
+        className={`text-black transition-all duration-500 ease-in fixed top-0 right-0 py-3 bg-white bg-shadow flex flex-col h-full gap-5 z-[10] overflow-x-hidden ${
+          toggle ? "w-[250px] opacity-100" : "w-0 opacity-0"
+        }`}
+        onClick={() => setToggle((prev) => !prev)}
+      >
+        <div className="flex items-end justify-end px-3">
+          <IoMdClose className="text-black size-10 hover:scale-105" />
+        </div>
+        <ul className="flex flex-col gap-3 px-3">
+          <Link
+            className="text-lg font-semibold hover:text-gray-500 active:text-green-600 transition-all duration-150 hover:ml-2 "
+            to="/"
+          >
+            Home
+          </Link>
+          <Link
+            className="text-lg font-semibold hover:text-gray-500 active:text-green-600 transition-all duration-150 hover:ml-2 "
+            to="/About"
+          >
+            About
+          </Link>
+          <Link
+            className="text-lg font-semibold hover:text-gray-500 active:text-green-600 transition-all duration-150 hover:ml-2 "
+            to="/Login"
+          >
+            Login
+          </Link>
+          <Link
+            className="text-lg font-semibold hover:text-gray-500 active:text-green-600 transition-all duration-150 hover:ml-2 "
+            to="/Register"
+          >
+            Register
+          </Link>
+        </ul>
+      </div>
 
       {/* Mobile Search */}
       {searchToggle && (
-  <div className="fixed top-0 w-full py-3 px-5 bg-black z-[1] flex items-center gap-5 justify-between">
-    
-    {/* Search Bar */}
-    <div className="relative w-full">
-      <input
-        type="search"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="w-full py-3 px-3 rounded-lg text-black outline-none focus:ring focus:ring-red-200"
-        placeholder="Search products..."
-      />
-      <div className="absolute right-0 top-0 h-full flex items-center px-4 bg-gray-200 rounded-lg">
-        <FaSearch className="text-black" />
-      </div>
+        <div className="fixed top-0 w-full py-3 px-5 bg-black z-[1] flex items-center gap-5 justify-between">
+          {/* Search Bar */}
+          <div className="relative w-full">
+            <input
+              type="search"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full py-3 px-3 rounded-lg text-black outline-none focus:ring focus:ring-red-200"
+              placeholder="Search products..."
+            />
+            <div className="absolute right-0 top-0 h-full flex items-center px-4 bg-gray-200 rounded-lg">
+              <FaSearch className="text-black" />
+            </div>
 
-      {/* Search Results */}
-      {(data.length > 0 || error) && (
-        <ul className="absolute top-full left-0 w-full bg-white text-black overflow-y-scroll z-10 shadow-md rounded-lg px-3">
-          {data.map((item, index) => (
-            <li key={index} className="py-2 flex items-center justify-between border-b">
-              <img src={item.image} alt="product image" className="w-10 h-10 flex object-cover rounded-md" />
-              <span className="text-right">{item.name}</span>
-            </li>
-          ))}
-          {error && <li className="py-2 text-red-500">{error}</li>}
-        </ul>
+            {/* Search Results */}
+            {(data.length > 0 || error) && (
+              <ul className="absolute top-full max-h-[85vh] left-0 w-full bg-white text-black overflow-y-scroll z-10 shadow-md rounded-lg px-3">
+                {data.map((item, index) => (
+                  <li
+                    key={index}
+                    className="py-2 flex items-center justify-between border-b"
+                  >
+                    <img
+                      src={item.image}
+                      alt="product image"
+                      className="w-10 h-10 flex object-cover rounded-md"
+                    />
+                    <span className="text-right">{item.name}</span>
+                  </li>
+                ))}
+                {error && <li className="py-2 text-red-500">{error}</li>}
+              </ul>
+            )}
+          </div>
+
+          {/* Close Button */}
+          <img
+            src={close}
+            alt="Close search"
+            className="cursor-pointer w-6 h-6"
+            onClick={() => {
+              setSearchToggle(false);
+              setSearchTerm("");
+            }}
+          />
+        </div>
       )}
-    </div>
-
-    {/* Close Button */}
-    <img
-      src={close}
-      alt="Close search"
-      className="cursor-pointer w-6 h-6"
-      onClick={() => {
-        setSearchToggle(false);
-        setSearchTerm("");
-      }}
-    />
-  </div>
-)}
-
     </>
   );
 };
 
 export default Nav;
-
