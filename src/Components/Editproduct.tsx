@@ -80,7 +80,6 @@ const Editproduct = ({ type }: { type: string }) => {
           setSuccess("Product updated successfully");
           setProducts(data.product)
           setTimeout(() => setSuccess(""), 3000)
-          clearTimeout(3000)
           navigate('/')
         }
       } catch (error: any) {

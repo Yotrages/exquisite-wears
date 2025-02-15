@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { background, bg4 } from "../assets";
+import { bg4, social } from "../assets";
 import { FaArrowAltCircleRight } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -35,8 +35,9 @@ const Hero = () => {
   const Admin = "true";
   const user = localStorage.getItem("userName");
 
-
-  const getLast : string = products[products.length - 1]?.image || background;
+  const sort = products.sort()
+  const getLast = sort[sort.length - 1]?.image || social ;
+  
 
   return (
     <section className={`w-full`}>

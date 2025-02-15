@@ -1,14 +1,15 @@
-import { useEffect, useState } from "react"
+import {  useState } from "react"
 
 const Preloader = () => {
-    const [loader, setLoader] = useState(2)
+    const [loader, setLoader] = useState<boolean | number>(11)
     const [bg, setBg] = useState('border-primary')
-    useEffect(() => {
-        window.onloadstart = () => {
-            setLoader(-3);
+   
+        window.onload = () => {
+            setLoader(false)
+            setLoader(-11)
             setBg('border-none')
         }
-    }, [loader])
+
 
   return (
     <div className={`flex bg-white fixed top-0 bottom-0 left-0 right-0 items-center justify-center min-h-screen`} style={{zIndex: `${loader}`}}>

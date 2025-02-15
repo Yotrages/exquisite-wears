@@ -1,4 +1,3 @@
-import logo from './images/logos/materialpro.svg'
 import Nigeria from './images/ngn.png'
 import payments from './images/payments.png'
 import loginVideo from './videos/video.mp4'
@@ -12,6 +11,7 @@ import social from './images/Social networking.gif'
 import about from './images/About us page-amico.png'
 import menu from './images/menu.svg'
 import close from './images/close.svg'
+import logo from './images/logo.jpg'
 
 export {
     logo,

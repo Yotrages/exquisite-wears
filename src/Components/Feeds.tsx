@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Button from "./Button";
 
 interface Product {
   image: string;
@@ -24,7 +25,8 @@ const Feeds = () => {
       name?: string;
       price?: number;
       quantity?: number;
-      _id?: string;
+      _id: string;
+      description?: string;
     }[]
   >([]);
   const [currentPage, setCurrentPage] = useState<number>(1)
@@ -34,17 +36,15 @@ const Feeds = () => {
     const [error, setError] = useState<null | string>(null)
   useEffect(() => {
     getProducts(currentPage)
-  }, [currentPage]);
+  }, [currentPage, products]);
 
   const getProducts = async (page: number): Promise<void> => {
     try {
       const url = `${URL}/get?page=${page}&limit=${limit}`;
-      console.log("Requesting:", url);
       const res = await axios.get<ApiResponse>(url, {
         headers: { "Cache-Control": "no-cache" },
       });
       const { products, totalPages } = res.data;
-      console.log("Products received:", products);
       setProducts(products);
       setTotalPages(totalPages);
     } catch (error: any) {
@@ -54,9 +54,13 @@ const Feeds = () => {
   
 
 
-  const deletePost = async (id: string | undefined) => {
+  const deletePost = async (id: string) => {
     try {
-      const res = await axios.delete(`${URL}/delete/${id}`)
+      const res = await axios.delete(`${URL}/delete/${id}`, {
+        headers: { "Cache-Control": "no-cache",
+          "Pragma": "no-cache",
+          "Expires": "0",}
+      })
       const data =  res.data
       console.log(data)
 
@@ -64,6 +68,7 @@ const Feeds = () => {
         setMessage('Product deleted successfully')
        setTimeout(() => setMessage(''), 3000)
         setProducts((products) => products.filter((item) => item._id !== id))
+        getProducts(currentPage)
       }
     } catch (error : any) {
       if (error.response) {
@@ -90,12 +95,12 @@ const handleEdit = (id: string | undefined) => {
   return (
     <section className="py-20">
       {error && (
-          <div className="bg-red-600 rounded-lg text-white fixed top-5 z-10 items-center justify-center text-center px-4 py-3">
+          <div className="bg-red-600 rounded-lg text-white fixed top-5 z-10 right-5 text-center px-4 py-3">
             {error}
           </div>
         )}
         {message && (
-          <div className="bg-green-600 rounded-lg text-white fixed top-5 z-10 justify-center items-center text-center px-4 py-3">
+          <div className="bg-green-600 rounded-lg text-white fixed top-5 z-10 right-5 text-center px-4 py-3">
             {message}
           </div>
         )}
@@ -107,28 +112,32 @@ const handleEdit = (id: string | undefined) => {
               className="flex flex-col h-fit mr-8 p-image bg-shadow rounded-lg hover:scale-110 transition-all duration-500 bg-white gap-4 mb-6 pb-3"
             >
               <img
-                className="w-full h-fit object-cover aspect-square hover:skew-y-1 rounded-lg"
+                className="w-full h-fit object-cover aspect-square rounded-lg"
                 src={item?.image || "default-placeholder-image.jpg"}
                 alt={item?.name}
               />
-              <div className="flex flex-col flex-wrap gap-3 px-4">
-                <h1 className="text-primary h-28 xs:h-20 text-clip text-wrap sm:h-10 tracking-wide font-light font-poppins">
+              <div className="flex flex-col  flex-wrap gap-3 px-4">
+                <h1 className="text-primary mb-2 header  tracking-wide font-light font-poppins">
                   {item?.name}
+                </h1>
+                <h1 className="text-primary header text-wrap tracking-wide font-light font-poppins">
+                  {item?.description}
                 </h1>
                 <p className="orange_gradient font-poppins font-semibold tracking-wide">
                   ${item?.price}
                 </p>
+                <Button onSmash={() => console.log('pressed')} styles="rounded-lg text-white hover:bg-green-500 text-center" buttonText="Discuss product" router="https://wa.me/08145534450"/>
               </div>
               {token === notAdmin && (
-                <div className="flex w-full px-2 justify-between h-fit sm:flex-row flex-col items-start sm:items-center gap-2">
+                <div className="flex w-full px-4 justify-between h-fit sm:flex-row flex-col items-start sm:items-center gap-2">
                   <button 
                     type="submit"
-                    onClick={() => handleEdit(item?._id)}
+                    onClick={() => handleEdit(item._id)}
                     className="rounded-lg  gap-4 py-2 px-3 bg-black-gradient bg-shadow text-white font-semibold tracking-widest"
                   >Edit</button>
                   <button
                     type="submit"
-                    onClick={() => deletePost(item?._id)}
+                    onClick={() => deletePost(item._id)}
                     className="rounded-lg py-2 px-3 bg-red-500 bg-shadow text-white font-semibold tracking-widest"
                   >Delete</button>
                 </div>

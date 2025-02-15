@@ -1,9 +1,10 @@
+import { Link } from "react-router-dom";
 
-const Button = ({buttonText, styles} : {buttonText : string, styles: string}) => {
+const Button = ({buttonText, styles, router, onSmash} : {buttonText : string, styles: string, router: string, onSmash: () => void}) => {
   return (
-    <button type="submit" className={`py-3 px-7 ${styles}`}>
+    <Link to={router} onClick={onSmash} type="submit" className={`bg-primary px-2 py-2 items-center justify-center ${styles}`}>
         {buttonText}
-    </button>
+    </Link>
   )
 }
 

@@ -1,11 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaSpinner } from "react-icons/fa";
 import { z } from "zod";
 import { productSchema } from "../Schema/AdminSchema";
 import { useNavigate } from "react-router-dom";
+import Button from "./Button";
 
 type postProduct = z.infer<typeof productSchema>;
 const Admin = ({ type }: { type: string }) => {
@@ -13,6 +14,8 @@ const Admin = ({ type }: { type: string }) => {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [show, setShow] = useState(false)
+  const okay = 'yes'
   const navigate = useNavigate()
   
   const {
@@ -66,7 +69,7 @@ const Admin = ({ type }: { type: string }) => {
         await setTimeout(() => setSuccess(""), 3000)
           reset();
           setImagePreview(null)
-          navigate('/')      
+          setShow(true)     
         }
       } catch (error: any) {
         console.error(error.message);
@@ -85,6 +88,7 @@ const Admin = ({ type }: { type: string }) => {
     sendProduct();
   };
   
+  
 
   return (
     <div className="w-full flex flex-col justify-center items-center py-12 px-4">
@@ -96,6 +100,12 @@ const Admin = ({ type }: { type: string }) => {
       {success && (
         <div className="bg-green-600 text-white py-2 px-4 rounded-md top-5 right-4 fixed justify-center z-10">
           {success}
+        </div>
+      )}
+      {show && (
+        <div className={`bg-primary text-white fixed top-7 right-3 flex items-center ${show ? 'w-[200px] opacity-25' : 'w-0 opacity-0'} py-2 px-3`}>
+          <Button onSmash={() => console.log('stay')} styles="hover:bg-green-400 bg-shadow" router="" buttonText={okay} />
+          <Button onSmash={() => navigate('/')} styles="hover:bg-green-400 bg-shadow" router="" buttonText='no' />
         </div>
       )}
       <h4 className="text-center tracking-wider text-3xl font-bold xs:text-[45px] sm:text-[60px]">

@@ -1,5 +1,6 @@
 import React, { Suspense, useState } from 'react'
 import Nav from './Nav'
+// import Preloader from './Preloader'
 
 const Footer = React.lazy(() => import('./Footer'))
 const BackToTop = React.lazy(() => import('./Backtotop'))

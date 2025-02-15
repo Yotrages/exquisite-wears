@@ -19,7 +19,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [success, setSucess] = useState(String);
+  const [success, setSuccess] = useState(String);
   const [password, setPassword] = useState(false);
 
   const URL = "https://ecommerce-9wqc.onrender.com/api/users/login";
@@ -36,8 +36,9 @@ const Login = () => {
           localStorage.setItem("userName", data.name);
           localStorage.setItem("admin", data.isAdmin);
           setLoading(false);
-          setSucess("Login successful");
-          setTimeout(() => setSucess(''), 3000)
+          setSuccess("Login successful");
+          setTimeout(() => setSuccess(''), 3000)
+          clearTimeout(3000)
           reset();
           if (!data.isAdmin) {
             navigate("/");
@@ -119,7 +120,7 @@ const Login = () => {
                   className="px-3 py-3 w-full focus:outline-none text-black rounded-lg"
                 />
                 <span
-                  className="absolute right-4 top-4 text-[22px] text-black"
+                  className="absolute right-4 top-4 text-[22px] cursor-pointer rounded-full text-black"
                   onClick={() => setPassword((prev) => !prev)}
                 >
                   {password ? <FaEyeSlash /> : <FaEye />}
@@ -134,7 +135,7 @@ const Login = () => {
               className="rounded-lg  gap-4 py-3 px-7 bg-black-gradient bg-shadow text-white font-semibold text-[18px] tracking-widest"
             >
               {loading ? (
-                <p className="flex items-center justify-center gap-3">
+                <p className={`flex items-center justify-center gap-3`}>
                   <FaSpinner className="animate-spin" />
                   Login
                 </p>

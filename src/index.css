@@ -307,14 +307,13 @@
   filter: blur(750px);
 }
 
-.Login {
-  background-image: url(./assets/images/img1.jpg);
-  background-position: center;
-  background-attachment: fixed;
-  background-repeat: no-repeat;
-  background-size: cover;
-}
-
 .p-image {
   width: calc(100% - 10px);
+}
+
+.header {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
 }

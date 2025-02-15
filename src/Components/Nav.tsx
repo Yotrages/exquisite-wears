@@ -1,6 +1,8 @@
 import { FaArrowDown, FaSearch } from "react-icons/fa";
 import { close, menu, Nigeria } from "../assets";
 import React, { useState, useEffect } from "react";
+import { CgMenuGridO } from "react-icons/cg";
+import { IoMdClose } from "react-icons/io";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import Logout from "./Logout";
@@ -118,17 +120,15 @@ const Nav = ({change, setChange} : {change: Boolean, setChange: React.Dispatch<R
 
           {/* Display Search Results */}
           {(data.length > 0 || error) && (
-            <div className="absolute md:flex hidden top-full left-0 w-full bg-white text-black z-[1] shadow-md px-3 py-1 rounded-md">
-              <ul>
+              <ul className="absolute md:flex flex-col hidden h-[85%] top-full left-0 w-full bg-white text-black z-[1] overflow-y-scroll shadow-md px-3 py-1 rounded-md">
                 {data.map((item, index) => (
-                  <li key={index} className="py-2 flex flex-row justify-between border-b">
-                    <div><img src={item.image} alt="" className="size-fit"/></div>
-                    {item.name}
+                  <li key={index} className="py-3 flex flex-row min-h-fit items-center w-full justify-between border-b">
+                    <div className=""><img src={item.image} alt="" className="size-16 object-contain"/></div>
+                    <div>{item.name}</div>
                   </li>
                 ))}
                 {error && <li className="py-2 text-red-500">{error}</li>}
               </ul>
-            </div>
           )}
         </div>
         {/* Desktop and Mobile Nav */}
@@ -176,7 +176,7 @@ const Nav = ({change, setChange} : {change: Boolean, setChange: React.Dispatch<R
               Login
             </Link>
 
-             <img className="text-black cursor-pointer ss:hidden flex hover:scale-105" src={menu} alt="menu" onClick={() => setToggle((prev) => (!prev))}/>
+             <CgMenuGridO className="text-black size-9 cursor-pointer ss:hidden flex hover:scale-105" onClick={() => setToggle((prev) => (!prev))}/>
             
 
 
@@ -190,7 +190,7 @@ const Nav = ({change, setChange} : {change: Boolean, setChange: React.Dispatch<R
 
              
                 <div className={`text-black transition-all duration-500 ease-in fixed top-0 right-0 py-3 bg-white bg-shadow flex flex-col h-full gap-5 z-[10] overflow-x-hidden ${toggle ? 'w-[250px] opacity-100' : 'w-0 opacity-0'}`} onClick={() => setToggle((prev) => (!prev))}>
-                  <div className="flex items-end justify-end px-3"><img src={close} className="text-black w-5 bg-black hover:scale-105" alt="" /></div>
+                  <div className="flex items-end justify-end px-3"><IoMdClose className="text-black size-10 hover:scale-105" /></div>
                   <ul className="flex flex-col gap-3 px-3">
                     <Link className="text-lg font-semibold hover:text-gray-500 active:text-green-600 transition-all duration-150 hover:ml-2 " to='/'>Home</Link>
                     <Link className="text-lg font-semibold hover:text-gray-500 active:text-green-600 transition-all duration-150 hover:ml-2 " to='/About'>About</Link>
@@ -202,44 +202,51 @@ const Nav = ({change, setChange} : {change: Boolean, setChange: React.Dispatch<R
 
       {/* Mobile Search */}
       {searchToggle && (
-        <div className="flex items-center gap-5 justify-between bg-black top-0 fixed z-[1] w-full py-3 px-5">
-          <div className="relative flex w-full">
-            <input
-              type="search"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="py-3 px-3 focus:outline-black outline-dashed outline-red-200 rounded-lg text-black w-full"
-              placeholder="Search products..."
-            />
-            <div className="absolute bg-gray-200 h-full rounded-lg px-4 right-0 flex items-center">
-              <FaSearch className="text-black" />
-            </div>
-            {(data.length > 0 || error) && (
-              <div className="absolute top-full rounded-lg left-0 w-full bg-white text-black z-10 shadow-md px-3">
-                <ul>
-                  {data.map((item, index) => (
-                    <li key={index} className="py-2 flex flex-row items-center justify-between border-b">
-                      <div><img src={item.image} alt="product image" className="size-fit" /></div>
-                      {item.name}
-                    </li>
-                  ))}
-                  {error && <li className="py-2 text-red-500">{error}</li>}
-                </ul>
-              </div>
-            )}
-          </div>
-          <img
-          src={close}
-            className="text-white cursor-pointer text-[25px]"
-            onClick={() => {
-              setSearchToggle(false);
-              setSearchTerm("");
-            }}
-          />
-        </div>
+  <div className="fixed top-0 w-full py-3 px-5 bg-black z-[1] flex items-center gap-5 justify-between">
+    
+    {/* Search Bar */}
+    <div className="relative w-full">
+      <input
+        type="search"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="w-full py-3 px-3 rounded-lg text-black outline-none focus:ring focus:ring-red-200"
+        placeholder="Search products..."
+      />
+      <div className="absolute right-0 top-0 h-full flex items-center px-4 bg-gray-200 rounded-lg">
+        <FaSearch className="text-black" />
+      </div>
+
+      {/* Search Results */}
+      {(data.length > 0 || error) && (
+        <ul className="absolute top-full left-0 w-full bg-white text-black overflow-y-scroll z-10 shadow-md rounded-lg px-3">
+          {data.map((item, index) => (
+            <li key={index} className="py-2 flex items-center justify-between border-b">
+              <img src={item.image} alt="product image" className="w-10 h-10 flex object-cover rounded-md" />
+              <span className="text-right">{item.name}</span>
+            </li>
+          ))}
+          {error && <li className="py-2 text-red-500">{error}</li>}
+        </ul>
       )}
+    </div>
+
+    {/* Close Button */}
+    <img
+      src={close}
+      alt="Close search"
+      className="cursor-pointer w-6 h-6"
+      onClick={() => {
+        setSearchToggle(false);
+        setSearchTerm("");
+      }}
+    />
+  </div>
+)}
+
     </>
   );
 };
 
 export default Nav;
+

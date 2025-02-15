@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { FaInstagram, FaPhoneAlt, FaSpinner, FaWhatsapp } from "react-icons/fa";
+import { FaInstagram, FaPhoneAlt, FaSpinner, FaWhatsapp, FaTiktok } from "react-icons/fa";
 import { FaLocationPin } from "react-icons/fa6";
 import { payments } from "../assets";
 import { SubSchema } from "../Schema/SubscribeSchema";
@@ -108,11 +108,14 @@ const Footer = () => {
           </span>
           <img src={payments} loading="lazy" alt="" />
           <span className="flex items-center gap-4">
-            <Link className="text-[30px]" to="https://wa.me/08145534450">
+            <Link className="text-[30px]" title="Whatsapp" to="https://wa.me/08145534450">
               <FaWhatsapp />
             </Link>
-            <Link className="text-[30px]" to="https://HarDeyBare28">
+            <Link className="text-[30px]" title="Instagram" to="https://www.instagram.com/the_exquisite_wears?igsh=MWRheHhvMmhvMzh4Mw==">
               <FaInstagram />
+            </Link>
+            <Link className="text-[30px]" title="Tiktok" to="https://www.tiktok.com/@the.exquisite.wears?_t=ZM-8tuPLsoPUoQ&_r=1">
+              <FaTiktok />
             </Link>
           </span>
         </div>
