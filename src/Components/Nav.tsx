@@ -1,5 +1,5 @@
 import { FaArrowDown, FaSearch } from "react-icons/fa";
-import { close, menu, Nigeria } from "../assets";
+import { close, Nigeria } from "../assets";
 import React, { useState, useEffect } from "react";
 import { CgMenuGridO } from "react-icons/cg";
 import { IoMdClose } from "react-icons/io";

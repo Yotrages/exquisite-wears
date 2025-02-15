@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
+    "@reduxjs/toolkit": "^2.5.1",
     "@testing-library/jest-dom": "^6.6.3",
     "axios": "^1.7.9",
     "lodash.debounce": "^4.0.8",
