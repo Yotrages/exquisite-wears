@@ -34,7 +34,7 @@ const Register = () => {
           console.log("Response:", res);
           setLoading(false);
           setSuccess("Login successful");
-          setTimeout(() => setSuccess(''), 3000)
+          await new Promise((resolve) => setTimeout(resolve, 3000))
           reset();
           navigate("/login");
         } else {

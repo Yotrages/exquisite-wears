@@ -37,8 +37,7 @@ const Login = () => {
           localStorage.setItem("admin", data.isAdmin);
           setLoading(false);
           setSuccess("Login successful");
-          setTimeout(() => setSuccess(''), 3000)
-          clearTimeout(3000)
+          await new Promise((resolve) => setTimeout(resolve, 3000))
           reset();
           if (!data.isAdmin) {
             navigate("/");
