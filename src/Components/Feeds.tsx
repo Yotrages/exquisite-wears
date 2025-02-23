@@ -1,109 +1,13 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import ProductValidator from "../Api/ProductValidator";
 import Button from "./Button";
+import { MessageRight } from "./Message";
 
-interface Product {
-  image: string;
-  name: string;
-  price: number;
-  quantity: number;
-  _id: string
-}
-
-interface ApiResponse {
-  products: Product[];
-  totalPages: number;
-  currentPage: number;
-}
 const Feeds = () => {
-  const URL = "https://ecommerce-9wqc.onrender.com/api/products";
-  const navigate = useNavigate();
-  const [products, setProducts] = useState<
-    {
-      image?: string;
-      name?: string;
-      price?: number;
-      quantity?: number;
-      _id: string;
-      description?: string;
-    }[]
-  >([]);
-  const [currentPage, setCurrentPage] = useState<number>(1)
-  const [totalPages, setTotalPages] = useState<number>(1)
-    const [message, setMessage] = useState('')
-    const limit : number = 15
-    const [error, setError] = useState<null | string>(null)
-  useEffect(() => {
-    getProducts(currentPage)
-  }, [currentPage, products]);
-
-  const getProducts = async (page: number): Promise<void> => {
-    try {
-      const url = `${URL}/get?page=${page}&limit=${limit}`;
-      const res = await axios.get<ApiResponse>(url, {
-        headers: { "Cache-Control": "no-cache" },
-      });
-      const { products, totalPages } = res.data;
-      setProducts(products);
-      setTotalPages(totalPages);
-    } catch (error: any) {
-      console.error("Error fetching products:", error);
-    }
-  };
   
-
-
-  const deletePost = async (id: string) => {
-    try {
-      const res = await axios.delete(`${URL}/delete/${id}`, {
-        headers: { "Cache-Control": "no-cache",
-          "Pragma": "no-cache",
-          "Expires": "0",}
-      })
-      const data =  res.data
-      console.log(data)
-
-      if (res.status === 200) {
-        setMessage('Product deleted successfully')
-       setTimeout(() => setMessage(''), 3000)
-        setProducts((products) => products.filter((item) => item._id !== id))
-        getProducts(currentPage)
-      }
-    } catch (error : any) {
-      if (error.response) {
-        setError(error.response.data.message)
-      } else if (error.request) {
-        setError('Server error, check your connection')
-      } else {
-        setError('An unknown error occurred')
-      }
-    }
-    setTimeout(() => setError(""), 3000)
-    clearTimeout(3000)
-  }
-
-  const token = localStorage.getItem("admin");
-  const notAdmin = "true";
-
-
-const handleEdit = (id: string | undefined) => {
-  navigate(`/edit/${id}`);
-};
-
-
+const { handleEdit, deletePost, success, token, notAdmin, products, error, setCurrentPage, currentPage, totalPages } = ProductValidator()
   return (
     <section className="py-20">
-      {error && (
-          <div className="bg-red-600 rounded-lg text-white fixed top-5 z-10 right-5 text-center px-4 py-3">
-            {error}
-          </div>
-        )}
-        {message && (
-          <div className="bg-green-600 rounded-lg text-white fixed top-5 z-10 right-5 text-center px-4 py-3">
-            {message}
-          </div>
-        )}
+      <MessageRight success={success} error={error}/>
       <div className="grid qy:grid-cols-3 md:grid-cols-4 grid-cols-2 sm:w-[88%] w-full sm:px-0 px-3 m-auto items-center gap-5">
         {products.length > 0 &&
           products.map((item) => (

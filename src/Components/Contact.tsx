@@ -1,74 +1,18 @@
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import axios from "axios";
-import { useState } from "react";
 import { FaSpinner} from "react-icons/fa";
-import { contactSchema } from "../Schema/ContactSchema";
 import { contact } from "../assets";
+import { MessageRight } from "./Message";
+import ContactValidator from "../Api/ContactValidator";
 
-type ContactForm = z.infer<typeof contactSchema>;
 const Contact = () => {
-  const {
-    handleSubmit,
-    formState: { errors },
-    register,
-    reset,
-  } = useForm<ContactForm>({ resolver: zodResolver(contactSchema) });
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [success, setSucess] = useState(String);
-
-  const URL = "https://ecommerce-9wqc.onrender.com/api/contact";
-  const submission = (Contactdata: ContactForm) => {
-    const loginUser = async () => {
-      setLoading(true);
-      try {
-        console.log("Sending data:", Contactdata);
-        const res = await axios.post(URL, Contactdata);
-
-        if (res.status === 200) {
-          console.log("Response:", res);
-          setLoading(false);
-          setSucess("Message delivered successfully");
-          reset();
-         setTimeout(() => setSucess(""), 3000)
-         clearTimeout(3000)
-        } else {
-          setLoading(false)
-        }
-      } catch (error: any) {
-        console.error("Error details:", error);
-        if (error.response) {
-          setError(error.response.data.message || "An error occurred");
-        } else if (error.request) {
-          setError("No response from server, check your connection and try again");
-        } else {
-          setError(error.message || "An error occurred");
-        }
-        setLoading(false);
-        setTimeout(() => setError(""), 3000)
-        clearTimeout(3000)
-      }
-    };
-    loginUser();
-  };
+  
+  const { handleSubmit, success, error, errors, register, submission, loading } = ContactValidator()
 
   return (
     <div className="w-full justify-between items-center xs:px-10 xl:px-28 gap-20 flex-col mt-20 sm:flex-row flex py-10">
-        {error && (
-          <div className="bg-red-600 rounded-lg text-white fixed top-5 z-10 m-auto justify-center text-center px-4 py-3">
-            {error}
-          </div>
-        )}
-        {success && (
-          <div className="bg-green-600 rounded-lg text-white w-full fixed top-5 z-10 justify-center flex items-center text-center px-4 py-3">
-            {success}
-          </div>
-        )}
+        <MessageRight success={success} error={error}/>
      <div className="sm:w-1/2"><img src={contact} className="w-fit" alt="" /></div>
       <form
-        className="w-full  px-5 qy:w-1/2 qy:px-0"
+        className="w-full px-5 qy:w-1/2 qy:px-0"
         onSubmit={handleSubmit(submission)}
       >
         <div className="flex flex-col gap-8 px-2">

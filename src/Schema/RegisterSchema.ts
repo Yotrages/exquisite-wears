@@ -13,3 +13,5 @@ export const registerSchema = z.object({
     .string({ required_error: "The name field is required" })
     .min(5, "Username must be up to 5 characters"),
 });
+
+export type RegisterForm = z.infer<typeof registerSchema>;

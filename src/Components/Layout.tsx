@@ -4,17 +4,17 @@ import Nav from './Nav'
 
 const Footer = React.lazy(() => import('./Footer'))
 const BackToTop = React.lazy(() => import('./Backtotop'))
-interface Layout {
+interface LayoutProps {
     children: React.ReactNode,
 }
-const Layout = ({children} : Layout) => {
+const Layout = ({children} : LayoutProps) => {
 
   const [change, setChange] = useState(false)
   return (
     <div>
       {/* <Preloader /> */}
         <Nav setChange={setChange} change={change} />
-        <main className={`${change ? 'mt-3' : 'mt-16'}`}>
+        <main className={`${change ? 'mt-4' : 'mt-16'}`}>
             {children}
         </main>
         <Suspense fallback={<div className='text-red-500 animate-pulse'>loading...</div>}>

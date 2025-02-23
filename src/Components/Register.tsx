@@ -1,73 +1,15 @@
-import { useNavigate } from "react-router-dom";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import axios from "axios";
-import { useState } from "react";
 import { FaSpinner, FaEye, FaEyeSlash } from "react-icons/fa";
-import { registerSchema } from "../Schema/RegisterSchema";
 import Question from "./Question";
+import { MessageCenter } from "./Message";
+import RegisterValidator from "../Api/RegisterValidator";
 
-type RegisterForm = z.infer<typeof registerSchema>;
 const Register = () => {
-  const {
-    handleSubmit,
-    formState: { errors },
-    register,
-    reset,
-  } = useForm<RegisterForm>({ resolver: zodResolver(registerSchema) });
-  const navigate = useNavigate();
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(String);
-  const [password, setPassword] = useState(false);
-
-  const URL = "https://ecommerce-9wqc.onrender.com/api/users/register";
-  const submission = (Logindata: RegisterForm) => {
-    const loginUser = async () => {
-      setLoading(true);
-      try {
-        console.log("Sending data:", Logindata);
-        const res = await axios.post(URL, Logindata);
-
-        if (res.status === 201) {
-          console.log("Response:", res);
-          setLoading(false);
-          setSuccess("Login successful");
-          await new Promise((resolve) => setTimeout(resolve, 3000))
-          reset();
-          navigate("/login");
-        } else {
-          setLoading(false)
-        }
-      } catch (error: any) {
-        console.error("Error details:", error);
-        if (error.response) {
-          setError(error.response.data.message || "An error occurred");
-        } else if (error.request) {
-          setError("No response from server, check your connection and try again");
-        } else {
-          setError(error.message || "An error occurred");
-        }
-        setTimeout(() => setError(""), 3000)
-        setLoading(false);
-      }
-    };
-    loginUser();
-  };
+  
+  const { handleSubmit, error, errors, submission, success, loading, password, register, setPassword} = RegisterValidator()
 
   return (
     <div className="w-full absolute justify-center items-center flex top-1/4">
-        {error && (
-          <div className="bg-red-600 rounded-lg text-white fixed top-5 z-10 justify-center items-center text-center px-4 py-3">
-            {error}
-          </div>
-        )}
-        {success && (
-          <div className="bg-green-600 rounded-lg text-white fixed top-5 z-10 justify-center items-center text-center px-4 py-3">
-            {success}
-          </div>
-        )}
+       <MessageCenter success={success} error={error}/>
       <div className="fixed items-center justify-center top-20">
       </div>
       <form
@@ -145,7 +87,7 @@ const Register = () => {
           </div>
           <button
             type="submit"
-            className="rounded-lg  gap-4 py-3 px-7 bg-black-gradient bg-shadow text-white font-semibold text-[18px] tracking-widest"
+            className="rounded-lg gap-4 py-3 px-7 bg-black-gradient bg-shadow text-white font-semibold text-[18px] tracking-widest"
           >
             {loading ? (
               <p className="flex items-center justify-center gap-3">

@@ -9,6 +9,8 @@ import Admindashboard from "./Admindashboard";
 import Edit from "./Edit";
 import NotificationPage from "./NotificationPage";
 import AboutPage from "./AboutPage";
+import ForgotPassword from "./ForgotPassword";
+import SearchPage from "./SearchPage";
 
 export {
   Home,
@@ -22,4 +24,6 @@ export {
   Edit,
   NotificationPage,
   AboutPage,
+  ForgotPassword,
+  SearchPage,
 };

@@ -1,0 +1,114 @@
+import axios from "axios";
+import { useParams } from "react-router-dom";
+import { URL } from "../Api/Endpoint";
+import { useEffect, useState } from "react";
+import { FaSearch } from "react-icons/fa";
+import Button from "./Button";
+import ProductValidator from "../Api/ProductValidator";
+
+const Search = () => {
+  const { searchTerm } = useParams();
+  const [data, setData] = useState<{_id: string, name: string, description: string, price: number, image: string}[]>([]);
+  const [newTerm, setNewTerm] = useState("");
+  const { handleEdit, deletePost, token, notAdmin } = ProductValidator()
+
+  useEffect(() => {
+    Search(searchTerm);
+  }, [searchTerm, newTerm])
+  const Search = async (item: string | undefined) => {
+    try {
+      const res = await axios.get(`${URL}/products/search?query=${item}`);
+      const data = res.data;
+      setData(data);
+    } catch (error: any) {
+      console.error(error);
+    }
+  };
+
+  const newSearch = Search(newTerm)
+
+  return (
+    <section className="mt-20 py-8  px-5">
+      <div className="flex flex-col gap-16">
+          <div className="flex qy:flex-row gap-9 flex-col items-start">
+            <div className="flex flex-row gap-9 sm:items-center">
+              <p className="sm:text-2xl text-xl text-primary font-semibold font-poppins">
+                Showing search results for:
+              </p>
+              <p className="text-xl font-semibold font-poppins text-black">
+                {searchTerm}
+              </p>
+            </div>
+            <div className="relative qy:hidden flex w-full">
+              <input
+                type="search"
+                defaultValue={searchTerm}
+                value={newTerm}
+                onChange={(e) => setNewTerm(e.target.value)}
+                className="w-full py-3 px-3 rounded-lg text-black ring ring-primary focus:ring focus:outline-none focus:ring-red-200"
+                placeholder="Search products..."
+              />
+              <div className="absolute right-0 h-full flex items-center px-4 bg-gray-300 rounded-lg cursor-pointer" onClick={() => newSearch}>
+                <FaSearch className="text-black cursor-pointer"/>
+              </div>
+              </div>
+              </div>
+              {/* Search Results */}
+              {data.length > 0 ?
+                data.map((item) => (
+                  <div
+                    key={item?._id}
+                    className="flex flex-col h-fit mr-8 p-image bg-shadow rounded-lg hover:scale-110 transition-all duration-500 bg-white gap-4 mb-6 pb-3"
+                  >
+                    <img
+                      className="w-full h-fit object-cover aspect-square rounded-lg"
+                      src={item?.image || "default-placeholder-image.jpg"}
+                      alt={item?.name}
+                    />
+                    <div className="flex flex-col  flex-wrap gap-3 px-4">
+                      <h1 className="text-primary mb-2 header  tracking-wide font-light font-poppins">
+                        {item?.name}
+                      </h1>
+                      <h1 className="text-primary header text-wrap tracking-wide font-light font-poppins">
+                        {item?.description}
+                      </h1>
+                      <p className="orange_gradient font-poppins font-semibold tracking-wide">
+                        ${item?.price}
+                      </p>
+                      <Button
+                        onSmash={() => console.log("pressed")}
+                        styles="rounded-lg text-white hover:bg-green-500 text-center"
+                        buttonText="Discuss product"
+                        router="https://wa.me/08145534450"
+                      />
+                    </div>
+                    {token === notAdmin && (
+                      <div className="flex w-full px-4 justify-between h-fit sm:flex-row flex-col items-start sm:items-center gap-2">
+                        <button
+                          type="submit"
+                          onClick={() => handleEdit(item._id)}
+                          className="rounded-lg  gap-4 py-2 px-3 bg-black-gradient bg-shadow text-white font-semibold tracking-widest"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="submit"
+                          onClick={() => deletePost(item._id)}
+                          className="rounded-lg py-2 px-3 bg-red-500 bg-shadow text-white font-semibold tracking-widest"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )) : (
+                    <div className="bg-black-gradient text-white justify-center items-center rounded-lg py-5 flex m-auto w-fit px-5">
+                        <p className="text-center">oops!! No items match your search</p>
+                    </div>
+                )}
+      </div>
+    </section>
+  );
+};
+
+export default Search;

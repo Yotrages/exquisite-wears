@@ -17,6 +17,11 @@ import Preloader from './Preloader'
 import Question from './Question'
 import Register from './Register'
 import Whatsapp from './Whatsapp'
+import Sidebar from './Sidebar'
+import SearchInput from './SearchInput'
+import About from './About'
+import Search from './Search'
+
 
 export {
     Admin,
@@ -37,5 +42,9 @@ export {
     Preloader,
     Question,
     Register,
-    Whatsapp
+    Whatsapp,
+    Sidebar,
+    SearchInput,
+    About,
+    Search
 }

@@ -1,81 +1,16 @@
-import { useNavigate } from "react-router-dom";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import axios from "axios";
-import { useState } from "react";
 import { FaEye, FaSpinner, FaEyeSlash } from "react-icons/fa";
-import { loginSchema } from "../Schema/LoginSchema";
 import Question from "./Question";
+import { MessageCenter } from "./Message";
+import LoginValidator from "../Api/LoginValidator";
 
-type LoginForm = z.infer<typeof loginSchema>;
 const Login = () => {
-  const {
-    handleSubmit,
-    formState: { errors },
-    register,
-    reset,
-  } = useForm<LoginForm>({ resolver: zodResolver(loginSchema) });
-  const navigate = useNavigate();
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(String);
-  const [password, setPassword] = useState(false);
-
-  const URL = "https://ecommerce-9wqc.onrender.com/api/users/login";
-  const submission = (Logindata: LoginForm) => {
-    const loginUser = async () => {
-      setLoading(true);
-      try {
-        const res = await axios.post(URL, Logindata);
-        const data = res.data;
-        console.log(data);
-
-        if (res.status === 200) {
-          localStorage.setItem("adminToken", data.token);
-          localStorage.setItem("userName", data.name);
-          localStorage.setItem("admin", data.isAdmin);
-          setLoading(false);
-          setSuccess("Login successful");
-          await new Promise((resolve) => setTimeout(resolve, 3000))
-          reset();
-          if (!data.isAdmin) {
-            navigate("/");
-          } else {
-            navigate("/admin");
-          }
-        }
-      } catch (error: any) {
-        console.error(error);
-        if (error.response) {
-          setError(error.response.data.message || "An error occured");
-        } else if (error.request) {
-          setError("No response from server, try checking your connection");
-        } else {
-          setError(error.message || "An error occured");
-        }
-        setLoading(false);
-        setTimeout(() => setError(""), 3000);
-        clearTimeout(3000);
-      }
-    };
-    loginUser();
-  };
-
+  
+  const {handleSubmit, success, error, submission, register, errors, password, setPassword, loading} = LoginValidator()
  
   return (
     <>
       <div className="w-full absolute justify-center items-center flex top-1/4">
-        {error && (
-          <div className="bg-red-600 rounded-lg text-white fixed top-5 z-10 items-center justify-center text-center px-4 py-3">
-            {error}
-          </div>
-        )}
-        {success && (
-          <div className="bg-green-600 rounded-lg text-white fixed top-5 z-10 justify-center items-center text-center px-4 py-3">
-            {success}
-          </div>
-        )}
+        <MessageCenter success={success} error={error}/>
         <form
           className="xs:w-[500px] w-full px-5"
           onSubmit={handleSubmit(submission)}

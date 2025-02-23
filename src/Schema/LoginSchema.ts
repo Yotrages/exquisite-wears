@@ -10,3 +10,5 @@ export const loginSchema = z.object({
       })
       .min(5, "The password must be up to 10 characters"),
   });
+
+  export type LoginForm = z.infer<typeof loginSchema>;

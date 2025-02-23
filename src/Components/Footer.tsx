@@ -2,78 +2,30 @@ import { Link } from "react-router-dom";
 import { FaInstagram, FaPhoneAlt, FaSpinner, FaWhatsapp, FaTiktok } from "react-icons/fa";
 import { FaLocationPin } from "react-icons/fa6";
 import { payments } from "../assets";
-import { SubSchema } from "../Schema/SubscribeSchema";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
-import { useState } from "react";
-import { URL } from "../Api/AdminApi";
-type SubscribeForm = z.infer<typeof SubSchema>
+import subscribeValidator from "../Api/SubscribeValidator";
+import { MessageCenter } from "./Message";
+
 const Footer = () => {
-  const [success, setSuccess] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
-  const {formState: {errors}, handleSubmit, register, reset} = useForm<SubscribeForm>({resolver: zodResolver(SubSchema)})
-  const subscribe = (email: SubscribeForm) => {
-    const subscription = async () => {
-      setLoading(true)
-      const formData = new FormData()
-      formData.append('email', email.email)
-      try {
-        const res = await axios.post(`${URL}/subscribe`, formData)
-        console.log(res.data)
+  
+  const { date, error, errors, register, handleSubmit, subscribe, success, loading} = subscribeValidator()
 
-        if (res.status === 201) {
-          setLoading(false)
-          setSuccess('Subscription Successful')
-          reset()
-         setTimeout(() => setSuccess(""), 3000)
-        }
-
-      } catch (error : any) {
-        console.error(error)
-        if (error.response) {
-          setError(error.response.data.message)
-        } else if (error.request) {
-          setError('Server not responding, check your connection')
-        } else {
-          setError('Something went wrong')
-        }
-      }
-      setLoading(false)
-      setTimeout(() => setError(""), 3000);
-      clearTimeout(3000)
-    }
-    subscription()
-  }
-  const date = new Date().getFullYear()
   return (
     <section className="mt-14 w-full py-4 bg-black">
-        {error && (
-          <div className="bg-red-600 rounded-lg text-white right-4 fixed top-5 z-10 justify-center items-center text-center px-4 py-3">
-            {error}
-          </div>
-        )}
-        {success && (
-          <div className="bg-green-600 rounded-lg text-white right-4 fixed top-5 z-10 justify-center items-center text-center px-4 py-3">
-            {success}
-          </div>
-        )}
+        <MessageCenter error={error} success={success}/>
       <div className="bg-black text-white sm:flex-row-reverse flex-col w-[85%] gap-9 py-4 mx-auto flex justify-between">
         <div className="flex items-start flex-col gap-5">
           <h3 className="text-[18px] font-semibold font-poppins text-white">
             SIGN UP FOR DISCOUNTS & UPDATES
           </h3>
-          <form id="subscribe" onSubmit={handleSubmit(subscribe)}>
+          <form className="w-full" id="subscribe" onSubmit={handleSubmit(subscribe)}>
             <input
               type="email"
               id="subscribe"
               {...register("email", {required: true})}
-              className="text-[#7e7e7e] bg-[#ffffff30] w-full px-4 mb-5 py-3 rounded-xl"
+              className="text-[#7e7e7e] bg-[#ffffff30] w-full px-4 mb-3 py-3 rounded-xl"
               placeholder="Enter your email address"
             />
-            {errors.email && <p className="text-red-400">{errors.email.message}</p>}
+            {errors.email && <p className="text-red-400 mb-2">{errors.email.message}</p>}
             
             <button
               type="submit"

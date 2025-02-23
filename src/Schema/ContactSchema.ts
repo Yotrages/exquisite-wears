@@ -14,3 +14,5 @@ export const contactSchema = z.object({
     .min(5, "Username must be up to 5 characters"),
     message: z.string({ required_error: "The message field is required" }).min(10, 'The message field must be up to 10 characters')
 });
+
+export type ContactForm = z.infer<typeof contactSchema>;

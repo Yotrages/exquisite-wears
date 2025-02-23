@@ -23,3 +23,5 @@ export const productSchema = z.object({
     .positive("Quantity must be a positive integer"),
     description: z.string({required_error: 'The description field is required'}).min(5, 'Enter at least 5 characters')
 });
+
+export type postProduct = z.infer<typeof productSchema>;

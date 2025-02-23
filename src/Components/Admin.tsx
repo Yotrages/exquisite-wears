@@ -1,113 +1,48 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import AdminValidator from "../Api/AdminValidator";
 import { FaSpinner } from "react-icons/fa";
-import { z } from "zod";
-import { productSchema } from "../Schema/AdminSchema";
-import { useNavigate } from "react-router-dom";
 import Button from "./Button";
+import { MessageRight } from "./Message";
 
-type postProduct = z.infer<typeof productSchema>;
 const Admin = ({ type }: { type: string }) => {
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [show, setShow] = useState(false)
-  const okay = 'yes'
-  const navigate = useNavigate()
-  
   const {
+    error,
+    errors,
+    handleImageChange,
     handleSubmit,
-    reset,
-    formState: { errors },
+    navigate,
+    success,
+    products,
+    show,
+    imagePreview,
     register,
-  } = useForm<postProduct>({ resolver: zodResolver(productSchema) });
-  const URL = "https://ecommerce-9wqc.onrender.com/api/products/post";
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string)
-      }
-      reader.readAsDataURL(file)
-    }
-  };
-
-
-  const products = (product: postProduct) => {
-    const sendProduct = async () => {
-      const formData = new FormData();
-      formData.append("image", product.image[0]); 
-      formData.append("name", product.name);
-      formData.append("description", product.description);
-      formData.append("price", product.price.toString());
-      formData.append("quantity", product.quantity.toString());
-      console.log(product.image[0]);
-  
-      const token = localStorage.getItem("adminToken");
-      if (!token) {
-        setError("You are not authenticated, please login");
-        setTimeout(() => setError(""), 3000)
-        return;
-      }
-  
-      setLoading(true);
-      try {
-        const res = await axios.post(URL, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (res.status === 201) {
-          setLoading(false)
-          setSuccess("Product posted successfully");
-        await setTimeout(() => setSuccess(""), 3000)
-          reset();
-          setImagePreview(null)
-          setShow(true)     
-        }
-      } catch (error: any) {
-        console.error(error.message);
-          if(error.response) {
-            setError(error.response.data.message)
-          } else if (error.request) {
-            setError(`Can't connect to the server, check your connection`)
-          } else {
-            setError('An unknown error occurred')
-          }
-          setTimeout(() => setError(""), 3000)
-          clearTimeout(3000)
-          setLoading(false)
-      }
-    };
-    sendProduct();
-  };
-  
-  
+    loading,
+    setShow
+  } = AdminValidator();
 
   return (
     <div className="w-full flex flex-col justify-center items-center py-12 px-4">
-      {error && (
-        <div className="bg-red-600 text-white py-2 rounded-md px-4 fixed top-5 right-4 z-10">
-          {error}
+     <MessageRight error={error} success={success}/>
+        <div
+          className={`bg-primary text-white fixed top-7 h-fit right-3 transition-all duration-500 ease-in-out flex flex-col items-center ${
+            show ? "w-[200px] opacity-25" : "w-0 opacity-0"
+          } py-2 px-3`}
+        >
+          <p className="text-lg font-poppins font-semibold text-center">Do you want to continue posting</p>
+          <span className="flex flex-row items-center justify-between">
+            <Button
+              onSmash={() => setShow(false)}
+              styles="hover:bg-green-400 bg-shadow"
+              router=""
+              buttonText="yes"
+            />
+            <Button
+              onSmash={() => navigate("/")}
+              styles="hover:bg-green-400 bg-shadow"
+              router=""
+              buttonText="no"
+            />
+          </span>
         </div>
-      )}
-      {success && (
-        <div className="bg-green-600 text-white py-2 px-4 rounded-md top-5 right-4 fixed justify-center z-10">
-          {success}
-        </div>
-      )}
-      {show && (
-        <div className={`bg-primary text-white fixed top-7 right-3 flex items-center ${show ? 'w-[200px] opacity-25' : 'w-0 opacity-0'} py-2 px-3`}>
-          <Button onSmash={() => console.log('stay')} styles="hover:bg-green-400 bg-shadow" router="" buttonText={okay} />
-          <Button onSmash={() => navigate('/')} styles="hover:bg-green-400 bg-shadow" router="" buttonText='no' />
-        </div>
-      )}
       <h4 className="text-center tracking-wider text-3xl font-bold xs:text-[45px] sm:text-[60px]">
         {type} post
       </h4>
@@ -145,7 +80,6 @@ const Admin = ({ type }: { type: string }) => {
                 }}
               />
             </span>
-           
           </div>
 
           <div className="flex flex-col items-start w-full gap-2">

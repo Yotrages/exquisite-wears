@@ -20,10 +20,10 @@ const Hero = () => {
         const data: Product[] = res.data.products;
 
         setProducts(data);
-
-        
+       
         const quantities = data.map((item) => item.quantity);
         localStorage.setItem("quantity", JSON.stringify(quantities));
+        console.log(quantities)
       } catch (error: any) {
         console.error("Error fetching products:", error.message);
       }
@@ -35,8 +35,7 @@ const Hero = () => {
   const Admin = "true";
   const user = localStorage.getItem("userName");
 
-  const sort = products.sort()
-  const getLast = sort[sort.length - 1]?.image || social ;
+  const getLast = products[0]?.image || social;
   
 
   return (
