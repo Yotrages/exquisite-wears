@@ -18,10 +18,8 @@ const subscribeValidator = () => {
   const subscribe = (email: SubscribeForm) => {
     const subscription = async () => {
       setLoading(true);
-      const formData = new FormData();
-      formData.append("email", email.email);
       try {
-        const res = await axios.post(`${URL}/subscribe`, formData);
+        const res = await axios.post(`${URL}/subscribe`, email);
         console.log(res.data);
 
         if (res.status === 201) {
