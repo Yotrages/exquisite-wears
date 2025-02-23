@@ -41,7 +41,7 @@ const ProductValidator = () => {
 
   const getProducts = async (page: number): Promise<void> => {
     try {
-      const url = `${URL}/get?page=${page}&limit=${limit}`;
+      const url = `${URL}/products/get?page=${page}&limit=${limit}`;
       const res = await axios.get<ApiResponse>(url, {
         headers: { "Cache-Control": "no-cache" },
       });

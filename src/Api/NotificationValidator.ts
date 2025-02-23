@@ -21,7 +21,7 @@ const ConnectToBe = () => {
     const sendNotification = async () => {
       setLoading(true);
       try {
-        const res = await axios.post(`${URL}/notify`, items, {
+        const res = await axios.post(`${URL}/subscribe/notify`, items, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
