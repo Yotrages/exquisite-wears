@@ -1,10 +1,10 @@
-import ProductValidator from "../Api/ProductValidator";
+import useProductValidator from "../Api/ProductValidator";
 import Button from "./Button";
 import { MessageRight } from "./Message";
 
 const Feeds = () => {
   
-const { handleEdit, deletePost, success, token, notAdmin, products, error, setCurrentPage, currentPage, totalPages } = ProductValidator()
+const { handleEdit, deletePost, success, token, notAdmin, products, error, setCurrentPage, currentPage, totalPages } = useProductValidator()
   return (
     <section className="py-20">
       <MessageRight success={success} error={error}/>

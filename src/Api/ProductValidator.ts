@@ -18,7 +18,7 @@ interface ApiResponse {
   currentPage: number;
 }
 
-const ProductValidator = () => {
+const useProductValidator = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState<
     {
@@ -37,7 +37,7 @@ const ProductValidator = () => {
     const [error, setError] = useState<null | string>(null)
   useEffect(() => {
     getProducts(currentPage)
-  }, [currentPage, products]);
+  }, [currentPage]);
 
   const getProducts = async (page: number): Promise<void> => {
     try {
@@ -81,7 +81,6 @@ const ProductValidator = () => {
       }
     }
     setTimeout(() => setError(""), 3000)
-    clearTimeout(3000)
   }
 
   const token = localStorage.getItem("admin");
@@ -95,4 +94,4 @@ const handleEdit = (id: string | undefined) => {
 return { handleEdit, token, notAdmin, deletePost, getProducts, setCurrentPage, totalPages, success, error, products, currentPage}
 }
 
-export default ProductValidator;
+export default useProductValidator;
