@@ -33,7 +33,7 @@ const Notification = () => {
             Message
           </label>
           <textarea
-            {...register("subject")}
+            {...register("message")}
             id="subject"
             className="w-full px-3 focus:outline-none py-3 rounded-lg flex border border-green-400 hover:border-yellow-400"
           />
@@ -42,12 +42,12 @@ const Notification = () => {
           )}
         </div>
         <button
-          className="bg-white rounded-full transition-all duration-500  hover:skew-x-6 hover:scale-110 bg-shadow orange_gradient px-4 py-3 text-center items-center justify-center flex gap-4"
+          className="bg-white rounded-full transition-all duration-500 hover:scale-110 bg-shadow orange_gradient px-4 py-3 text-center items-center justify-center flex gap-4"
           type="submit"
         >
           {loading ? (
-            <span>
-              <FaSpinner className="text-lg" />
+            <span className="flex flex-row items-center gap-3 justify-center">
+              <FaSpinner className="text-lg text-black animate-spin" />
               Send Message
             </span>
           ) : (

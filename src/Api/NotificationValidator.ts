@@ -15,7 +15,7 @@ const ConnectToBe = () => {
   const [success, setSuccess] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const token = localStorage.getItem("adminToken");
+  // const token = localStorage.getItem("adminToken");
 
   const Notify = (items: Notifications) => {
     const sendNotification = async () => {
@@ -24,10 +24,9 @@ const ConnectToBe = () => {
         const res = await axios.post(`${URL}/subscribe/notify`, items, {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
         });
-        if (res.status === 201) {
+        if (res.status === 200) {
           setLoading(false);
           setSuccess("All users are Notified successfully");
           reset();

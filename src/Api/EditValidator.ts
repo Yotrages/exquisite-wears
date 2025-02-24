@@ -99,7 +99,7 @@ const EditValidator = () => {
         const getProducts = async () => {
           if (!id) return; // Ensure there's an ID before fetching
           try {
-            const res = await axios.get(`${URL}/get/${id}`);
+            const res = await axios.get(`${URL}/products/get/${id}`);
             const data = res.data.product; // Adjust according to your API response
             console.log(data);
             setProducts(data);

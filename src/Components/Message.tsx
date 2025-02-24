@@ -31,7 +31,7 @@ interface MessageProps {
           </div>
         )}
         {success && (
-          <div className="bg-green-600 rounded-lg text-white right-4 fixed top-5 z-10 justify-center items-center text-center px-4 py-3">
+          <div className="bg-green-600 rounded-lg text-white right-4 fixed top-7 z-10 justify-center items-center text-center px-4 py-3">
             {success}
           </div>
         )}

@@ -35,11 +35,11 @@ const ChangePassword = () => {
                    </div>
                    <div className="flex flex-col gap-4 items-start text-white text-base font-semibold">
                      <label
-                       htmlFor="password"
+                       htmlFor="new password"
                        id="email"
                        className="text-[18px] font-semibold"
                      >
-                       Password
+                       new password
                      </label>
                      <div className="flex flex-col relative w-full">
                        <input

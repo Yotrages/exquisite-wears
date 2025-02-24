@@ -7,7 +7,6 @@ const AdminPage = () => {
   const navigate = useNavigate();
   useEffect(() => {
     const token = localStorage.getItem('admin');
-    console.log(token)
     const notAdmin = 'true'
     if (token !== notAdmin) {
       navigate('/login')

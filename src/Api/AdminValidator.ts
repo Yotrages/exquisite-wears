@@ -61,7 +61,7 @@ const AdminValidator = () => {
         if (res.status === 201) {
           setLoading(false)
           setSuccess("Product posted successfully");
-        await new Promise((resolve) => setTimeout(resolve, 3000))
+          setTimeout(() => setSuccess(''), 3000)
           reset();
           setImagePreview(null)
           setShow(true)     

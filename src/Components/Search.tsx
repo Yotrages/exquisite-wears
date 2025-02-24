@@ -14,7 +14,7 @@ const Search = () => {
 
   useEffect(() => {
     Search(searchTerm);
-  }, [searchTerm, newTerm])
+  }, [searchTerm])
   const Search = async (item: string | undefined) => {
     try {
       const res = await axios.get(`${URL}/products/search?query=${item}`);
@@ -25,7 +25,6 @@ const Search = () => {
     }
   };
 
-  const newSearch = Search(newTerm)
 
   return (
     <section className="mt-20 py-8  px-5">
@@ -48,13 +47,16 @@ const Search = () => {
                 className="w-full py-3 px-3 rounded-lg text-black ring ring-primary focus:ring focus:outline-none focus:ring-red-200"
                 placeholder="Search products..."
               />
-              <div className="absolute right-0 h-full flex items-center px-4 bg-gray-300 rounded-lg cursor-pointer" onClick={() => newSearch}>
+              <div className="absolute right-0 h-full flex items-center px-4 bg-gray-300 rounded-lg cursor-pointer" onClick={() => Search(newTerm)}>
                 <FaSearch className="text-black cursor-pointer"/>
               </div>
               </div>
               </div>
               {/* Search Results */}
-              {data.length > 0 ?
+              
+              {data.length !== 0  ? 
+              (<div className="grid ss:grid-cols-3 md:grid-cols-4 grid-cols-2 sm:w-[88%] w-full sm:px-0 px-3 m-auto items-center gap-5">
+              {data.length > 0 &&
                 data.map((item) => (
                   <div
                     key={item?._id}
@@ -101,11 +103,13 @@ const Search = () => {
                       </div>
                     )}
                   </div>
-                )) : (
-                    <div className="bg-black-gradient text-white justify-center items-center rounded-lg py-5 flex m-auto w-fit px-5">
+                ))}
+               </div>) : (
+                    <div className="bg-black-gradient text-white justify-center w-fit items-center rounded-lg py-5 flex m-auto  px-5">
                         <p className="text-center">oops!! No items match your search</p>
                     </div>
-                )}
+                )
+            }
       </div>
     </section>
   );

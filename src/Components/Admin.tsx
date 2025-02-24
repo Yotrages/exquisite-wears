@@ -23,22 +23,22 @@ const Admin = ({ type }: { type: string }) => {
     <div className="w-full flex flex-col justify-center items-center py-12 px-4">
      <MessageRight error={error} success={success}/>
         <div
-          className={`bg-primary text-white fixed top-7 h-fit right-3 transition-all duration-500 ease-in-out flex flex-col items-center ${
-            show ? "w-[200px] opacity-25" : "w-0 opacity-0"
+          className={`bg-primary text-white fixed top-7 h-fit justify-center items-center z-10 transition-all duration-500 ease-in-out flex flex-col ${
+            show ? "w-[200px] opacity-100" : "w-0 opacity-0"
           } py-2 px-3`}
         >
           <p className="text-lg font-poppins font-semibold text-center">Do you want to continue posting</p>
-          <span className="flex flex-row items-center justify-between">
+          <span className="flex flex-row gap-5 items-center justify-between">
             <Button
               onSmash={() => setShow(false)}
-              styles="hover:bg-green-400 bg-shadow"
+              styles="hover:bg-green-400 bg-shadow rounded-lg"
               router=""
               buttonText="yes"
             />
             <Button
               onSmash={() => navigate("/")}
-              styles="hover:bg-green-400 bg-shadow"
-              router=""
+              styles="hover:bg-green-400 bg-shadow rounded-lg"
+              router="/"
               buttonText="no"
             />
           </span>
@@ -46,8 +46,8 @@ const Admin = ({ type }: { type: string }) => {
       <h4 className="text-center tracking-wider text-3xl font-bold xs:text-[45px] sm:text-[60px]">
         {type} post
       </h4>
-      <form onSubmit={handleSubmit(products)}>
-        <div className="flex flex-col items-center gap-9 w-full sm:max-w-[500px] mt-9 sm:mt-20 px-3 mx-auto">
+      <form className="w-full" onSubmit={handleSubmit(products)}>
+        <div className="flex flex-col items-center gap-9 w-full qy:w-[500px] mt-9 sm:mt-20 px-3 mx-auto">
           <div className="flex flex-col items-center w-full gap-3">
             <label
               htmlFor="image"
@@ -57,12 +57,12 @@ const Admin = ({ type }: { type: string }) => {
               Image
             </label>
             <span className="relative flex rounded-lg">
-              <div className="sm:size-[350px] size-52 border-red-300 flex items-center justify-center bg-gray-200 rounded-lg">
+              <div className="qy:size-[350px] md:size-[400px] size-64 border-red-300 flex items-center justify-center bg-gray-200 rounded-lg">
                 {imagePreview ? (
                   <img
                     src={imagePreview}
                     alt="Preview"
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover rounded-lg"
                   />
                 ) : (
                   <span className="text-gray-500">No image selected</span>

@@ -3,7 +3,7 @@ import { FaInstagram, FaPhoneAlt, FaSpinner, FaWhatsapp, FaTiktok } from "react-
 import { FaLocationPin } from "react-icons/fa6";
 import { payments } from "../assets";
 import subscribeValidator from "../Api/SubscribeValidator";
-import { MessageCenter } from "./Message";
+import {  MessageRight } from "./Message";
 
 const Footer = () => {
   
@@ -11,7 +11,7 @@ const Footer = () => {
 
   return (
     <section className="mt-14 w-full py-4 bg-black">
-        <MessageCenter error={error} success={success}/>
+        <MessageRight error={error} success={success}/>
       <div className="bg-black text-white sm:flex-row-reverse flex-col w-[85%] gap-9 py-4 mx-auto flex justify-between">
         <div className="flex items-start flex-col gap-5">
           <h3 className="text-[18px] font-semibold font-poppins text-white">

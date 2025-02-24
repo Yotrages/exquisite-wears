@@ -68,7 +68,6 @@ const useProductValidator = () => {
       if (res.status === 200) {
         setSuccess('Product deleted successfully')
        setTimeout(() => setSuccess(''), 3000)
-        setProducts((products) => products.filter((item) => item._id !== id))
         getProducts(currentPage)
       }
     } catch (error : any) {

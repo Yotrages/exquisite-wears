@@ -13,6 +13,10 @@ const Hero = () => {
   const URL = "https://ecommerce-9wqc.onrender.com/api/products/get";
   const [products, setProducts] = useState<Product[]>([]);
 
+
+  const getLast = products[0]?.image ?? social;
+
+
   useEffect(() => {
     const getProducts = async () => {
       try {
@@ -28,13 +32,12 @@ const Hero = () => {
       }
     };
     getProducts();
-  }, []);
+  }, [getLast]);
 
   const token = localStorage.getItem("admin");
   const Admin = "true";
   const user = localStorage.getItem("userName");
 
-  const getLast = products[0]?.image ?? social;
   
 
   return (
@@ -57,16 +60,26 @@ const Hero = () => {
             </h2>
 
             {/* Conditional Button */}
-            <Link
-              to={token === Admin ? '/Admin' : user ? '#subscribe' : '/Register'}
-              className="inline-flex items-center gap-3 px-6 py-3 bg-black-gradient text-white rounded-md shadow-md transition-transform hover:scale-105 w-fit"
-              id="subscribe"
-            >
-              <button className="font-semibold text-lg">
-                {token === Admin ? "Create Post" : user ? 'Subscribe' : 'Get started' }
-              </button>
-              <FaArrowAltCircleRight />
-            </Link>
+            <div className="flex flex-col sm:flex-row items-center gap-5">
+              <Link
+                to={token === Admin ? '/Admin' : user ? '#subscribe' : '/Register'}
+                className="inline-flex items-center gap-3 px-6 py-3 bg-black-gradient text-white rounded-md shadow-md transition-transform hover:scale-105 w-fit"
+                id="subscribe"
+              >
+                <button className="font-semibold text-lg">
+                  {token === Admin ? "Create Post" : user ? 'Subscribe' : 'Get started' }
+                </button>
+                <FaArrowAltCircleRight />
+              </Link>
+                         {token === Admin && (
+               <Link className="inline-flex items-center gap-3 px-6 py-3 bg-black-gradient text-white rounded-md shadow-md transition-transform hover:scale-105 w-fit"  to='/Notification'>
+                <button className="font-semibold text-lg">
+                 Notify Users
+                </button>
+                <FaArrowAltCircleRight />
+               </Link>
+                         )}
+            </div>
           </div>
 
           {/* Product Image */}

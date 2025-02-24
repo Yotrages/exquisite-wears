@@ -21,16 +21,8 @@ export const steps = [
 
 
 export const handleLogout = () => {
-  const navigate = useNavigate();
     window.localStorage.removeItem("userName");
     window.localStorage.removeItem("admin");
     localStorage.removeItem("adminToken");
-    if (
-      window.location.pathname !== "http://localhost:5173/Admin" ||
-      "http://localhost:5173/Dashboard"
-    ) {
-      window.location.reload();
-      return;
-    }
-    navigate("/login");
+    window.location.reload()
   };

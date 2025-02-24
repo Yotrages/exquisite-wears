@@ -29,7 +29,6 @@ const ContactValidator = () => {
               setSucess("Message delivered successfully");
               reset();
              setTimeout(() => setSucess(""), 3000)
-             clearTimeout(3000)
             } else {
               setLoading(false)
             }
