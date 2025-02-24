@@ -1,41 +1,64 @@
+import { useEffect, useState } from "react";
 
 interface MessageProps {
-  error: string | null;
-  success: string;
+  error?: string | null;
+  success?: string | null;
 }
 
- export const MessageCenter = ({error, success} : MessageProps) => {
+export const MessageCenter = ({ error, success }: MessageProps) => {
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    if (error || success) {
+      setVisible(true);
+      const timer = setTimeout(() => setVisible(false), 5000); // Auto-dismiss after 5 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [error, success]);
+
+  if (!visible) return null;
+
   return (
-    <div>
+    <div className="fixed top-5 left-1/2 transform -translate-x-1/2 z-10">
       {error && (
-          <div className="bg-red-600 rounded-lg text-white fixed top-5 z-10 items-center justify-center text-center px-4 py-3">
-            {error}
-          </div>
-        )}
-        {success && (
-          <div className="bg-green-600 rounded-lg text-white fixed top-5 z-10 justify-center items-center text-center px-4 py-3">
-            {success}
-          </div>
-        )}
+        <div className="bg-red-600 text-white rounded-lg shadow-lg px-6 py-3 text-center animate-fadeIn">
+          ❌ {error}
+        </div>
+      )}
+      {success && (
+        <div className="bg-green-600 text-white rounded-lg shadow-lg px-6 py-3 text-center animate-fadeIn">
+          ✅ {success}
+        </div>
+      )}
     </div>
-  )
-}
+  );
+};
 
+export const MessageRight = ({ error, success }: MessageProps) => {
+  const [visible, setVisible] = useState(true);
 
- export const MessageRight = ({error, success} : MessageProps) => {
+  useEffect(() => {
+    if (error || success) {
+      setVisible(true);
+      const timer = setTimeout(() => setVisible(false), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [error, success]);
+
+  if (!visible) return null;
+
   return (
-    <div>
+    <div className="fixed top-5 right-4 z-10">
       {error && (
-          <div className="bg-red-600 rounded-lg text-white right-4 fixed top-5 z-10 justify-center items-center text-center px-4 py-3">
-            {error}
-          </div>
-        )}
-        {success && (
-          <div className="bg-green-600 rounded-lg text-white right-4 fixed top-7 z-10 justify-center items-center text-center px-4 py-3">
-            {success}
-          </div>
-        )}
+        <div className="bg-red-600 text-white rounded-lg shadow-lg px-6 py-3 text-center animate-fadeIn">
+          ❌ {error}
+        </div>
+      )}
+      {success && (
+        <div className="bg-green-600 text-white rounded-lg shadow-lg px-6 py-3 text-center animate-fadeIn">
+          ✅ {success}
+        </div>
+      )}
     </div>
-  )
-}
-
+  );
+};

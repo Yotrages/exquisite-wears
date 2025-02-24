@@ -5,14 +5,14 @@ import { MessageRight } from "./Message";
 const Notification = () => {
   const { errors, error, Notify, handleSubmit, success, register, loading } = ConnectToBe()
   return (
-    <section className="py-10 mt-10 w-full">
+    <section className="pb-10 pt-16 mt-20 w-full">
       <MessageRight error={error} success={success}/>
       <h1 className="sm:text-5xl text-3xl font-poppins text-primary tracking-wider font-extrabold text-center mb-14">
         Notify all users
       </h1>
       <form
         onSubmit={handleSubmit(Notify)}
-        className="flex items-center gap-8 flex-col w-full px-3 qy:w-2/3 xl:w-2/6 m-auto"
+        className="flex items-center gap-8 flex-col w-full px-5 sm:w-3/6 qy:w-2/3 xl:w-2/5 m-auto"
       >
         <div className="flex flex-col w-full items-start gap-5">
           <label className="text-xl font-bold" htmlFor="subject" id="subject">
@@ -22,7 +22,7 @@ const Notification = () => {
             type="text"
             {...register("subject")}
             id="subject"
-            className="w-full py-2 focus:outline-none px-3 rounded-lg flex border border-green-400 hover:border-yellow-400"
+            className="w-full py-2 focus:outline-none px-3 rounded-lg flex border ring-primary ring hover:border-yellow-400"
           />
           {errors.subject && (
             <p className="text-red-700">{errors.subject.message}</p>
@@ -35,7 +35,7 @@ const Notification = () => {
           <textarea
             {...register("message")}
             id="subject"
-            className="w-full px-3 focus:outline-none py-3 rounded-lg flex border border-green-400 hover:border-yellow-400"
+            className="w-full px-3 focus:outline-none py-3 rounded-lg flex border ring ring-primary hover:border-yellow-400"
           />
           {errors.message && (
             <p className="text-red-500">{errors.message.message}</p>

@@ -21,7 +21,11 @@ const ContactValidator = () => {
           setLoading(true);
           try {
             console.log("Sending data:", Contactdata);
-            const res = await axios.post(`${URL}/contact`, Contactdata);
+            const res = await axios.post(`${URL}/contact`, Contactdata, {
+              headers: {
+                "Content-Type": "application/json"
+              }
+            });
     
             if (res.status === 200) {
               console.log("Response:", res);

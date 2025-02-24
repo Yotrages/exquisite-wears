@@ -1,7 +1,7 @@
 import AdminValidator from "../Api/AdminValidator";
 import { FaSpinner } from "react-icons/fa";
 import Button from "./Button";
-import { MessageRight } from "./Message";
+import { MessageCenter } from "./Message";
 
 const Admin = ({ type }: { type: string }) => {
   const {
@@ -21,7 +21,7 @@ const Admin = ({ type }: { type: string }) => {
 
   return (
     <div className="w-full flex flex-col justify-center items-center py-12 px-4">
-     <MessageRight error={error} success={success}/>
+     <MessageCenter error={error} success={success}/>
         <div
           className={`bg-primary text-white fixed top-7 h-fit justify-center items-center z-10 transition-all duration-500 ease-in-out flex flex-col ${
             show ? "w-[200px] opacity-100" : "w-0 opacity-0"
