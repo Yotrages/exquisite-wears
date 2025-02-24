@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 
 export const steps = [
   // Array of steps with sub-step descriptions
