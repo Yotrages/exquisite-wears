@@ -39,7 +39,7 @@ const RegisterValidator = () => {
           } catch (error: any) {
             console.error("Error details:", error);
             if (error.response) {
-              setError(error.response.data.message || "An error occurred");
+              setError(error.response.data.message || "An error occurred" || error.response.dat.error);
             } else if (error.request) {
               setError("No response from server, check your connection and try again");
             } else {

@@ -9,7 +9,7 @@ const Login = () => {
  
   return (
     <>
-      <div className="w-full absolute justify-center items-center flex top-1/4">
+      <div className="w-full relative flex justify-center items-center">
         <MessageCenter success={success} error={error}/>
         <form
           className="xs:w-[500px] w-full px-5"

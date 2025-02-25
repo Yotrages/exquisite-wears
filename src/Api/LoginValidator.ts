@@ -44,7 +44,7 @@ const LoginValidator = () => {
           } catch (error: any) {
             console.error(error);
             if (error.response) {
-              setError(error.response.data.message || "An error occured");
+              setError(error.response.data.message || error.response.data.error);
             } else if (error.request) {
               setError("No response from server, try checking your connection");
             } else {

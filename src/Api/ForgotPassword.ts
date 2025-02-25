@@ -29,7 +29,7 @@ const ForgotPasswordValidator = () => {
             }
            } catch (error : any) {
             if (error.response) {
-                setError(error.response.data.message)
+                setError(error.response.data.message || error.response.data.error)
             } else if (error.request) {
                 setError('Request failed, Check your connection')
             } else {

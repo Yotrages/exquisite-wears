@@ -1,3 +1,4 @@
+import { NavigateFunction } from "react-router-dom";
 
 export const steps = [
   // Array of steps with sub-step descriptions
@@ -18,10 +19,15 @@ export const steps = [
   ],
 ];
 
-
-export const handleLogout = () => {
+export const handleLogout = (navigate: NavigateFunction) => {
     window.localStorage.removeItem("userName");
     window.localStorage.removeItem("admin");
     localStorage.removeItem("adminToken");
-    window.location.reload()
+    if ( window.location.pathname === "/admin" ||
+      window.location.pathname.startsWith("/edit") ||
+      window.location.pathname === "/notification") {
+      navigate('/login')
+    } else {
+      window.location.reload()
+    }
   };

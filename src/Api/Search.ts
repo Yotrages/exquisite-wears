@@ -28,7 +28,7 @@ const SearchValidator = () => {
           } catch (err: any) {
             setData([]);
             if (err.response) {
-              setError(err.response.data.message || "No items match your search.");
+              setError(err.response.data.message || "No items match your search." || err.response.data.error);
             } else if (err.request) {
               setError("Server is not responding. Check your connection.");
             } else {

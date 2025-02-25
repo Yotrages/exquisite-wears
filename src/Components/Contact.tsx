@@ -1,6 +1,6 @@
 import { FaSpinner} from "react-icons/fa";
 import { contact } from "../assets";
-import { MessageRight } from "./Message";
+import { MessageCenter } from "./Message";
 import ContactValidator from "../Api/ContactValidator";
 
 const Contact = () => {
@@ -9,7 +9,7 @@ const Contact = () => {
 
   return (
     <div className="w-full justify-between items-center xs:px-10 xl:px-28 gap-20 flex-col mt-20 sm:flex-row flex py-10">
-        <MessageRight success={success} error={error}/>
+        <MessageCenter success={success} error={error}/>
      <div className="sm:w-1/2"><img src={contact} className="w-fit" alt="" /></div>
       <form
         className="w-full px-5 qy:w-1/2 qy:px-0"

@@ -68,9 +68,15 @@ const AdminValidator = () => {
         }
       } catch (error: any) {
         console.error(error.message);
-          if(error.response) {
-            setError(error.response.data.message)
-          } else if (error.request) {
+        if (error.response) {
+          setError(error.response.data.message || error.response.data.error)
+          if (error.response?.status === 400 || 403 || 401) {
+            setError(error.response.data.error)
+            localStorage.removeItem('adminToken')
+            setTimeout(() => navigate('/login'), 2000)
+          }
+        }
+          else if (error.request) {
             setError(`Can't connect to the server, check your connection`)
           } else {
             setError('An unknown error occurred')

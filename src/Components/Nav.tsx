@@ -2,7 +2,7 @@ import { FaArrowDown, FaSearch } from "react-icons/fa";
 import { Nigeria } from "../assets";
 import React from "react";
 import { CgMenuGridO } from "react-icons/cg";
-import { Link} from "react-router-dom";
+import { Link, useNavigate} from "react-router-dom";
 import Logout from "./Logout";
 import { handleLogout } from "../constants";
 import SearchValidator from "../Api/Search";
@@ -30,6 +30,7 @@ const Nav = ({
     toggle,
   } = SearchValidator();
   setChange(() => searchToggle);
+  const navigate = useNavigate()
 
   return (
     <>
@@ -117,7 +118,7 @@ const Nav = ({
               <FaShoppingCart className="xs:text-[25px] text-[20px]" />
               <button className="xs:size-5 text-[12px] xs:text-[16px] size-4 rounded-full items-center justify-center flex bg-gray-600 text-white absolute bottom-3 left-3 xs:left-4">0</button>
             </div> */}
-            <Logout styles="" onsmash={handleLogout} />
+            <Logout styles="" onsmash={() => handleLogout(navigate)} />
           </div>
         ) : (
           <div className="relative flex items-center xs:gap-8 gap-7">
@@ -126,7 +127,7 @@ const Nav = ({
               onClick={handleSearchToggle}
             />
             <Link
-              to="/Register"
+              to="/register"
               className="px-2 ss:flex hidden py-2 hover:scale-110 transition duration-500 ease-in-out items-start justify-center rounded-lg bg-primary text-white "
             >
               Get Started

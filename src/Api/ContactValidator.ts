@@ -39,7 +39,7 @@ const ContactValidator = () => {
           } catch (error: any) {
             console.error("Error details:", error);
             if (error.response) {
-              setError(error.response.data.message || "An error occurred");
+              setError(error.response.data.message || error.response.data.error);
             } else if (error.request) {
               setError("No response from server, check your connection and try again");
             } else {

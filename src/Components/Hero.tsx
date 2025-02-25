@@ -62,7 +62,7 @@ const Hero = () => {
             {/* Conditional Button */}
             <div className="flex flex-col sm:flex-row items-center gap-5">
               <Link
-                to={token === Admin ? '/Admin' : user ? '#subscribe' : '/Register'}
+                to={token === Admin ? '/admin' : user ? '#subscribe' : '/register'}
                 className="inline-flex items-center gap-3 px-6 py-3 bg-black-gradient text-white rounded-md shadow-md transition-transform hover:scale-105 w-fit"
                 id="subscribe"
               >
@@ -72,7 +72,7 @@ const Hero = () => {
                 <FaArrowAltCircleRight />
               </Link>
                          {token === Admin && (
-               <Link className="inline-flex items-center gap-3 px-6 py-3 bg-black-gradient text-white rounded-md shadow-md transition-transform hover:scale-105 w-fit"  to='/Notification'>
+               <Link className="inline-flex items-center gap-3 px-6 py-3 bg-black-gradient text-white rounded-md shadow-md transition-transform hover:scale-105 w-fit"  to='/notification'>
                 <button className="font-semibold text-lg">
                  Notify Users
                 </button>

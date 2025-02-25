@@ -35,7 +35,7 @@ const ConnectToBe = () => {
       } catch (error: any) {
         console.error(error);
         if (error.response) {
-          setError(error.response.data.message);
+          setError(error.response.data.message || error.response.data.error);
         } else if (error.request) {
           setError("Server not responding, check your connection");
         } else {

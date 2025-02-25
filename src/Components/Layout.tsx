@@ -1,6 +1,6 @@
 import React, { Suspense, useState } from 'react'
 import Nav from './Nav'
-// import Preloader from './Preloader'
+import Preloader from './Preloader'
 
 const Footer = React.lazy(() => import('./Footer'))
 const BackToTop = React.lazy(() => import('./Backtotop'))
@@ -12,7 +12,7 @@ const Layout = ({children} : LayoutProps) => {
   const [change, setChange] = useState(false)
   return (
     <div>
-      {/* <Preloader /> */}
+      <Preloader />
         <Nav setChange={setChange} change={change} />
         <main className={`${change ? 'mt-4' : 'mt-16'}`}>
             {children}

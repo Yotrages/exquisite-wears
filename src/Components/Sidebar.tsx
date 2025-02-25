@@ -27,19 +27,19 @@ const Sidebar = ({toggle, setToggle} : sideBarProps) => {
               </Link>
               <Link
                 className="text-lg font-semibold hover:text-gray-500 active:text-green-600 transition-all duration-150 hover:ml-2 "
-                to="/About"
+                to="/about"
               >
                 About
               </Link>
               <Link
                 className="text-lg font-semibold hover:text-gray-500 active:text-green-600 transition-all duration-150 hover:ml-2 "
-                to="/Login"
+                to="/login"
               >
                 Login
               </Link>
               <Link
                 className="text-lg font-semibold hover:text-gray-500 active:text-green-600 transition-all duration-150 hover:ml-2 "
-                to="/Register"
+                to="/register"
               >
                 Register
               </Link>

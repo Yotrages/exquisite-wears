@@ -80,7 +80,7 @@ const EditValidator = () => {
           } catch (error: any) {
             console.error(error.message);
               if(error.response) {
-                setError(error.response.data.message)
+                setError(error.response.data.message || error.response.data.error)
               } else if (error.request) {
                 setError(`Can't connect to the server, check your connection`)
               } else {

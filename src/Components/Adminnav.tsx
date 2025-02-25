@@ -1,13 +1,9 @@
 import { FaBell, FaFacebookMessenger, FaProductHunt } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { Link} from "react-router-dom";
 import Logout from "./Logout";
 
 const Adminnav = () => {
-    const navigate = useNavigate()
-    const handleLogout = () => {
-        window.localStorage.removeItem("userName");
-        navigate("/login");
-      };
+    
       return (
     <nav className='flex justify-between px-5 py-5 items-center bg-[#f2f2f2] bg-shadow text-black'>
       <span className="flex items-center">
@@ -16,7 +12,7 @@ const Adminnav = () => {
       </span>
 
         <div className="flex gap-6 items-center">
-            <Link className="flex hover:text-green-600 items-center gap-2" to='/Admin'>
+            <Link className="flex hover:text-green-600 items-center gap-2" to='/admin'>
                 <FaFacebookMessenger  className="text-[18px]"/>
                 <h3 className="text-[18px] font-semibold">Create post</h3>
             </Link>
@@ -24,11 +20,11 @@ const Adminnav = () => {
             <FaBell  className="text-[18px]"/>
             <h3 className="text-[18px] font-semibold">Notifications</h3>
             </span>
-            <Link className="flex hover:text-green-600 items-center gap-2" to='/Admin'>
+            <Link className="flex hover:text-green-600 items-center gap-2" to='/admin'>
                 <FaProductHunt  className="text-[18px]"/>
                 <h3 className="text-[18px] font-semibold">Most Popular</h3>
             </Link>
-            <Logout styles="" onsmash={handleLogout}/>
+            <Logout styles="" onsmash={() => {}}/>
         </div>
 
     </nav>

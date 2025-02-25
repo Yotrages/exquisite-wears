@@ -7,12 +7,12 @@ const Question = ({type} : {type: string}) => {
           type === 'login' ? (
             <div className="flex flex-wrap gap-2 items-center item-center text-lg">
               <p className="text-white">Don't have an account?</p>
-              <Link to='/Register' className="text-dimWhite">Register</Link>
+              <Link to='/register' className="text-dimWhite">Register</Link>
             </div>
           ) : (
             <div className="flex gap-2 flex-wrap item-center text-lg">
               <p className="text-white">Already have an account?</p>
-              <Link to='/Login' className="text-dimWhite">Login</Link>
+              <Link to='/login' className="text-dimWhite">Login</Link>
             </div>
           )
         }
