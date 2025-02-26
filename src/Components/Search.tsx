@@ -22,7 +22,7 @@ const Search = () => {
 
   useEffect(() => {
     Search(searchTerm);
-  }, [searchTerm, newTerm]);
+  }, [searchTerm]);
   const Search = async (item: string | undefined) => {
     try {
       const res = await axios.get(`${URL}/products/search?query=${item}`);
@@ -65,7 +65,7 @@ const Search = () => {
         {/* Search Results */}
 
         {data.length !== 0 ? (
-          <div className="grid ss:grid-cols-3 md:grid-cols-4 grid-cols-2 sm:w-[88%] w-full sm:px-0 px-3 m-auto items-center gap-5">
+          <div className="grid qy:grid-cols-3 md:grid-cols-4 grid-cols-2 sm:w-[88%] w-full sm:px-0 px-2 m-auto items-center gap-2 xs:gap-5">
             {data.length > 0 &&
               data.map((item) => (
                 <div
