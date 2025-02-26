@@ -78,10 +78,10 @@ const Search = () => {
                   alt={item?.name}
                 />
                 <div className="flex flex-col flex-wrap gap-3 px-4">
-                  <h1 className="text-primary mb-1 header h-4 font-light qy:text-base text-sm font-poppins">
+                  <h1 className="text-primary mb-1 header h-10 qy:h-0 font-light qy:text-base text-sm font-poppins">
                     {item?.name}
                   </h1>
-                  <h1 className="text-primary header text-wrap font-light qy:text-base text-sm font-poppins">
+                  <h1 className="text-primary header text-wrap h-10 qy:h-0 font-light qy:text-base text-sm font-poppins">
                     {item?.description}
                   </h1>
                   <p className="orange_gradient font-poppins font-semibold tracking-wide">
