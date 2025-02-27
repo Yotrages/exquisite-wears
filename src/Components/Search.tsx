@@ -77,11 +77,11 @@ const Search = () => {
                   src={item?.image || "default-placeholder-image.jpg"}
                   alt={item?.name}
                 />
-                <div className="flex flex-col flex-wrap gap-3 px-4">
+                <div className="flex flex-col flex-wrap qy:gap-2.5 gap-1.5 px-4">
                   <h1 className="text-primary mb-1 header h-10 qy:h-0 font-light qy:text-base text-sm font-poppins">
                     {item?.name}
                   </h1>
-                  <h1 className="text-primary header text-wrap h-10 qy:h-0 font-light qy:text-base text-sm font-poppins">
+                  <h1 className="text-primary header h-10 qy:h-0 text-wrap font-light qy:text-base text-sm font-poppins">
                     {item?.description}
                   </h1>
                   <p className="orange_gradient font-poppins font-semibold tracking-wide">
@@ -89,7 +89,7 @@ const Search = () => {
                   </p>
                   <Button
                     onSmash={() => console.log("pressed")}
-                    styles="rounded-lg text-white hover:bg-green-500 text-center"
+                    styles="rounded-lg text-white hover:bg-green-500 text-center qy:text-base text-xs"
                     buttonText="Discuss product"
                     router="https://wa.me/08145534450"
                   />

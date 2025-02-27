@@ -308,7 +308,7 @@
 }
 
 .p-image {
-  width: calc(100% - 10px);
+  width: calc(100% - 3px);
 }
 
 .header {
