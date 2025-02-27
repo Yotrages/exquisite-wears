@@ -61,7 +61,7 @@ const Feeds = () => {
                   </p>
                   <Button
                     onSmash={() => console.log("pressed")}
-                    styles="rounded-lg text-white hover:bg-green-500 text-center"
+                    styles="rounded-lg text-white hover:bg-green-500 text-center qy:text-base text-xs"
                     buttonText="Discuss product"
                     router="https://wa.me/08145534450"
                   />
