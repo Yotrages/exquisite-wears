@@ -34,9 +34,9 @@ const Search = () => {
   };
 
   return (
-    <section className="mt-20 py-8  px-5">
+    <section className="mt-20 py-8">
       <div className="flex flex-col gap-16">
-        <div className="flex qy:flex-row gap-9 flex-col items-start">
+        <div className="flex qy:flex-row gap-9 flex-col items-start px-5">
           <div className="flex flex-row gap-9 sm:items-center">
             <p className="sm:text-2xl text-xl text-primary font-semibold font-poppins">
               Showing search results for:
