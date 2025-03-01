@@ -1,5 +1,5 @@
 import { FaSpinner } from "react-icons/fa";
-import { MessageRight } from "./Message";
+import { MessageCenter } from "./Message";
 import EditValidator from "../Api/EditValidator";
 
 const Editproduct = ({ type }: { type: string }) => {
@@ -7,7 +7,7 @@ const Editproduct = ({ type }: { type: string }) => {
 
   return (
     <div className="w-full flex flex-col justify-center items-center py-16 px-4">
-      <MessageRight success={success} error={error}/>
+      <MessageCenter success={success} error={error}/>
       <h4 className="text-center tracking-wider text-3xl xs:text-[45px] sm:text-[60px] font-semibold">
         {type} post
       </h4>

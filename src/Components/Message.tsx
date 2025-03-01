@@ -69,7 +69,7 @@ export const ContinuationMessage = ({message} : {message: string}) => {
   const {show, setShow, navigate} = AdminValidator()
   return (
     <div
-          className={`bg-primary text-white fixed top-7 h-fit rounded-lg justify-center items-center z-10 transition-all duration-500 ease-in-out flex flex-col ${
+          className={`bg-primary text-white fixed top-10 h-fit rounded-lg justify-center items-center z-10 transition-all duration-500 ease-in-out flex flex-col ${
             show ? "w-[200px] opacity-100" : "w-0 opacity-0"
           } py-2 px-3`}
         >
