@@ -1,12 +1,13 @@
 import { FaSpinner } from "react-icons/fa";
 import ConnectToBe from "../Api/NotificationValidator";
-import { MessageRight } from "./Message";
+import { ContinuationMessage, MessageCenter } from "./Message";
 
 const Notification = () => {
   const { errors, error, Notify, handleSubmit, success, register, loading } = ConnectToBe()
   return (
     <section className="pb-10 pt-7 md:pt-10 mt-20 w-full">
-      <MessageRight error={error} success={success}/>
+      <MessageCenter error={error} success={success}/>
+      <ContinuationMessage message="do you want to notify about another product"/>
       <h1 className="sm:text-5xl text-2xl font-poppins text-primary tracking-wider font-extrabold text-center mb-9">
         Notify all users
       </h1>

@@ -15,6 +15,7 @@ const ConnectToBe = () => {
   const [success, setSuccess] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [show, setShow] = useState(false)
   // const token = localStorage.getItem("adminToken");
 
   const Notify = (items: Notifications) => {
@@ -31,6 +32,7 @@ const ConnectToBe = () => {
           setSuccess("All users are Notified successfully");
           reset();
           await new Promise((resolve) => setTimeout(resolve, 3000));
+          setShow(true)
         }
       } catch (error: any) {
         console.error(error);
@@ -50,7 +52,7 @@ const ConnectToBe = () => {
     sendNotification();
   };
 
-  return { errors, handleSubmit, register, success, error, loading, Notify };
+  return { errors, handleSubmit, register, success, error, loading, Notify, show };
 };
 
 export default ConnectToBe;

@@ -91,4 +91,4 @@ const AdminValidator = () => {
 return {error, errors, success, loading, handleImageChange, handleSubmit, imagePreview, show, navigate, register, products, setShow}
 }
 
-  export default AdminValidator
+  export default AdminValidator;
