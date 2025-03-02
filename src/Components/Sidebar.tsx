@@ -10,8 +10,8 @@ interface sideBarProps {
 const Sidebar = ({toggle, setToggle} : sideBarProps) => {
   return (
     <div
-            className={`text-black transition-all duration-500 ease-in fixed top-0 right-0 py-3 bg-white bg-shadow flex flex-col h-full gap-5 z-[10] overflow-x-hidden ${
-              toggle ? "w-[250px] opacity-100" : "w-0 opacity-0"
+            className={`text-black transition-all duration-500 rounded-l-lg ease-in fixed top-0 right-0 py-3 bg-white bg-shadow flex flex-col h-full gap-5 z-[10] overflow-x-hidden ${
+              toggle ? "w-[200px] opacity-100" : "w-0 opacity-0"
             }`}
             onClick={() => setToggle((prev) => !prev)}
           >

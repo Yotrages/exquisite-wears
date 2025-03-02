@@ -71,14 +71,14 @@ const Feeds = () => {
                     <button
                       type="submit"
                       onClick={() => handleEdit(item._id)}
-                      className="rounded-lg  gap-4 py-2 px-3 bg-black-gradient bg-shadow text-white font-semibold tracking-widest"
+                      className="rounded-lg qy:text-base text-sm gap-4 py-2 px-3 bg-black-gradient bg-shadow text-white font-semibold tracking-widest"
                     >
                       Edit
                     </button>
                     <button
                       type="submit"
                       onClick={() => deletePost(item._id)}
-                      className="rounded-lg py-2 px-3 bg-red-500 bg-shadow text-white font-semibold tracking-widest"
+                      className="rounded-lg py-2 qy:text-base text-sm px-3 bg-red-500 bg-shadow text-white font-semibold tracking-widest"
                     >
                       Delete
                     </button>
