@@ -29,7 +29,7 @@ const RegisterValidator = () => {
             if (res.status === 201) {
               console.log("Response:", res);
               setLoading(false);
-              setSuccess("Login successful");
+              setSuccess("Registration successful");
               await new Promise((resolve) => setTimeout(resolve, 3000))
               reset();
               navigate("/login");
