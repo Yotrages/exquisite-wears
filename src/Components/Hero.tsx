@@ -53,10 +53,10 @@ const Hero = () => {
         <div className="relative flex flex-col sm:py-28 md:py-40 py-10 md:flex-row gap-10 md:justify-between items-center w-full md:h-full px-8 xl:px-12 md:px-14">
           <div className="flex flex-col md:items-start items-center gap-14 md:w-1/2 text-center md:text-left">
             <h1 className="xs:text-4xl text-3xl md:text-5xl font-bold text-white tracking-wide">
-            Crafting Elegant Styles for Your Unique Look
+              Let's help you look and feel Elegant and confident 
             </h1>
             <h2 className="xs:text-2xl text-lg md:text-2xl tracking-wide text-white">
-              Exquisite Wears, where creativity meets impeccable craftsmanship. We offered Custom-tailored fashion for your growing wardrobe, Redefining fashion, one stitch at a time.
+             The Exquisite Wears, where perfect fits meet timeless accessories. We provide Custom-tailored dresses and high quality fashion accessories that enhance confidence, elegance and individuality.
             </h2>
 
             {/* Conditional Button */}
