@@ -12,7 +12,7 @@ interface Product {
 const Hero = () => {
   const URL = "https://ecommerce-9wqc.onrender.com/api/products/get";
   const [products, setProducts] = useState<Product[]>([]);
-
+  
 
   const getLast = products[0]?.image ?? social;
 
@@ -50,7 +50,7 @@ const Hero = () => {
           alt="Background"
         />
         
-        <div className="relative flex flex-col sm:py-28 md:py-40 py-10 md:flex-row gap-10 md:justify-between items-center w-full md:h-full px-8 xl:px-12 md:px-14">
+        <div className="relative flex flex-col sm:py-28 md:py-40 py-10 md:flex-row gap-10 md:justify-between items-center md:items-start w-full md:h-full px-8 xl:px-12 md:px-14">
           <div className="flex flex-col md:items-start items-center gap-8 qy:gap-14 md:w-1/2 text-center md:text-left">
             <h1 className="xs:text-4xl text-3xl md:text-5xl font-bold text-white tracking-wide">
               Let's help you look and feel Elegant and confident 
