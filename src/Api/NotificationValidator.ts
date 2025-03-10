@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { URL } from "./Endpoint";
+import { useNavigate } from "react-router-dom";
 
 const ConnectToBe = () => {
   const {
@@ -16,6 +17,7 @@ const ConnectToBe = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false)
+  const navigate = useNavigate()
   // const token = localStorage.getItem("adminToken");
 
   const Notify = (items: Notifications) => {
@@ -52,7 +54,7 @@ const ConnectToBe = () => {
     sendNotification();
   };
 
-  return { errors, handleSubmit, register, success, error, loading, Notify, show };
+  return { errors, handleSubmit, register, success, error, loading, Notify, show, setShow, navigate };
 };
 
 export default ConnectToBe;
