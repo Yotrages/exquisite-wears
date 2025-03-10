@@ -63,8 +63,8 @@ const AdminValidator = () => {
           setSuccess("Product posted successfully");
           setTimeout(() => setSuccess(''), 3000)
           reset();
-          setImagePreview(null)
           setShow(true)     
+          setImagePreview(null)
         }
       } catch (error: any) {
         console.error(error.message);

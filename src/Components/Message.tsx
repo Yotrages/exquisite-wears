@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import Button from "./Button";
-import AdminValidator from "../Api/AdminValidator";
 
 interface MessageProps {
   error?: string | null;
@@ -65,29 +63,3 @@ export const MessageRight = ({ error, success }: MessageProps) => {
   );
 };
 
-export const ContinuationMessage = ({message} : {message: string}) => {
-  const {show, setShow, navigate} = AdminValidator()
-  return (
-    <div
-          className={`bg-primary text-white fixed top-10 h-fit rounded-lg justify-center items-center z-10 transition-all duration-500 ease-in-out flex flex-col ${
-            show ? "w-[200px] opacity-100" : "w-0 opacity-0"
-          } py-2 px-3`}
-        >
-          <p className="text-lg font-poppins font-semibold text-center">{message}</p>
-          <span className="flex flex-row gap-5 items-center justify-between">
-            <Button
-              onSmash={() => setShow(false)}
-              styles="hover:bg-green-400 bg-shadow rounded-full"
-              router=""
-              buttonText="yes"
-            />
-            <Button
-              onSmash={() => navigate("/")}
-              styles="hover:bg-green-400 bg-shadow rounded-full"
-              router="/"
-              buttonText="no"
-            />
-          </span>
-        </div>
-  )
-}
