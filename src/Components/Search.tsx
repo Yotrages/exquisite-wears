@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import Button from "./Button";
 import ProductValidator from "../Api/ProductValidator";
+import { FaNairaSign } from "react-icons/fa6";
 
 const Search = () => {
   const { searchTerm } = useParams();
@@ -78,14 +79,14 @@ const Search = () => {
                   alt={item?.name}
                 />
                 <div className="flex flex-col flex-wrap qy:gap-2.5 gap-1.5 px-4">
-                  <h1 className="text-primary mb-1 header h-10 qy:h-0 font-light qy:text-base text-sm font-poppins">
+                  <h1 className="text-black mb-1 header h-10 qy:h-5 font-light qy:text-base text-sm font-poppins">
                     {item?.name}
                   </h1>
-                  <h1 className="text-primary header h-10 qy:h-0 text-wrap font-light qy:text-base text-sm font-poppins">
+                  <h1 className="text-black header h-10 qy:h-6 text-wrap font-light qy:text-base text-sm font-poppins">
                     {item?.description}
                   </h1>
-                  <p className="orange_gradient font-poppins font-semibold tracking-wide">
-                    ${item?.price}
+                  <p className="orange_gradient font-poppins font-semibold tracking-wide flex flex-row items-center">
+                  <FaNairaSign className="text-black"/>{item?.price}
                   </p>
                   <Button
                     onSmash={() => console.log("pressed")}
@@ -106,13 +107,14 @@ const Search = () => {
                     <button
                       type="submit"
                       onClick={() => deletePost(item._id)}
-                      className="rounded-lg qy:text-base text-sm py-2 px-3 bg-red-500 bg-shadow text-white font-semibold tracking-widest"
+                      className="rounded-lg py-2 qy:text-base text-sm px-3 bg-red-500 bg-shadow text-white font-semibold tracking-widest"
                     >
                       Delete
                     </button>
                   </div>
                 )}
               </div>
+
               ))}
           </div>
         ) : (
