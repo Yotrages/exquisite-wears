@@ -35,7 +35,8 @@ const SearchInput = ({searchToggle, searchTerm, setSearchTerm, setSearchToggle, 
                 {data.map((item, index) => (
                   <li
                     key={index}
-                    className="py-2 flex items-center justify-between border-b"
+                    className="py-2 flex items-center justify-between border-b cursor-pointer"
+                    onClick={() => handleSearch(item.name)}
                   >
                     <img
                       src={item.image}
