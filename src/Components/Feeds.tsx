@@ -59,7 +59,7 @@ const Feeds = () => {
                     {item?.description}
                   </h1>
                   <p className="orange_gradient font-poppins font-semibold tracking-wide">
-                  <FaNairaSign />{item?.price}
+                  <FaNairaSign className="text-black"/>{item?.price}
                   </p>
                   <Button
                     onSmash={() => console.log("pressed")}

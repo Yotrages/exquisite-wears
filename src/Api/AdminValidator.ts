@@ -69,11 +69,11 @@ const AdminValidator = () => {
       } catch (error: any) {
         console.error(error.message);
         if (error.response) {
-          setError(error.response.data.message || error.response.data.error)
+          setError(error.response.data.message || 'Session timeout, login again')
           if (error.response?.status === 400 || 403 || 401) {
-            setError(error.response.data.error)
+            setError('Session timeout, login again')
             localStorage.removeItem('adminToken')
-            setTimeout(() => navigate('/login'), 2000)
+            setTimeout(() => navigate('/login'), 3000)
           }
         }
           else if (error.request) {

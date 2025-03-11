@@ -78,8 +78,8 @@ const Nav = ({
               {data.map((item, index) => (
                 <li
                   key={index}
-                  className="py-3 flex flex-row min-h-fit items-center w-full justify-between border-b"
-                  onClick={() => setSearchTerm(item.name)}
+                  className="py-3 flex flex-row min-h-fit cursor-pointer items-center w-full justify-between border-b"
+                  onClick={() => handleSearch(item.name)}
                 >
                   <div>
                     <img
