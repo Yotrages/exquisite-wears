@@ -58,7 +58,7 @@ const Feeds = () => {
                   <h1 className="text-black header h-10 qy:h-6 text-wrap font-light qy:text-base text-sm font-poppins">
                     {item?.description}
                   </h1>
-                  <p className="orange_gradient font-poppins font-semibold tracking-wide">
+                  <p className="orange_gradient font-poppins font-semibold tracking-wide flex flex-row items-center">
                   <FaNairaSign className="text-black"/>{item?.price}
                   </p>
                   <Button
