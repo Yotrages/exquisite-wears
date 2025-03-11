@@ -1,6 +1,8 @@
 import useProductValidator from "../Api/ProductValidator";
 import Button from "./Button";
 import { MessageRight } from "./Message";
+import { FaNairaSign } from "react-icons/fa6";
+
 
 const SkeletonCard = () => (
   <div className="animate-pulse flex flex-col h-fit mr-8 p-image bg-shadow rounded-lg bg-gray-200 gap-4 mb-6 pb-3">
@@ -57,7 +59,7 @@ const Feeds = () => {
                     {item?.description}
                   </h1>
                   <p className="orange_gradient font-poppins font-semibold tracking-wide">
-                    ${item?.price}
+                  <FaNairaSign />{item?.price}
                   </p>
                   <Button
                     onSmash={() => console.log("pressed")}

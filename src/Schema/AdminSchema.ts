@@ -8,11 +8,11 @@ export const productSchema = z.object({
     .string({ required_error: "Name field is required" })
     .min(10, "The name field should be at least 10 characters"),
   price: z
-    .string({
+    .number({
       required_error: "Price field is required",
       invalid_type_error: "The price must be a number",
-    })
-    .min(2, "The price field should be at least a number"),
+    }).positive('price must be a positive number')
+    .min(1, "The price field should be at least a number"),
   quantity: z
     .number({
       required_error: "Quantity field is required",
