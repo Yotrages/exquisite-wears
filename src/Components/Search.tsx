@@ -43,7 +43,7 @@ const Search = () => {
               Showing search results for:
             </p>
             <p className="text-xl font-semibold font-poppins text-black">
-              {searchTerm}
+              {searchTerm || newTerm}
             </p>
           </div>
           <div className="relative qy:hidden flex w-full">

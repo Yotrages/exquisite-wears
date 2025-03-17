@@ -32,7 +32,7 @@ const Hero = () => {
       }
     };
     getProducts();
-  }, [getLast]);
+  }, []);
 
   const token = localStorage.getItem("admin");
   const Admin = "true";

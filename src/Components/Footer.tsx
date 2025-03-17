@@ -59,17 +59,20 @@ const Footer = () => {
             <address>Ibadan, Oyo. Nigeria.</address>
           </span>
           <img src={payments} loading="lazy" alt="" />
-          <span className="flex items-center gap-4">
-            <Link className="text-[30px]" title="Whatsapp" to="https://wa.me/08145534450">
-              <FaWhatsapp />
-            </Link>
-            <Link className="text-[30px]" title="Instagram" to="https://www.instagram.com/the_exquisite_wears?igsh=MWRheHhvMmhvMzh4Mw==">
-              <FaInstagram />
-            </Link>
-            <Link className="text-[30px]" title="Tiktok" to="https://www.tiktok.com/@the.exquisite.wears?_t=ZM-8tuPLsoPUoQ&_r=1">
-              <FaTiktok />
-            </Link>
-          </span>
+          <div className="flex flex-col gap-3">
+            <p className="text-white font-semibold font-poppins text-xl">Follow us on social media</p>
+            <span className="flex items-center gap-4">
+              <Link className="text-[30px]" title="Whatsapp" to="https://wa.me/08145534450">
+                <FaWhatsapp />
+              </Link>
+              <Link className="text-[30px]" title="Instagram" to="https://www.instagram.com/the_exquisite_wears?igsh=MWRheHhvMmhvMzh4Mw==">
+                <FaInstagram />
+              </Link>
+              <Link className="text-[30px]" title="Tiktok" to="https://www.tiktok.com/@the.exquisite.wears?_t=ZM-8tuPLsoPUoQ&_r=1">
+                <FaTiktok />
+              </Link>
+            </span>
+          </div>
         </div>
       </div>
       <hr className="w-[90%] mx-auto bg-white mt-4"/>
