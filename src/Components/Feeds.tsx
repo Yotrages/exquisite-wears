@@ -74,10 +74,14 @@ const Feeds = () => {
                   <FaNairaSign className="text-black"/>{item?.price}
                   </p>
                   <Button
-                    onSmash={() => console.log("pressed")}
+                    onSmash={() => {
+                      const message = `Hello, I'm interested in this product:\n\n*${item?.name}*\nPrice: ₦${item?.price}\nImage: ${item?.image}`;
+                      const whatsappUrl = `https://api.whatsapp.com/send?phone=09029282035&text=${encodeURIComponent(message)}`;
+                      window.open(whatsappUrl, "_blank");
+                    }}
                     styles="rounded-lg text-white hover:bg-green-500 text-center qy:text-base text-xs"
                     buttonText="Discuss product"
-                    router="https://wa.me/08145534450"
+                    router=""
                   />
                 </div>
                 {token === notAdmin && (
