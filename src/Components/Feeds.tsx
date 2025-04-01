@@ -76,7 +76,7 @@ const Feeds = () => {
                   <Button
                     onSmash={() => {
                       const message = `Hello, I'm interested in this product:\n\n*${item?.name}*\nPrice: ₦${item?.price}\nImage: ${item?.image}`;
-                      const whatsappUrl = `https://api.whatsapp.com/send?phone=09029282035&text=${encodeURIComponent(message)}`;
+                      const whatsappUrl = `https://api.whatsapp.com/send?phone=08145534450&text=${encodeURIComponent(message)}`;
                       window.open(whatsappUrl, "_blank");
                     }}
                     styles="rounded-lg text-white hover:bg-green-500 text-center qy:text-base text-xs"
