@@ -53,7 +53,7 @@ const Feeds = () => {
                 className="flex flex-col h-fit mr-8 p-image bg-shadow rounded-lg transition-all duration-500 bg-white gap-4 mb-6 pb-3"
               >
                 <img
-                  className="w-full h-fit object-cover aspect-square rounded-lg"
+                  className="w-full h-fit object-cover cursor-pointer aspect-square rounded-lg"
                   src={item?.image}
                   alt={item?.name}
                   onClick={() => {
