@@ -2,7 +2,8 @@ import useProductValidator from "../Api/ProductValidator";
 import Button from "./Button";
 import { MessageRight } from "./Message";
 import { FaNairaSign } from "react-icons/fa6";
-
+import Modal from "./Modal";
+import { useState } from "react";
 
 const SkeletonCard = () => (
   <div className="animate-pulse flex flex-col h-fit mr-8 p-image bg-shadow rounded-lg bg-gray-200 gap-4 mb-6 pb-3">
@@ -32,9 +33,13 @@ const Feeds = () => {
 
   const isLoading = products.length === 0; // If no products, assume loading
 
+  const [show, setShow] = useState(false)
+  const [image, setImage] = useState<string | undefined>('')
+  const [name, setName] = useState<string | undefined>('')
   return (
     <section className="py-20">
       <MessageRight success={success} error={error} />
+      <Modal name={name} setShow={setShow} show={show} image={image}/>
 
       <div className="grid qy:grid-cols-3 md:grid-cols-4 grid-cols-2 sm:w-[88%] w-full sm:px-0 px-2 m-auto items-center gap-1 xs:gap-5">
         {isLoading
@@ -42,15 +47,22 @@ const Feeds = () => {
               .fill(0)
               .map((_, index) => <SkeletonCard key={index} />) // Show 6 skeleton loaders
           : products.map((item) => (
+            
               <div
                 key={item?._id}
-                className="flex flex-col h-fit mr-8 p-image bg-shadow rounded-lg hover:scale-110 transition-all duration-500 bg-white gap-4 mb-6 pb-3"
+                className="flex flex-col h-fit mr-8 p-image bg-shadow rounded-lg transition-all duration-500 bg-white gap-4 mb-6 pb-3"
               >
                 <img
                   className="w-full h-fit object-cover aspect-square rounded-lg"
-                  src={item?.image || "default-placeholder-image.jpg"}
+                  src={item?.image}
                   alt={item?.name}
+                  onClick={() => {
+                    setShow(true)
+                    setImage(item?.image)
+                    setName(item?.name)
+                  }}
                 />
+                
                 <div className="flex flex-col flex-wrap qy:gap-2.5 gap-1.5 px-4">
                   <h1 className="text-black mb-1 header h-10 qy:h-5 font-light qy:text-base text-sm font-poppins">
                     {item?.name}
@@ -88,6 +100,7 @@ const Feeds = () => {
                 )}
               </div>
             ))}
+
       </div>
 
       <div className="flex flex-row w-full items-center justify-center pt-5 gap-4">
