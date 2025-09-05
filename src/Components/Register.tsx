@@ -35,7 +35,7 @@ const Register = () => {
       timestamp: Date.now()
     }));
     
-    window.location.href = `https://ecommerce-9wqc.onrender.com/api/auth/${provider}?state=${state}`;
+    window.location.href = `https://ecommerce-9wqc.onrender.com/api/users/auth/${provider}?state=${state}`;
   };
 
   return (
