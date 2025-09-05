@@ -39,10 +39,10 @@ const Hero = () => {
   const user = localStorage.getItem("userName");
 
   return (
-    <section className="w-full relative overflow-hidden">
+    <section className="w-full relative overflow-hidden isolate">
       <div className="relative w-full min-h-screen">
         {/* Enhanced Background with Overlay */}
-        <div className="absolute inset-0">
+        <div className="absolute inset-0 z-0">
           <img
             src={bg4}
             className="w-full h-full object-cover"
@@ -55,14 +55,14 @@ const Hero = () => {
         </div>
         
         {/* Floating decorative elements */}
-        <div className="absolute top-20 right-10 opacity-10 animate-pulse">
+        <div className="absolute top-20 right-10 opacity-10 animate-pulse z-10">
           <FaGem className="text-6xl text-white transform rotate-12" />
         </div>
-        <div className="absolute bottom-32 left-16 opacity-10 animate-pulse">
+        <div className="absolute bottom-32 left-16 opacity-10 animate-pulse z-10">
           <FaClock className="text-8xl text-white transform -rotate-12" />
         </div>
         
-        <div className="relative flex flex-col sm:py-28 md:py-40 py-16 md:flex-row gap-10 md:justify-between items-center md:items-start w-full md:h-full px-8 xl:px-16 md:px-14">
+        <div className="relative z-20 flex flex-col sm:py-28 md:py-40 py-16 md:flex-row gap-10 md:justify-between items-center md:items-start w-full md:h-full px-8 xl:px-16 md:px-14">
           <div className="flex flex-col md:items-start items-center gap-8 qy:gap-14 md:w-1/2 text-center md:text-left">
             {/* Premium badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500/20 to-yellow-600/20 backdrop-blur-sm border border-amber-400/30 rounded-full text-amber-300 text-sm font-medium">
@@ -136,44 +136,35 @@ const Hero = () => {
             </div>
           </div>
 
-          {/* Enhanced Product Image Section */}
+          {/* Enhanced Product Image Section - Fixed positioning */}
           <div className="mt-10 md:mt-0 md:w-1/2 flex justify-center relative">
-            {/* Decorative rings */}
-            <div className="absolute inset-0 flex items-center justify-center">
+            {/* Decorative rings - contained within this section */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               <div className="w-96 h-96 border border-amber-400/20 rounded-full animate-spin-slow"></div>
               <div className="absolute w-80 h-80 border border-yellow-300/10 rounded-full animate-pulse"></div>
             </div>
             
-            {/* Product image with enhanced styling */}
-            <div className="relative z-10 group">
+            {/* Product image with enhanced styling - proper containment */}
+            <div className="relative z-10 group max-w-lg">
               <div className="absolute -inset-4 bg-gradient-to-r from-amber-600 to-yellow-400 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-300"></div>
-              <img
-                src={getLast}
-                className="relative w-full max-w-lg h-auto object-cover rounded-2xl shadow-2xl transform group-hover:scale-105 transition-all duration-500 border-2 border-amber-400/30"
-                alt="Featured Luxury Watch"
-              />
-              {/* Product highlight badge */}
-              <div className="absolute -top-4 -right-4 bg-gradient-to-r from-red-500 to-pink-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg animate-pulse">
-                Featured
+              <div className="relative">
+                <img
+                  src={getLast}
+                  className="w-full h-auto object-cover rounded-2xl shadow-2xl transform group-hover:scale-105 transition-all duration-500 border-2 border-amber-400/30 max-h-[600px]"
+                  alt="Featured Luxury Watch"
+                />
+                {/* Product highlight badge */}
+                <div className="absolute -top-4 -right-4 bg-gradient-to-r from-red-500 to-pink-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg animate-pulse">
+                  Featured
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         {/* Bottom gradient fade */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/50 to-transparent"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/50 to-transparent z-10"></div>
       </div>
-
-      {/* Custom CSS for animations */}
-      {/* <style jsx>{`
-        @keyframes spin-slow {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-        .animate-spin-slow {
-          animation: spin-slow 20s linear infinite;
-        }
-      `}</style> */}
     </section>
   );
 };

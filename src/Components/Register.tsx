@@ -25,7 +25,7 @@ const Register = () => {
   if (oAuthError) {
     <MessageCenter error={oAuthError} />
   }
-  
+
   const handleOAuthLogin = (provider: string, intent = 'login') => {
     setLoading(provider);
     
@@ -35,7 +35,7 @@ const Register = () => {
       timestamp: Date.now()
     }));
     
-    window.location.href = `http://localhost:5000/api/auth/${provider}?state=${state}`;
+    window.location.href = `https://ecommerce-9wqc.onrender.com/api/auth/${provider}?state=${state}`;
   };
 
   return (

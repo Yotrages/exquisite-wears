@@ -3,6 +3,7 @@ import axios from "axios";
 import Button from "./Button";
 import Modal from "./Modal";
 import { MessageRight } from "./Message";
+import useProductValidator from "../Api/ProductValidator";
 
 interface Product {
   _id: string;
@@ -14,8 +15,8 @@ interface Product {
 }
 
 const SliderSkeletonCard = () => (
-  <div className="flex-shrink-0 w-80 animate-pulse">
-    <div className="bg-gradient-to-br from-gray-200 to-gray-300 rounded-2xl p-6 mx-4 h-[450px]">
+  <div className="flex-shrink-0 w-72 sm:w-80 lg:w-84">
+    <div className="bg-gradient-to-br from-gray-200 to-gray-300 rounded-2xl p-4 sm:p-6 mx-2 sm:mx-4 h-[450px]">
       <div className="w-full h-48 bg-gray-400 rounded-xl mb-4"></div>
       <div className="space-y-3">
         <div className="h-4 bg-gray-400 rounded w-3/4"></div>
@@ -48,6 +49,26 @@ const WatchSlider = () => {
   const token = localStorage.getItem("admin");
   const notAdmin = "true";
 
+  // Responsive card width calculation
+  const getCardWidth = () => {
+    if (typeof window === 'undefined') return 320;
+    if (window.innerWidth < 640) return 288; // sm: w-72 = 288px
+    if (window.innerWidth < 1024) return 320; // md: w-80 = 320px
+    return 336; // lg: w-84 = 336px
+  };
+
+  const [cardWidth, setCardWidth] = useState(getCardWidth);
+
+  // Handle window resize
+  useEffect(() => {
+    const handleResize = () => {
+      setCardWidth(getCardWidth());
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   // Fetch products
   useEffect(() => {
     const getProducts = async () => {
@@ -56,7 +77,6 @@ const WatchSlider = () => {
         const res = await axios.get(URL);
         const data: Product[] = res.data.products;
         setProducts(data);
-        setSuccess("Products loaded successfully!");
         
         const quantities = data.map((item) => item.quantity);
         localStorage.setItem("quantity", JSON.stringify(quantities));
@@ -69,13 +89,14 @@ const WatchSlider = () => {
     };
     
     getProducts();
-  }, []);
+  }, [navigator.onLine]);
 
-  // Auto-scroll functionality
+  // Auto-scroll functionality with responsive consideration
   useEffect(() => {
     if (!isPaused && !isLoading && products.length > 0) {
       const interval = setInterval(() => {
-        setCurrentSlide(prev => (prev + 1) % Math.max(1, products.length - 2));
+        const maxSlides = Math.max(1, products.length - (window.innerWidth < 640 ? 0 : window.innerWidth < 1024 ? 1 : 2));
+        setCurrentSlide(prev => (prev + 1) % maxSlides);
       }, 5000);
       return () => clearInterval(interval);
     }
@@ -84,35 +105,29 @@ const WatchSlider = () => {
   // Scroll to specific slide
   useEffect(() => {
     if (sliderRef.current) {
-      const slideWidth = 320; // w-80 = 320px
+      const scrollLeft = currentSlide * cardWidth;
       sliderRef.current.scrollTo({
-        left: currentSlide * slideWidth,
+        left: scrollLeft,
         behavior: 'smooth'
       });
     }
-  }, [currentSlide]);
+  }, [currentSlide, cardWidth]);
 
   const nextSlide = () => {
-    setCurrentSlide(prev => (prev + 1) % Math.max(1, products.length - 2));
+    const maxSlides = Math.max(1, products.length - (window.innerWidth < 640 ? 0 : window.innerWidth < 1024 ? 1 : 2));
+    setCurrentSlide(prev => (prev + 1) % maxSlides);
   };
 
   const prevSlide = () => {
-    setCurrentSlide(prev => prev === 0 ? Math.max(0, products.length - 3) : prev - 1);
+    const maxSlides = Math.max(1, products.length - (window.innerWidth < 640 ? 0 : window.innerWidth < 1024 ? 1 : 2));
+    setCurrentSlide(prev => prev === 0 ? maxSlides - 1 : prev - 1);
   };
 
-  const handleEdit = (id: string) => {
-    // Add your edit logic here
-    console.log("Edit product:", id);
-  };
-
-  const handleDelete = (id: string) => {
-    // Add your delete logic here
-    console.log("Delete product:", id);
-  };
+  const {handleEdit, deletePost} = useProductValidator()
 
   const SliderCard = ({ item, index }: { item: Product, index: number }) => (
-    <div className="flex-shrink-0 w-80 group">
-      <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl p-6 mx-4 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:scale-105 border border-amber-100 relative overflow-hidden">
+    <div className="flex-shrink-0 w-72 sm:w-80 lg:w-84 group">
+      <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl p-4 sm:p-6 mx-2 sm:mx-4 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:scale-105 border border-amber-100 relative overflow-hidden">
         {/* Luxury shimmer effect */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
         
@@ -120,7 +135,7 @@ const WatchSlider = () => {
         {index < 3 && (
           <div className="absolute -top-3 -right-3 z-10">
             <div className={`
-              px-3 py-1 rounded-full text-xs font-bold shadow-lg text-white transform rotate-12
+              px-2 sm:px-3 py-1 rounded-full text-xs font-bold shadow-lg text-white transform rotate-12
               ${index === 0 ? 'bg-gradient-to-r from-red-500 to-pink-600' : 
                 index === 1 ? 'bg-gradient-to-r from-purple-500 to-indigo-600' : 
                 'bg-gradient-to-r from-green-500 to-emerald-600'}
@@ -131,9 +146,9 @@ const WatchSlider = () => {
         )}
         
         {/* Product Image */}
-        <div className="relative overflow-hidden rounded-xl mb-6 bg-gradient-to-br from-gray-50 to-gray-100">
+        <div onClick={() => setShow(true)} className="relative overflow-hidden rounded-xl mb-4 sm:mb-6 bg-gradient-to-br from-gray-50 to-gray-100">
           <img
-            className="w-full h-56 object-cover cursor-pointer transition-all duration-700 group-hover:scale-110"
+            className="w-full h-48 sm:h-56 object-cover cursor-pointer transition-all duration-700 group-hover:scale-110"
             src={item.image}
             alt={item.name}
             onClick={() => {
@@ -154,21 +169,21 @@ const WatchSlider = () => {
         </div>
 
         {/* Product Info */}
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {/* Watch name */}
-          <h3 className="text-xl font-bold text-gray-800 leading-tight line-clamp-2 group-hover:text-amber-700 transition-colors duration-300">
+          <h3 className="text-lg sm:text-xl font-bold text-gray-800 leading-tight line-clamp-2 group-hover:text-amber-700 transition-colors duration-300">
             {item.name}
           </h3>
           
           {/* Description */}
-          <p className="text-sm text-gray-600 leading-relaxed line-clamp-3">
+          <p className="text-sm text-gray-600 leading-relaxed truncate">
             {item.description}
           </p>
           
           {/* Price and rating section */}
           <div className="flex items-center justify-between py-2">
             <div>
-              <p className="text-2xl font-bold bg-gradient-to-r from-amber-600 to-yellow-600 bg-clip-text text-transparent">
+              <p className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-amber-600 to-yellow-600 bg-clip-text text-transparent">
                 {item.price?.toLocaleString("en-NG", {
                   style: "currency",
                   currency: "NGN",
@@ -178,29 +193,31 @@ const WatchSlider = () => {
             </div>
             <div className="text-right">
               <div className="flex items-center justify-end gap-1 text-amber-500 mb-1">
-                <span className="text-lg">⭐⭐⭐⭐⭐</span>
+                <span className="text-base sm:text-lg">⭐⭐⭐⭐⭐</span>
               </div>
               <p className="text-xs text-gray-500">Premium Quality</p>
             </div>
           </div>
 
           {/* Features */}
-          <div className="flex flex-wrap gap-2 py-2">
+          <div className="flex flex-wrap gap-2 py-1 sm:py-2">
             <span className="px-2 py-1 bg-amber-50 text-amber-700 text-xs rounded-full border border-amber-200">Water Resistant</span>
             <span className="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded-full border border-blue-200">Sapphire Glass</span>
           </div>
 
-          {/* WhatsApp CTA Button */}
-          <Button
-            onSmash={() => {
-              const message = `Hello! I'm interested in this luxury timepiece:\n\n⌚ *${item.name}*\n💰 Price: ${item.price?.toLocaleString("en-NG", { style: "currency", currency: "NGN" })}\n📸 Image: ${item.image}\n\nI'd like to know more about this watch's features and availability.`;
-              const whatsappUrl = `https://api.whatsapp.com/send?phone=08145534450&text=${encodeURIComponent(message)}`;
-              window.open(whatsappUrl, "_blank");
-            }}
-            styles="w-full rounded-xl text-white bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl text-center font-semibold py-4 text-base"
-            buttonText="💬 Inquire via WhatsApp"
-            router=""
-          />
+          {/* WhatsApp CTA Button - Fixed spacing */}
+          <div className="pt-2 sm:pt-3">
+            <Button
+              onSmash={() => {
+                const message = `Hello! I'm interested in this luxury timepiece:\n\n⌚ *${item.name}*\n💰 Price: ${item.price?.toLocaleString("en-NG", { style: "currency", currency: "NGN" })}\n📸 Image: ${item.image}\n\nI'd like to know more about this watch's features and availability.`;
+                const whatsappUrl = `https://api.whatsapp.com/send?phone=08145534450&text=${encodeURIComponent(message)}`;
+                window.open(whatsappUrl, "_blank");
+              }}
+              styles="w-full rounded-xl text-white bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl text-center font-semibold py-3 sm:py-4 text-sm sm:text-base"
+              buttonText="💬 Inquire via WhatsApp"
+              router=""
+            />
+          </div>
 
           {/* Admin Controls */}
           {token === notAdmin && (
@@ -212,7 +229,7 @@ const WatchSlider = () => {
                 ✏️ Edit
               </button>
               <button
-                onClick={() => handleDelete(item._id)}
+                onClick={() => deletePost(item._id)}
                 className="flex-1 rounded-lg py-2 px-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold text-sm transition-all duration-300 hover:scale-105 shadow-md"
               >
                 🗑️ Delete
@@ -225,22 +242,21 @@ const WatchSlider = () => {
   );
 
   return (
-    <section className="py-20 bg-gradient-to-br from-gray-50 via-white to-amber-50 overflow-hidden">
-      <MessageRight success={success} error={error} />
+    <section className="py-12 sm:py-20 bg-gradient-to-br from-gray-50 via-white to-amber-50 overflow-hidden">
       <Modal name={selectedName} setShow={setShow} show={show} image={selectedImage} />
 
       {/* Header Section */}
-      <div className="text-center mb-16 px-4">
-        <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500/20 to-yellow-600/20 backdrop-blur-sm border border-amber-400/30 rounded-full text-amber-700 text-sm font-medium mb-6">
+      <div className="text-center mb-12 sm:mb-16 px-4">
+        <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-gradient-to-r from-amber-500/20 to-yellow-600/20 backdrop-blur-sm border border-amber-400/30 rounded-full text-amber-700 text-sm font-medium mb-4 sm:mb-6">
           <span>⌚</span>
           <span>Curated Collection</span>
         </div>
         
-        <h2 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-amber-600 via-yellow-600 to-amber-700 bg-clip-text text-transparent mb-6 leading-tight">
+        <h2 className="text-3xl sm:text-5xl md:text-6xl font-bold bg-gradient-to-r from-amber-600 via-yellow-600 to-amber-700 bg-clip-text text-transparent mb-4 sm:mb-6 leading-tight px-2">
           Exquisite Timepieces
         </h2>
         
-        <p className="text-gray-600 text-xl max-w-3xl mx-auto leading-relaxed">
+        <p className="text-gray-600 text-base sm:text-xl max-w-3xl mx-auto leading-relaxed px-4">
           Discover our handpicked selection of luxury wristwatches, where Swiss craftsmanship meets contemporary elegance. Each timepiece tells a story of precision, heritage, and unmatched sophistication.
         </p>
       </div>
@@ -255,9 +271,9 @@ const WatchSlider = () => {
         <button
           onClick={prevSlide}
           disabled={isLoading}
-          className="absolute left-4 top-1/2 -translate-y-1/2 z-30 bg-white/95 hover:bg-white backdrop-blur-md rounded-full p-4 shadow-xl transition-all duration-300 hover:scale-110 group border border-amber-200/50 disabled:opacity-50"
+          className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-30 bg-white/95 hover:bg-white backdrop-blur-md rounded-full p-2 sm:p-4 shadow-xl transition-all duration-300 hover:scale-110 group border border-amber-200/50 disabled:opacity-50"
         >
-          <svg className="w-6 h-6 text-amber-600 group-hover:text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-4 h-4 sm:w-6 sm:h-6 text-amber-600 group-hover:text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 19l-7-7 7-7" />
           </svg>
         </button>
@@ -265,30 +281,38 @@ const WatchSlider = () => {
         <button
           onClick={nextSlide}
           disabled={isLoading}
-          className="absolute right-4 top-1/2 -translate-y-1/2 z-30 bg-white/95 hover:bg-white backdrop-blur-md rounded-full p-4 shadow-xl transition-all duration-300 hover:scale-110 group border border-amber-200/50 disabled:opacity-50"
+          className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-30 bg-white/95 hover:bg-white backdrop-blur-md rounded-full p-2 sm:p-4 shadow-xl transition-all duration-300 hover:scale-110 group border border-amber-200/50 disabled:opacity-50"
         >
-          <svg className="w-6 h-6 text-amber-600 group-hover:text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-4 h-4 sm:w-6 sm:h-6 text-amber-600 group-hover:text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" />
           </svg>
         </button>
 
         {/* Slider Container */}
-        <div 
-          ref={sliderRef}
-          className="flex overflow-x-auto scrollbar-hide gap-0 px-8 py-6"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-        >
-          {isLoading
-            ? Array(6).fill(0).map((_, index) => <SliderSkeletonCard key={index} />)
-            : products.map((item, index) => (
-                <SliderCard key={item._id} item={item} index={index} />
-              ))}
+        <div className="relative overflow-hidden">
+          <div 
+            ref={sliderRef}
+            className="flex overflow-x-auto scrollbar-hide gap-0 px-4 sm:px-8 py-6 scroll-smooth"
+            style={{ 
+              scrollbarWidth: 'none', 
+              msOverflowStyle: 'none',
+              scrollSnapType: 'x mandatory'
+            }}
+          >
+            {isLoading
+              ? Array(6).fill(0).map((_, index) => <SliderSkeletonCard key={index} />)
+              : products.map((item, index) => (
+                  <div key={item._id} style={{ scrollSnapAlign: 'start' }}>
+                    <SliderCard item={item} index={index} />
+                  </div>
+                ))}
+          </div>
         </div>
 
         {/* Dots Indicator */}
-        {!isLoading && products.length > 3 && (
-          <div className="flex justify-center mt-8 gap-3">
-            {Array(Math.max(1, products.length - 2))
+        {!isLoading && products.length > 1 && (
+          <div className="flex justify-center mt-6 sm:mt-8 gap-2 sm:gap-3 px-4">
+            {Array(Math.max(1, products.length - (window.innerWidth < 640 ? 0 : window.innerWidth < 1024 ? 1 : 2)))
               .fill(0)
               .map((_, index) => (
                 <button
@@ -296,8 +320,8 @@ const WatchSlider = () => {
                   onClick={() => setCurrentSlide(index)}
                   className={`transition-all duration-300 rounded-full ${
                     currentSlide === index
-                      ? 'w-8 h-3 bg-gradient-to-r from-amber-600 to-yellow-600'
-                      : 'w-3 h-3 bg-gray-300 hover:bg-gray-400'
+                      ? 'w-6 sm:w-8 h-2 sm:h-3 bg-gradient-to-r from-amber-600 to-yellow-600'
+                      : 'w-2 sm:w-3 h-2 sm:h-3 bg-gray-300 hover:bg-gray-400'
                   }`}
                 />
               ))}
@@ -313,36 +337,13 @@ const WatchSlider = () => {
       </div>
 
       {/* Bottom decoration */}
-      <div className="flex justify-center mt-16">
+      <div className="flex justify-center mt-12 sm:mt-16">
         <div className="flex items-center gap-4 text-amber-600">
-          <div className="w-12 h-px bg-gradient-to-r from-transparent to-amber-600"></div>
-          <span className="text-2xl">⌚</span>
-          <div className="w-12 h-px bg-gradient-to-l from-transparent to-amber-600"></div>
+          <div className="w-8 sm:w-12 h-px bg-gradient-to-r from-transparent to-amber-600"></div>
+          <span className="text-xl sm:text-2xl">⌚</span>
+          <div className="w-8 sm:w-12 h-px bg-gradient-to-l from-transparent to-amber-600"></div>
         </div>
       </div>
-
-      {/* Custom CSS */}
-      {/* <style jsx>{`
-        .scrollbar-hide {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-        .line-clamp-2 {
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }
-        .line-clamp-3 {
-          display: -webkit-box;
-          -webkit-line-clamp: 3;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }
-      `}</style> */}
     </section>
   );
 };
