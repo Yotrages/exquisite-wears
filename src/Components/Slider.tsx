@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import Button from "./Button";
 import Modal from "./Modal";
-import { MessageRight } from "./Message";
 import useProductValidator from "../Api/ProductValidator";
 
 interface Product {
@@ -33,8 +32,6 @@ const WatchSlider = () => {
   const URL = "https://ecommerce-9wqc.onrender.com/api/products/get";
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string>("");
-  const [success, setSuccess] = useState<string>("");
   
   const sliderRef = useRef<HTMLDivElement>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -81,7 +78,6 @@ const WatchSlider = () => {
         const quantities = data.map((item) => item.quantity);
         localStorage.setItem("quantity", JSON.stringify(quantities));
       } catch (error: any) {
-        setError("Error fetching products: " + error.message);
         console.error("Error fetching products:", error.message);
       } finally {
         setIsLoading(false);
