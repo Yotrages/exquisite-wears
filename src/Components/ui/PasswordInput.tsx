@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import Success from "./Success";
 
 interface InputProps {
   width?: string;
@@ -57,7 +56,6 @@ const PasswordInput = ({
             {show ? <FaEyeSlash /> : <FaEye />}
             </div>
         </div>
-        <Success show={show} setShow={setShow}/>
     </div>
   );
 };
