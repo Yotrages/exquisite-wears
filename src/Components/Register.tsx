@@ -2,6 +2,8 @@ import { FaEye, FaEyeSlash, FaSpinner } from "react-icons/fa";
 import Question from "./Question";
 import { MessageCenter } from "./Message";
 import RegisterValidator from "../Api/RegisterValidator";
+import Button from "./ui/Button";
+import { useState } from "react";
 
 const Register = () => {
   const {
@@ -10,11 +12,31 @@ const Register = () => {
     errors,
     submission,
     success,
-    loading,
+    loading: apiLoading,
     password,
     register,
     setPassword,
   } = RegisterValidator();
+   const [loading, setLoading] = useState<string | null>(null);
+ 
+    const searchParams = new URLSearchParams(window.location.search)
+  const oAuthError = searchParams.get('error')
+
+  if (oAuthError) {
+    <MessageCenter error={oAuthError} />
+  }
+  
+  const handleOAuthLogin = (provider: string, intent = 'login') => {
+    setLoading(provider);
+    
+    const state = btoa(JSON.stringify({ 
+      intent: intent, 
+      redirectUrl: intent === 'register' ? 'login' : 'oauth-success',
+      timestamp: Date.now()
+    }));
+    
+    window.location.href = `http://localhost:5000/api/auth/${provider}?state=${state}`;
+  };
 
   return (
     <div className="w-full relative flex justify-center items-center">
@@ -23,7 +45,7 @@ const Register = () => {
         className="xs:w-[500px] w-full px-5"
         onSubmit={handleSubmit(submission)}
       >
-        <div className="flex flex-col gap-8 px-2">
+        <div className="flex flex-col gap-4 px-2">
           {/* Email Input */}
           <div className="flex flex-col gap-4 items-start text-white text-base font-semibold">
             <label htmlFor="email" className="text-[18px] font-semibold">
@@ -85,13 +107,31 @@ const Register = () => {
               <p className="text-red-600">{errors.password.message}</p>
             )}
           </div>
+          <div className="space-y-2 w-full ">
+          <Button 
+          width="100%"
+            onClick={() => handleOAuthLogin('google', 'register')}
+            className="w-full"
+            variant="filled"
+          >
+            {loading === 'google' ? 'Redirecting...' : 'Sign up with Google'}
+          </Button>
+          <Button 
+          width="100%"
+            onClick={() => handleOAuthLogin('github', 'register')}
+            className="w-full"
+            variant="filled"
+          >
+            {loading === 'github' ? 'Redirecting...' : 'Sign up with GitHub'}
+          </Button>
+        </div>
 
           {/* Submit Button */}
           <button
             type="submit"
             className="rounded-lg gap-4 py-3 px-7 bg-black-gradient bg-shadow text-white font-semibold text-[18px] tracking-widest"
           >
-            {loading ? (
+            {apiLoading ? (
               <p className="flex items-center justify-center gap-3">
                 <FaSpinner className="animate-spin" /> Register
               </p>

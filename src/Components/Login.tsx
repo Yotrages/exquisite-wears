@@ -2,10 +2,31 @@ import { FaEye, FaSpinner, FaEyeSlash } from "react-icons/fa";
 import Question from "./Question";
 import { MessageCenter } from "./Message";
 import LoginValidator from "../Api/LoginValidator";
+import Button from "./ui/Button";
+import { useState } from "react";
 
 const Login = () => {
+  const searchParams = new URLSearchParams(window.location.search)
+  const oAuthError = searchParams.get('error')
+
+  if (oAuthError) {
+    <MessageCenter error={oAuthError} />
+  }
   
-  const {handleSubmit, success, error, submission, register, errors, password, setPassword, loading} = LoginValidator()
+  const {handleSubmit, success, error, submission, register, errors, password, setPassword, loading: apiLoading} = LoginValidator()
+    const [loading, setLoading] = useState<string | null>(null);
+ 
+  const handleOAuthLogin = (provider: string, intent = 'login') => {
+    setLoading(provider);
+    
+    const state = btoa(JSON.stringify({ 
+      intent: intent, 
+      redirectUrl: intent === 'register' ? '/login' : '/oauth-success',
+      timestamp: Date.now()
+    }));
+    
+    window.location.href = `http://localhost:5000/api/auth/${provider}?state=${state}`;
+  };
  
   return (
     <>
@@ -15,7 +36,7 @@ const Login = () => {
           className="xs:w-[500px] w-full px-5"
           onSubmit={handleSubmit(submission)}
         >
-          <div className="flex flex-col gap-8 px-2">
+          <div className="flex flex-col gap-4 px-2">
             <div className="flex flex-col gap-4 items-start text-white text-base font-semibold">
               <label
                 htmlFor="email"
@@ -64,11 +85,27 @@ const Login = () => {
                 <p className="text-red-600">{errors.password.message}</p>
               )}
             </div>
+            <div className="space-y-2 w-full">
+          <Button 
+          width="100%"
+            onClick={() => handleOAuthLogin('google', 'login')}
+            className="w-full"
+          >
+            {loading === 'google' ? 'Redirecting...' : 'Sign in with Google'}
+          </Button>
+          <Button 
+          width="100%"
+            onClick={() => handleOAuthLogin('github', 'login')}
+            className="w-full"
+          >
+            {loading === 'github' ? 'Redirecting...' : 'Sign in with GitHub'}
+          </Button>
+        </div>
             <button
               type="submit"
               className="rounded-lg  gap-4 py-3 px-7 bg-black-gradient bg-shadow text-white font-semibold text-[18px] tracking-widest"
             >
-              {loading ? (
+              {apiLoading ? (
                 <p className={`flex items-center justify-center gap-3`}>
                   <FaSpinner className="animate-spin" />
                   Login

@@ -10,15 +10,16 @@ interface ModalProps {
 const Modal = ({show, image, setShow, name} : ModalProps) => {
   return (
     <>
- 
-         <div className={`flex flex-col z-20 transition-all duration-500 ease-in-out h-full gap-3 ss:gap-6 ${show ? 'w-full bg-black/90 opacity-100' : 'w-0 bg-black/0 opacity-0'} py-5 px-5 justify-center flex-1 items-center fixed top-0`}>
+        {show && (
+          <div className={`flex z-50 transition-all w-full max-w-lg duration-500 ease-in-out h-full gap-3 py-5 px-5 justify-center items-center fixed inset-0`}>
          <div className="flex flex-col w-full items-end cursor-pointer justify-end">
          <IoMdClose className="text-[35px] text-white" onClick={() => setShow(false)}/>
          </div>
-         <div className="flex w-full ss:w-[800px] h-full py-5 px-2 flex-col items-center">
-        <img className="object-contain h-[500px] text-white ss:w-[580px] w-full" src={image} alt={name} />
+         <div className="flex w-full py-5 px-2 flex-col items-center">
+        <img className="object-contain text-white" src={image} alt={name} />
          </div>
      </div>
+        )}
     </>  
   )
 }
