@@ -6,15 +6,13 @@ import Button from "./ui/Button";
 import { useState } from "react";
 
 const Login = () => {
-  const searchParams = new URLSearchParams(window.location.search)
-  const oAuthError = searchParams.get('error')
-
-  if (oAuthError) {
-    <MessageCenter error={oAuthError} />
-  }
+  const searchParams = new URLSearchParams(window.location.search);
+  const oAuthError = searchParams.get('error');
+  const oAuthSuccess = searchParams.get('success');
+  // const registered = searchParams.get('registered');
   
-  const {handleSubmit, success, error, submission, register, errors, password, setPassword, loading: apiLoading} = LoginValidator()
-    const [loading, setLoading] = useState<string | null>(null);
+  const {handleSubmit, success, error, submission, register, errors, password, setPassword, loading: apiLoading} = LoginValidator();
+  const [loading, setLoading] = useState<string | null>(null);
  
   const handleOAuthLogin = (provider: string, intent = 'login') => {
     setLoading(provider);
@@ -27,11 +25,15 @@ const Login = () => {
     
     window.location.href = `https://ecommerce-9wqc.onrender.com/api/users/auth/${provider}?state=${state}`;
   };
+
+  // Determine what message to show
+  const displaySuccess = oAuthSuccess || success;
+  const displayError = oAuthError || error;
  
   return (
     <>
       <div className="w-full relative flex justify-center items-center">
-        <MessageCenter success={success} error={error}/>
+        <MessageCenter success={displaySuccess} error={displayError}/>
         <form
           className="xs:w-[500px] w-full px-5"
           onSubmit={handleSubmit(submission)}
@@ -86,21 +88,21 @@ const Login = () => {
               )}
             </div>
             <div className="space-y-2 w-full">
-          <Button 
-          width="100%"
-            onClick={() => handleOAuthLogin('google', 'login')}
-            className="w-full"
-          >
-            {loading === 'google' ? 'Redirecting...' : 'Sign in with Google'}
-          </Button>
-          <Button 
-          width="100%"
-            onClick={() => handleOAuthLogin('github', 'login')}
-            className="w-full"
-          >
-            {loading === 'github' ? 'Redirecting...' : 'Sign in with GitHub'}
-          </Button>
-        </div>
+              <Button 
+                width="100%"
+                onClick={() => handleOAuthLogin('google', 'login')}
+                className="w-full"
+              >
+                {loading === 'google' ? 'Redirecting...' : 'Sign in with Google'}
+              </Button>
+              <Button 
+                width="100%"
+                onClick={() => handleOAuthLogin('github', 'login')}
+                className="w-full"
+              >
+                {loading === 'github' ? 'Redirecting...' : 'Sign in with GitHub'}
+              </Button>
+            </div>
             <button
               type="submit"
               className="rounded-lg  gap-4 py-3 px-7 bg-black-gradient bg-shadow text-white font-semibold text-[18px] tracking-widest"
@@ -114,7 +116,7 @@ const Login = () => {
                 <p>Login</p>
               )}
             </button>
-        <Question type="login"/>
+            <Question type="login"/>
           </div>
         </form>
       </div>

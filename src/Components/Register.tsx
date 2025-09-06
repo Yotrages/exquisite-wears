@@ -17,16 +17,17 @@ const Register = () => {
     register,
     setPassword,
   } = RegisterValidator();
-   const [loading, setLoading] = useState<string | null>(null);
- 
-    const searchParams = new URLSearchParams(window.location.search)
-  const oAuthError = searchParams.get('error')
+  
+  const [loading, setLoading] = useState<string | null>(null);
+  
+  const searchParams = new URLSearchParams(window.location.search);
+  const oAuthError = searchParams.get('error');
+  const suggest = searchParams.get('suggest');
 
-  if (oAuthError) {
-    <MessageCenter error={oAuthError} />
-  }
-
-  const handleOAuthLogin = (provider: string, intent = 'login') => {
+  // Determine what message to show
+  const displayError = oAuthError || error;
+  
+  const handleOAuthLogin = (provider: string, intent = 'register') => {
     setLoading(provider);
     
     const state = btoa(JSON.stringify({ 
@@ -40,7 +41,14 @@ const Register = () => {
 
   return (
     <div className="w-full relative flex justify-center items-center">
-      <MessageCenter success={success} error={error} />
+      <MessageCenter success={success} error={displayError} />
+      {/* Show suggestion to login if user already exists */}
+      {suggest === 'login' && (
+        <div className="mb-4 p-3 bg-blue-100 border border-blue-400 text-blue-700 rounded">
+          It looks like you already have an account. <a href="/login" className="underline font-semibold">Click here to login instead</a>.
+        </div>
+      )}
+      
       <form
         className="xs:w-[500px] w-full px-5"
         onSubmit={handleSubmit(submission)}
@@ -107,24 +115,25 @@ const Register = () => {
               <p className="text-red-600">{errors.password.message}</p>
             )}
           </div>
-          <div className="space-y-2 w-full ">
-          <Button 
-          width="100%"
-            onClick={() => handleOAuthLogin('google', 'register')}
-            className="w-full"
-            variant="filled"
-          >
-            {loading === 'google' ? 'Redirecting...' : 'Sign up with Google'}
-          </Button>
-          <Button 
-          width="100%"
-            onClick={() => handleOAuthLogin('github', 'register')}
-            className="w-full"
-            variant="filled"
-          >
-            {loading === 'github' ? 'Redirecting...' : 'Sign up with GitHub'}
-          </Button>
-        </div>
+          
+          <div className="space-y-2 w-full">
+            <Button 
+              width="100%"
+              onClick={() => handleOAuthLogin('google', 'register')}
+              className="w-full"
+              variant="filled"
+            >
+              {loading === 'google' ? 'Redirecting...' : 'Sign up with Google'}
+            </Button>
+            <Button 
+              width="100%"
+              onClick={() => handleOAuthLogin('github', 'register')}
+              className="w-full"
+              variant="filled"
+            >
+              {loading === 'github' ? 'Redirecting...' : 'Sign up with GitHub'}
+            </Button>
+          </div>
 
           {/* Submit Button */}
           <button
@@ -147,4 +156,4 @@ const Register = () => {
   );
 };
 
-export default Register
+export default Register;
