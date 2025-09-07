@@ -37,7 +37,7 @@ const useProductValidator = () => {
     const [error, setError] = useState<null | string>(null)
   useEffect(() => {
     getProducts(currentPage)
-  }, [currentPage]);
+  }, [currentPage, navigator.onLine]);
 
   const getProducts = async (page: number): Promise<void> => {
     try {
@@ -52,7 +52,6 @@ const useProductValidator = () => {
       console.error("Error fetching products:", error);
     }
   };
-  
 
 
   const deletePost = async (id: string) => {
