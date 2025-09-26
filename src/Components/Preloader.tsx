@@ -1,23 +1,21 @@
 import { useState, useEffect } from "react";
-import { useLocation } from 'react-router-dom'; // Detects route changes
+import { useLocation } from 'react-router-dom'; 
 
 const Preloader = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const location = useLocation(); // Tracks URL changes
+  const location = useLocation(); 
   const [bg, setBg] = useState('border-primary')
 
   useEffect(() => {
-    // When location (page) changes, show preloader
     setIsLoading(true);
     setBg("border-green-500");
 
-    // Hide preloader after a short delay (simulating content loading)
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 2000); // Adjust delay as needed
+    }, 2000); 
 
-    return () => clearTimeout(timer); // Cleanup timer on unmount
-  }, [location]); // Runs every time the URL changes
+    return () => clearTimeout(timer); 
+  }, [location]); 
 
   return (
     <div className={`flex bg-white fixed top-0 bottom-0 left-0 right-0 items-center justify-center min-h-screen ${

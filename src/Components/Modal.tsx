@@ -19,7 +19,7 @@ const Modal = ({show, image, setShow, name} : ModalProps) => {
   return (
     <div 
       className={`
-        fixed inset-0 z-50 flex items-center justify-center p-4
+        fixed inset-0 py-3 z-50 flex items-center justify-center p-4
         bg-black/70 backdrop-blur-sm
         transition-all duration-300 ease-out
         ${show ? 'opacity-100 visible' : 'opacity-0 invisible'}

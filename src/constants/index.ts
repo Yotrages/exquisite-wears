@@ -1,7 +1,6 @@
 import { NavigateFunction } from "react-router-dom";
 
 export const steps = [
-  // Array of steps with sub-step descriptions
   [
     { label: "Enter your name", placeholder: "Name", type: 'text' },
     { label: "Enter your email", placeholder: "Email", type: 'email' },

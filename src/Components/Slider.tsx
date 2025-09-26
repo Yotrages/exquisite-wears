@@ -37,26 +37,22 @@ const WatchSlider = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
-  // Modal states
   const [show, setShow] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string>("");
   const [selectedName, setSelectedName] = useState<string>("");
 
-  // Auth states
   const token = localStorage.getItem("admin");
   const notAdmin = "true";
 
-  // Responsive card width calculation
   const getCardWidth = () => {
     if (typeof window === 'undefined') return 320;
-    if (window.innerWidth < 640) return 288; // sm: w-72 = 288px
-    if (window.innerWidth < 1024) return 320; // md: w-80 = 320px
-    return 336; // lg: w-84 = 336px
+    if (window.innerWidth < 640) return 288; 
+    if (window.innerWidth < 1024) return 320;
+    return 336; 
   };
 
   const [cardWidth, setCardWidth] = useState(getCardWidth);
 
-  // Handle window resize
   useEffect(() => {
     const handleResize = () => {
       setCardWidth(getCardWidth());
@@ -66,7 +62,6 @@ const WatchSlider = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Fetch products
   useEffect(() => {
     const getProducts = async () => {
       try {
@@ -87,7 +82,6 @@ const WatchSlider = () => {
     getProducts();
   }, [navigator.onLine]);
 
-  // Auto-scroll functionality with responsive consideration
   useEffect(() => {
     if (!isPaused && !isLoading && products.length > 0) {
       const interval = setInterval(() => {
@@ -98,7 +92,6 @@ const WatchSlider = () => {
     }
   }, [isPaused, isLoading, products.length]);
 
-  // Scroll to specific slide
   useEffect(() => {
     if (sliderRef.current) {
       const scrollLeft = currentSlide * cardWidth;
@@ -124,10 +117,8 @@ const WatchSlider = () => {
   const SliderCard = ({ item, index }: { item: Product, index: number }) => (
     <div className="flex-shrink-0 w-72 sm:w-80 lg:w-84 group">
       <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl p-4 sm:p-6 mx-2 sm:mx-4 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:scale-105 border border-amber-100 relative overflow-hidden">
-        {/* Luxury shimmer effect */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
         
-        {/* Premium badges */}
         {index < 3 && (
           <div className="absolute -top-3 -right-3 z-10">
             <div className={`
@@ -141,7 +132,6 @@ const WatchSlider = () => {
           </div>
         )}
         
-        {/* Product Image */}
         <div onClick={() => setShow(true)} className="relative overflow-hidden rounded-xl mb-4 sm:mb-6 bg-gradient-to-br from-gray-50 to-gray-100">
           <img
             className="w-full h-48 sm:h-56 object-cover cursor-pointer transition-all duration-700 group-hover:scale-110"
@@ -154,7 +144,6 @@ const WatchSlider = () => {
             }}
           />
           
-          {/* Overlay with zoom icon */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
             <div className="bg-white/90 backdrop-blur-sm rounded-full p-3 transform scale-0 group-hover:scale-100 transition-transform duration-300">
               <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -164,19 +153,15 @@ const WatchSlider = () => {
           </div>
         </div>
 
-        {/* Product Info */}
         <div className="space-y-3 sm:space-y-4">
-          {/* Watch name */}
           <h3 className="text-lg sm:text-xl font-bold text-gray-800 leading-tight line-clamp-2 group-hover:text-amber-700 transition-colors duration-300">
             {item.name}
           </h3>
           
-          {/* Description */}
           <p className="text-sm text-gray-600 leading-relaxed truncate">
             {item.description}
           </p>
           
-          {/* Price and rating section */}
           <div className="flex items-center justify-between py-2">
             <div>
               <p className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-amber-600 to-yellow-600 bg-clip-text text-transparent">
@@ -195,13 +180,11 @@ const WatchSlider = () => {
             </div>
           </div>
 
-          {/* Features */}
           <div className="flex flex-wrap gap-2 py-1 sm:py-2">
             <span className="px-2 py-1 bg-amber-50 text-amber-700 text-xs rounded-full border border-amber-200">Water Resistant</span>
             <span className="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded-full border border-blue-200">Sapphire Glass</span>
           </div>
 
-          {/* WhatsApp CTA Button - Fixed spacing */}
           <div className="pt-2 sm:pt-3">
             <Button
               onSmash={() => {
@@ -215,7 +198,6 @@ const WatchSlider = () => {
             />
           </div>
 
-          {/* Admin Controls */}
           {token === notAdmin && (
             <div className="flex gap-2 pt-3 border-t border-gray-100">
               <button
@@ -257,13 +239,11 @@ const WatchSlider = () => {
         </p>
       </div>
 
-      {/* Main Slider Section */}
       <div 
         className="relative"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
       >
-        {/* Navigation Buttons */}
         <button
           onClick={prevSlide}
           disabled={isLoading}
@@ -284,7 +264,6 @@ const WatchSlider = () => {
           </svg>
         </button>
 
-        {/* Slider Container */}
         <div className="relative overflow-hidden">
           <div 
             ref={sliderRef}
@@ -305,7 +284,6 @@ const WatchSlider = () => {
           </div>
         </div>
 
-        {/* Dots Indicator */}
         {!isLoading && products.length > 1 && (
           <div className="flex justify-center mt-6 sm:mt-8 gap-2 sm:gap-3 px-4">
             {Array(Math.max(1, products.length - (window.innerWidth < 640 ? 0 : window.innerWidth < 1024 ? 1 : 2)))
@@ -324,7 +302,6 @@ const WatchSlider = () => {
           </div>
         )}
 
-        {/* Play/Pause indicator */}
         <div className="flex justify-center mt-4">
           <div className={`text-sm text-gray-500 transition-opacity duration-300 ${isPaused ? 'opacity-100' : 'opacity-50'}`}>
             {isPaused ? '⏸️ Paused' : '▶️ Auto-playing'}
@@ -332,7 +309,6 @@ const WatchSlider = () => {
         </div>
       </div>
 
-      {/* Bottom decoration */}
       <div className="flex justify-center mt-12 sm:mt-16">
         <div className="flex items-center gap-4 text-amber-600">
           <div className="w-8 sm:w-12 h-px bg-gradient-to-r from-transparent to-amber-600"></div>

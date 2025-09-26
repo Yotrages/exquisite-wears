@@ -9,7 +9,6 @@ const Login = () => {
   const searchParams = new URLSearchParams(window.location.search);
   const oAuthError = searchParams.get('error');
   const oAuthSuccess = searchParams.get('success');
-  // const registered = searchParams.get('registered');
   
   const {handleSubmit, success, error, submission, register, errors, password, setPassword, loading: apiLoading} = LoginValidator();
   const [loading, setLoading] = useState<string | null>(null);
@@ -26,7 +25,6 @@ const Login = () => {
     window.location.href = `https://ecommerce-9wqc.onrender.com/api/users/auth/${provider}?state=${state}`;
   };
 
-  // Determine what message to show
   const displaySuccess = oAuthSuccess || success;
   const displayError = oAuthError || error;
  

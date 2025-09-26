@@ -4,7 +4,7 @@ import { steps } from "../constants";
 const Pagination = () => {
   const [currentStep, setCurrentStep] = useState(0); // Current main step
   const [currentSubStep, setCurrentSubStep] = useState(0); // Current sub-step
-  const totalSubSteps = 3; // Total sub-steps per step
+  const totalSubSteps = 3; 
 
   const nextSubStep = () => {
     if (currentSubStep < totalSubSteps - 1) {
@@ -46,7 +46,6 @@ const Pagination = () => {
 
   return (
     <div className="max-w-lg mx-auto p-6">
-      {/* Step Indicators */}
       <div className="flex justify-between items-center mb-8">
         {steps.map((_, index) => (
           <div key={index} className={getStepStyle(index)}>
@@ -55,7 +54,6 @@ const Pagination = () => {
         ))}
       </div>
 
-      {/* Form */}
       <div className="border p-6 rounded-lg shadow-md bg-white">
         <label className="block text-lg font-semibold text-gray-700 mb-2">
           {steps[currentStep][currentSubStep].label}
@@ -67,7 +65,6 @@ const Pagination = () => {
         />
       </div>
 
-      {/* Navigation Buttons */}
       <div className="flex justify-between mt-6">
         <button
           onClick={prevSubStep}

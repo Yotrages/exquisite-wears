@@ -75,7 +75,6 @@ const Admin = ({ type }: { type: string }) => {
                 className="absolute w-full h-full opacity-0 cursor-pointer"
                 onChange={(e) => {
                   handleImageChange(e);
-                  // Ensure the file is registered in the form
                   register("image").onChange(e);
                 }}
               />

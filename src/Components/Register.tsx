@@ -24,7 +24,6 @@ const Register = () => {
   const oAuthError = searchParams.get('error');
   const suggest = searchParams.get('suggest');
 
-  // Determine what message to show
   const displayError = oAuthError || error;
   
   const handleOAuthLogin = (provider: string, intent = 'register') => {

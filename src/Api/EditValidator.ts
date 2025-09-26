@@ -97,17 +97,17 @@ const EditValidator = () => {
     
       useEffect(() => {
         const getProducts = async () => {
-          if (!id) return; // Ensure there's an ID before fetching
+          if (!id) return; 
           try {
             const res = await axios.get(`${URL}/products/get/${id}`);
-            const data = res.data.product; // Adjust according to your API response
+            const data = res.data.product; 
             console.log(data);
             setProducts(data);
             setValue("name", data.name);
             setValue("description", data.description);
             setValue("price", data.price);
             setValue("quantity", data.quantity);
-            setImagePreview(data.image); // Set preview image
+            setImagePreview(data.image); 
           } catch (error: any) {
             console.error(error);
           }

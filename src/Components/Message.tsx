@@ -11,7 +11,7 @@ export const MessageCenter = ({ error, success }: MessageProps) => {
   useEffect(() => {
     if (error || success) {
       setVisible(true);
-      const timer = setTimeout(() => setVisible(false), 5000); // Auto-dismiss after 5 seconds
+      const timer = setTimeout(() => setVisible(false), 5000); 
       return () => clearTimeout(timer);
     }
   }, [error, success]);

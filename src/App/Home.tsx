@@ -3,7 +3,6 @@ import Feeds from "../Components/Feeds";
 import Hero from "../Components/Hero";
 import Layout from "../Components/Layout";
 import WatchSlider from "../Components/Slider";
-// import Preloader from "../Components/Preloader";
 import Whatsapp from "../Components/Whatsapp";
 
 

@@ -18,7 +18,6 @@ const ConnectToBe = () => {
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false)
   const navigate = useNavigate()
-  // const token = localStorage.getItem("adminToken");
 
   const Notify = (items: Notifications) => {
     const sendNotification = async () => {
