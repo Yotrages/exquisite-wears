@@ -1,9 +1,12 @@
-import Contact from "../Components/Contact";
 import Feeds from "../Components/Feeds";
 import Hero from "../Components/Hero";
 import Layout from "../Components/Layout";
 import WatchSlider from "../Components/Slider";
-import Whatsapp from "../Components/Whatsapp";
+import RecommendedForYou from "../Components/RecommendedForYou";
+import TrendingProducts from "../Components/TrendingProducts";
+import Categories from "../Components/Categories";
+import RecentlyViewed from "../Components/RecentlyViewed";
+import FlashSales from "../Components/FlashSales";
 
 
 const Home = () => {
@@ -11,10 +14,13 @@ const Home = () => {
     <Layout>
       {/* <Preloader /> */}
       <Hero />
+      <FlashSales />
+      <Categories />
       <WatchSlider />
+      <TrendingProducts />
       <Feeds />
-      <Contact />
-      <Whatsapp />
+      <RecentlyViewed />
+      <RecommendedForYou />
     </Layout>
   )
 }

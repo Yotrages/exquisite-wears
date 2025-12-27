@@ -1,15 +1,13 @@
-import { MessageCenter } from './Message'
 import ForgotPasswordValidator from '../Api/ForgotPassword'
 import { FaEye, FaEyeSlash, FaSpinner } from 'react-icons/fa'
 
 const ChangePassword = () => {
 
-    const { success, error, errors, handleSubmit, ForgotPassword , register, loading, password, setPassword} = ForgotPasswordValidator()
+    const { errors, handleSubmit, ForgotPassword , register, loading, password, setPassword} = ForgotPasswordValidator()
   return (
-       <div className="w-full absolute justify-center items-center flex top-1/4">
-               <MessageCenter success={success} error={error}/>
+       <div className="w-full absolute justify-center items-center flex top-1/4 px-3 xs:px-4">
                <form
-                 className="xs:w-[500px] w-full px-5"
+                 className="w-full max-w-[500px] px-2 xs:px-3"
                  onSubmit={handleSubmit(ForgotPassword)}
                >
                  <div className="flex flex-col gap-8 px-2">
@@ -17,7 +15,7 @@ const ChangePassword = () => {
                      <label
                        htmlFor="email"
                        id="email"
-                       className="text-[18px] font-semibold"
+                       className="text-base sm:text-lg font-semibold"
                      >
                        Email
                      </label>
@@ -35,9 +33,9 @@ const ChangePassword = () => {
                    </div>
                    <div className="flex flex-col gap-4 items-start text-white text-base font-semibold">
                      <label
-                       htmlFor="new password"
-                       id="email"
-                       className="text-[18px] font-semibold"
+                       htmlFor="password"
+                       id="password"
+                       className="text-base sm:text-lg font-semibold"
                      >
                        new password
                      </label>
@@ -51,7 +49,7 @@ const ChangePassword = () => {
                          className="px-3 py-3 w-full focus:outline-none text-black rounded-lg"
                        />
                        <span
-                         className="absolute right-4 top-4 text-[22px] cursor-pointer rounded-full text-black"
+                         className="absolute right-3 top-3 text-lg sm:text-xl cursor-pointer rounded-full text-black"
                          onClick={() => setPassword((prev) => !prev)}
                        >
                          {password ? <FaEyeSlash /> : <FaEye />}

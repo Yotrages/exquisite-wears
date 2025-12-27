@@ -2,9 +2,10 @@ import { useState } from "react";
 import { Notifications, NotificationSchema } from "../Schema/Notification";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import axios from "axios";
-import { URL } from "./Endpoint";
+import apiClient from "./axiosConfig";
+import { NotificationResponse } from "./ApiResponses";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const ConnectToBe = () => {
   const {
@@ -23,29 +24,20 @@ const ConnectToBe = () => {
     const sendNotification = async () => {
       setLoading(true);
       try {
-        const res = await axios.post(`${URL}/subscribe/notify`, items, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const res = await apiClient.post<NotificationResponse>(`/subscribe/notify`, items);
         if (res.status === 200) {
           setLoading(false);
           setSuccess("All users are Notified successfully");
+          toast.success("Notification sent successfully");
           reset();
           await new Promise((resolve) => setTimeout(resolve, 3000));
           setShow(true)
         }
       } catch (error: any) {
-        console.error(error);
-        if (error.response) {
-          setError(error.response.data.message || error.response.data.error);
-        } else if (error.request) {
-          setError("Server not responding, check your connection");
-        } else {
-          setError("An unknown error occurred");
-        }
-        setTimeout(() => setError(""), 3000);
-        clearTimeout(3000);
+        const errorMsg = error.response?.data?.message || error.response?.data?.error || "Failed to send notification";
+        setError(errorMsg);
+        toast.error(errorMsg);
+        setTimeout(() => setError(""), 5000);
       } finally {
         setLoading(false);
       }

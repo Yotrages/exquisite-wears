@@ -1,16 +1,14 @@
 import { FaSpinner } from "react-icons/fa";
 import ConnectToBe from "../Api/NotificationValidator";
-import { MessageCenter } from "./Message";
 import Button from "./Button";
 
 const Notification = () => {
-  const { errors, error, Notify, handleSubmit, success, register, loading, navigate, show, setShow } = ConnectToBe()
+  const { errors, Notify, handleSubmit, register, loading, navigate, show, setShow } = ConnectToBe()
   return (
     <section className="pb-10 pt-7 md:pt-10 mt-20 w-full">
-      <MessageCenter error={error} success={success}/>
       <div
-          className={`bg-primary text-white fixed top-28 h-fit rounded-lg justify-center items-center z-10 transition-all duration-500 ease-in-out flex flex-col ${
-            show ? "w-[200px] opacity-100" : "w-0 opacity-0"
+          className={`bg-primary text-white fixed top-28 left-1/2 -translate-x-1/2 h-fit rounded-lg justify-center items-center z-10 transition-all duration-500 ease-in-out flex flex-col ${
+            show ? "w-[180px] xs:w-[200px] opacity-100" : "w-0 opacity-0"
           } py-2 px-3`}
         >
           <p className="text-lg font-poppins font-semibold text-center">do you want to notify about another product</p>
@@ -34,7 +32,7 @@ const Notification = () => {
       </h1>
       <form
         onSubmit={handleSubmit(Notify)}
-        className="flex items-center gap-8 flex-col w-full px-5 sm:w-3/6 qy:w-2/3 xl:w-2/5 m-auto"
+        className="flex items-center gap-8 flex-col w-full px-3 xs:px-5 sm:w-3/6 md:w-2/5 xl:w-2/5 m-auto"
       >
         <div className="flex flex-col w-full items-start gap-5">
           <label className="text-xl font-bold" htmlFor="subject" id="subject">

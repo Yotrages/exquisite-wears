@@ -11,6 +11,11 @@ import NotificationPage from "./NotificationPage";
 import AboutPage from "./AboutPage";
 import ForgotPassword from "./ForgotPassword";
 import SearchPage from "./SearchPage";
+import Orders from "./Orders";
+import OrderTracking from "./OrderTracking";
+import OrderSuccess from "./OrderSuccess";
+import Settings from "./Settings";
+import NotificationPreferences from "./NotificationPreferences";
 
 export {
   Home,
@@ -26,4 +31,9 @@ export {
   AboutPage,
   ForgotPassword,
   SearchPage,
+  Orders,
+  OrderTracking,
+  OrderSuccess,
+  Settings,
+  NotificationPreferences,
 };

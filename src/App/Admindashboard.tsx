@@ -1,11 +1,7 @@
-import Adminnav from "../Components/Adminnav";
+import AdminDashboard from "../Components/AdminDashboard";
 
 const Admindashboard = () => {
-  return (
-    <div>
-        <Adminnav />
-    </div>
-  )
-}
+  return <AdminDashboard />;
+};
 
 export default Admindashboard;

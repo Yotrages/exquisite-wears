@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { FaInstagram, FaPhoneAlt, FaSpinner, FaWhatsapp, FaTiktok } from "react-icons/fa";
+import { FaInstagram, FaPhoneAlt, FaSpinner, FaTiktok } from "react-icons/fa";
 import { FaLocationPin } from "react-icons/fa6";
 import { payments } from "../assets";
 import subscribeValidator from "../Api/SubscribeValidator";
@@ -12,7 +12,7 @@ const Footer = () => {
   return (
     <section className="mt-14 w-full py-4 bg-black">
         <MessageRight error={error} success={success}/>
-      <div className="bg-black text-white sm:flex-row-reverse flex-col w-[85%] gap-9 py-4 mx-auto flex justify-between">
+      <div className="bg-black text-white sm:flex-row-reverse flex-col w-[85%] gap-5 sm:gap-9 py-4 mx-auto flex justify-between">
         <div className="flex items-start flex-col gap-5">
           <h3 className="text-[18px] font-semibold font-poppins text-white">
             SIGN UP FOR DISCOUNTS & UPDATES
@@ -62,9 +62,6 @@ const Footer = () => {
           <div className="flex flex-col gap-3">
             <p className="text-white font-semibold font-poppins text-xl">Follow us on social media</p>
             <span className="flex items-center gap-4">
-              <Link className="text-[30px]" title="Whatsapp" to="https://wa.me/08145534450">
-                <FaWhatsapp />
-              </Link>
               <Link className="text-[30px]" title="Instagram" to="https://www.instagram.com/the_exquisite_wears?igsh=MWRheHhvMmhvMzh4Mw==">
                 <FaInstagram />
               </Link>

@@ -1,6 +1,5 @@
 import { FaEye, FaEyeSlash, FaSpinner } from "react-icons/fa";
 import Question from "./Question";
-import { MessageCenter } from "./Message";
 import RegisterValidator from "../Api/RegisterValidator";
 import Button from "./ui/Button";
 import { useState } from "react";
@@ -8,10 +7,8 @@ import { useState } from "react";
 const Register = () => {
   const {
     handleSubmit,
-    error,
     errors,
     submission,
-    success,
     loading: apiLoading,
     password,
     register,
@@ -21,10 +18,7 @@ const Register = () => {
   const [loading, setLoading] = useState<string | null>(null);
   
   const searchParams = new URLSearchParams(window.location.search);
-  const oAuthError = searchParams.get('error');
   const suggest = searchParams.get('suggest');
-
-  const displayError = oAuthError || error;
   
   const handleOAuthLogin = (provider: string, intent = 'register') => {
     setLoading(provider);
@@ -40,22 +34,20 @@ const Register = () => {
 
   return (
     <div className="w-full relative flex justify-center items-center">
-      <MessageCenter success={success} error={displayError} />
       {/* Show suggestion to login if user already exists */}
       {suggest === 'login' && (
         <div className="mb-4 p-3 bg-blue-100 border border-blue-400 text-blue-700 rounded">
           It looks like you already have an account. <a href="/login" className="underline font-semibold">Click here to login instead</a>.
         </div>
       )}
-      
       <form
-        className="xs:w-[500px] w-full px-5"
+        className="w-full max-w-[500px] px-2 xs:px-3"
         onSubmit={handleSubmit(submission)}
       >
         <div className="flex flex-col gap-4 px-2">
           {/* Email Input */}
           <div className="flex flex-col gap-4 items-start text-white text-base font-semibold">
-            <label htmlFor="email" className="text-[18px] font-semibold">
+            <label htmlFor="email" className="text-base sm:text-lg font-semibold">
               Email
             </label>
             <input
@@ -73,7 +65,7 @@ const Register = () => {
 
           {/* Username Input */}
           <div className="flex flex-col gap-4 items-start text-white text-base font-semibold">
-            <label htmlFor="name" className="text-[18px] font-semibold">
+            <label htmlFor="name" className="text-base sm:text-lg font-semibold">
               Username
             </label>
             <input
@@ -91,7 +83,7 @@ const Register = () => {
 
           {/* Password Input */}
           <div className="flex flex-col gap-4 items-start text-white text-base font-semibold">
-            <label htmlFor="password" className="text-[18px] font-semibold">
+            <label htmlFor="password" className="text-base sm:text-lg font-semibold">
               Password
             </label>
             <div className="relative w-full">

@@ -1,6 +1,8 @@
 import React, { Suspense, useState } from 'react'
 import Nav from './Nav'
 import Preloader from './Preloader'
+import BottomNavigation from './BottomNavigation'
+import Chatbot from './ChatBot'
 
 const Footer = React.lazy(() => import('./Footer'))
 const BackToTop = React.lazy(() => import('./Backtotop'))
@@ -11,7 +13,7 @@ const Layout = ({children} : LayoutProps) => {
 
   const [change, setChange] = useState(false)
   return (
-    <div>
+    <div className='w-full'>
       <Preloader />
         <Nav setChange={setChange} change={change} />
         <main className={`${change ? 'mt-4' : 'mt-16'}`}>
@@ -23,6 +25,8 @@ const Layout = ({children} : LayoutProps) => {
         <Suspense fallback={<div className='text-red-400 animate-bounce'>Loading...</div>}>
         <Footer />
         </Suspense>
+         <Chatbot />
+        <BottomNavigation />
     </div>
   )
 }

@@ -3,62 +3,111 @@ import { useNavigate } from "react-router-dom";
 import { LoginForm, loginSchema } from "../Schema/LoginSchema";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import axios from "axios";
-import { URL } from "./Endpoint";
+import { useDispatch } from "react-redux";
+import apiClient from "./axiosConfig";
+import { setAuthToken } from "../utils/cookieManager";
+import { loginSuccess } from "../redux/authSlice";
+import { LoginResponse } from "./ApiResponses";
+import toast from "react-hot-toast";
 
 const LoginValidator = () => {
-    const {
-        handleSubmit,
-        formState: { errors },
-        register,
-        reset,
-      } = useForm<LoginForm>({ resolver: zodResolver(loginSchema) });
-      const navigate = useNavigate();
-      const [error, setError] = useState<string | null>(null);
-      const [loading, setLoading] = useState(false);
-      const [success, setSuccess] = useState(String);
-      const [password, setPassword] = useState(false);
-    
-      const submission = (Logindata: LoginForm) => {
-        const loginUser = async () => {
-          setLoading(true);
-          try {
-            const res = await axios.post(`${URL}/users/login`, Logindata);
-            const data = res.data;
-            console.log(data);
-    
-            if (res.status === 200) {
-              localStorage.setItem("adminToken", data.token);
-              localStorage.setItem("userName", data.name);
-              localStorage.setItem("admin", data.isAdmin);
-              setLoading(false);
-              setSuccess("Login successful");
-              await new Promise((resolve) => setTimeout(resolve, 3000))
-              reset();
-              if (!data.isAdmin) {
-                navigate("/");
-              } else {
-                navigate("/admin");
-              }
-            }
-          } catch (error: any) {
-            console.error(error);
-            if (error.response) {
-              setError(error.response.data.message || error.response.data.error);
-            } else if (error.request) {
-              setError("No response from server, try checking your connection");
-            } else {
-              setError(error.message || "An error occured");
-            }
-            setLoading(false);
-            setTimeout(() => setError(""), 3000);
-            clearTimeout(3000);
+  const {
+    handleSubmit,
+    formState: { errors },
+    register,
+    reset,
+  } = useForm<LoginForm>({ resolver: zodResolver(loginSchema) });
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState("");
+  const [password, setPassword] = useState(false);
+
+  const submission = (Logindata: LoginForm) => {
+    const loginUser = async () => {
+      setLoading(true);
+      try {
+        const res = await apiClient.post<LoginResponse>(
+          `/users/login`,
+          Logindata
+        );
+        const data = res.data;
+        console.log("Login response:", data);
+
+        if (res.status === 200) {
+          // Store token in secure cookie instead of localStorage
+          setAuthToken(data.token);
+
+          // Dispatch Redux action to update auth state
+          dispatch(
+            loginSuccess({
+              token: data.token,
+              user: {
+                _id: data._id,
+                email: data.email,
+                name: data.name,
+                isAdmin: data.isAdmin,
+              },
+            })
+          );
+
+          setLoading(false);
+          setSuccess("Login successful");
+          toast.success("Login successful");
+
+          await new Promise((resolve) => setTimeout(resolve, 1500));
+          reset();
+
+          // Redirect based on user role
+          const redirectParam = new URLSearchParams(window.location.search).get(
+            "redirect"
+          );
+          if (redirectParam) {
+            navigate(redirectParam);
+          } else if (!data.isAdmin) {
+            navigate("/");
+          } else {
+            navigate("/admin");
           }
-        };
-        loginUser();
-      };
+        }
+      } catch (error: any) {
+        console.error("Login error:", error);
+        setLoading(false);
 
-      return { handleSubmit, error, errors, success, loading, setPassword, password, submission, register}
-}
+        if (error.response) {
+          const errorMsg =
+            error.response.data.message || error.response.data.error;
+          setError(errorMsg);
+          toast.error(errorMsg);
+        } else if (error.request) {
+          setError(
+            "No response from server, try checking your connection"
+          );
+          toast.error("Server not responding");
+        } else {
+          setError(error.message || "An unknown error occurred");
+          toast.error("Login failed");
+        }
 
-export default LoginValidator
+        setTimeout(() => setError(""), 5000);
+      }
+    };
+
+    loginUser();
+  };
+
+  return {
+    handleSubmit,
+    register,
+    errors,
+    submission,
+    error,
+    loading,
+    success,
+    password,
+    setPassword,
+  };
+};
+
+export default LoginValidator;

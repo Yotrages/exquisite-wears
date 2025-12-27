@@ -2,8 +2,9 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { SubSchema, SubscribeForm } from "../Schema/SubscribeSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
-import { URL } from "./Endpoint";
+import apiClient from "./axiosConfig";
+import { SubscribeResponse } from "./ApiResponses";
+import toast from "react-hot-toast";
 
 const subscribeValidator = () => {
   const [success, setSuccess] = useState("");
@@ -19,28 +20,22 @@ const subscribeValidator = () => {
     const subscription = async () => {
       setLoading(true);
       try {
-        const res = await axios.post(`${URL}/subscribe`, email);
-        console.log(res.data);
-
+        const res = await apiClient.post<SubscribeResponse>(`/subscribe`, email);
         if (res.status === 201) {
           setLoading(false);
           setSuccess("Subscription Successful");
+          toast.success("Subscribed successfully");
           reset();
           setTimeout(() => setSuccess(""), 3000);
         }
       } catch (error: any) {
-        console.error(error);
-        if (error.response) {
-          setError(error.response.data.message);
-        } else if (error.request) {
-          setError("Server not responding, check your connection");
-        } else {
-          setError("Something went wrong");
-        }
+        const errorMsg = error.response?.data?.message || "Failed to subscribe";
+        setError(errorMsg);
+        toast.error(errorMsg);
+        setTimeout(() => setError(""), 5000);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
-      setTimeout(() => setError(""), 3000);
-      clearTimeout(3000);
     };
     subscription();
   };

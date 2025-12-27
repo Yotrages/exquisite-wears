@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { postProduct, productSchema } from "../Schema/AdminSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import axios from "axios";
-import { URL } from "./Endpoint";
+import apiClient from "./axiosConfig";
+import { ProductCreateResponse } from "./ApiResponses";
+import toast from "react-hot-toast";
 
 const AdminValidator = () => {
   const [success, setSuccess] = useState("");
@@ -13,6 +15,8 @@ const AdminValidator = () => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [show, setShow] = useState(false)
   const navigate = useNavigate()
+  const authState = useSelector((state: any) => state.authSlice);
+  const token = authState?.token || null;
   
   const {
     handleSubmit,
@@ -35,32 +39,51 @@ const AdminValidator = () => {
 
   const products = (product: postProduct) => {
     const sendProduct = async () => {
+      if (!token) {
+        setError("You are not authenticated, please login");
+        toast.error("Please login to add products");
+        setTimeout(() => setError(""), 3000)
+        return;
+      }
+
       const formData = new FormData();
       formData.append("image", product.image[0]); 
       formData.append("name", product.name);
       formData.append("description", product.description);
       formData.append("price", product.price.toString());
       formData.append("quantity", product.quantity.toString());
-      console.log(product.image[0]);
-  
-      const token = localStorage.getItem("adminToken");
-      if (!token) {
-        setError("You are not authenticated, please login");
-        setTimeout(() => setError(""), 3000)
-        return;
+
+      if (product.originalPrice !== undefined && product.originalPrice !== null) {
+        formData.append("originalPrice", product.originalPrice.toString());
       }
-  
+
+      if (product.discount !== undefined && product.discount !== null) {
+        formData.append("discount", product.discount.toString());
+      }
+
+      if (product.brand) {
+        formData.append('brand', product.brand);
+      }
+
+      if (product.specifications) {
+        formData.append('specifications', typeof product.specifications === 'string' ? product.specifications : JSON.stringify(product.specifications));
+      }
+
+      if (product.seller) {
+        formData.append('seller', typeof product.seller === 'string' ? product.seller : JSON.stringify(product.seller));
+      }
+
       setLoading(true);
       try {
-        const res = await axios.post(`${URL}/products/post`, formData, {
+        const res = await apiClient.post<ProductCreateResponse>(`/products/post`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
           },
         });
         if (res.status === 201) {
           setLoading(false)
           setSuccess("Product posted successfully");
+          toast.success("Product posted successfully");
           setTimeout(() => setSuccess(''), 3000)
           reset();
           setShow(true)     
@@ -68,22 +91,16 @@ const AdminValidator = () => {
         }
       } catch (error: any) {
         console.error(error.message);
-        if (error.response) {
-          setError(error.response.data.message || 'Session timeout, login again')
-          if (error.response?.status === 400 || 403 || 401) {
-            setError('Session timeout, login again')
-            localStorage.removeItem('adminToken')
-            setTimeout(() => navigate('/login'), 3000)
-          }
+        const errorMsg = error.response?.data?.message || 'Failed to post product';
+        setError(errorMsg);
+        toast.error(errorMsg);
+        
+        if (error.response?.status === 401 || error.response?.status === 403) {
+          setTimeout(() => navigate('/login'), 2000)
         }
-          else if (error.request) {
-            setError(`Can't connect to the server, check your connection`)
-          } else {
-            setError('An unknown error occurred')
-          }
-          setTimeout(() => setError(""), 3000)
-          clearTimeout(3000)
-          setLoading(false)
+        
+        setTimeout(() => setError(""), 5000)
+        setLoading(false)
       }
     };
     sendProduct();

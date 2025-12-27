@@ -2,8 +2,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { ContactForm, contactSchema } from "../Schema/ContactSchema";
 import { useState } from "react";
-import axios from "axios";
-import { URL } from "./Endpoint";
+import apiClient from "./axiosConfig";
+import { ContactResponse } from "./ApiResponses";
+import toast from "react-hot-toast";
 
 const ContactValidator = () => {
     const {
@@ -20,34 +21,21 @@ const ContactValidator = () => {
         const loginUser = async () => {
           setLoading(true);
           try {
-            console.log("Sending data:", Contactdata);
-            const res = await axios.post(`${URL}/contact`, Contactdata, {
-              headers: {
-                "Content-Type": "application/json"
-              }
-            });
+            const res = await apiClient.post<ContactResponse>(`/contact`, Contactdata);
     
             if (res.status === 200) {
-              console.log("Response:", res);
               setLoading(false);
               setSucess("Message delivered successfully");
+              toast.success("Message sent successfully");
               reset();
-             setTimeout(() => setSucess(""), 3000)
-            } else {
-              setLoading(false)
+              setTimeout(() => setSucess(""), 3000)
             }
           } catch (error: any) {
-            console.error("Error details:", error);
-            if (error.response) {
-              setError(error.response.data.message || error.response.data.error);
-            } else if (error.request) {
-              setError("No response from server, check your connection and try again");
-            } else {
-              setError(error.message || "An error occurred");
-            }
+            const errorMsg = error.response?.data?.message || error.response?.data?.error || "Failed to send message";
+            setError(errorMsg);
+            toast.error(errorMsg);
             setLoading(false);
-            setTimeout(() => setError(""), 3000)
-            clearTimeout(3000)
+            setTimeout(() => setError(""), 5000)
           }
         };
         loginUser();

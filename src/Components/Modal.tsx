@@ -1,13 +1,19 @@
 import { IoMdClose } from "react-icons/io"
 
+import ProductImageGallery from './ProductImageGallery'
+
 interface ModalProps {
-    image: string | undefined
+    images?: string[]
+    image?: string | undefined
     show: boolean
     name: string | undefined
+    productId?: string
+    productRating?: number
+    totalReviews?: number
     setShow: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const Modal = ({show, image, setShow, name} : ModalProps) => {
+const Modal = ({show, images = [], image, setShow, name, productId, productRating = 0, totalReviews = 0} : ModalProps) => {
   if (!show) return null;
 
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -28,6 +34,9 @@ const Modal = ({show, image, setShow, name} : ModalProps) => {
     >
       {/* Modal Container */}
       <div 
+        data-product-id={productId}
+        data-product-rating={productRating}
+        data-total-reviews={totalReviews}
         className={`
           relative w-full max-w-2xl mx-auto
           bg-gradient-to-br from-white via-gray-50 to-amber-50
@@ -63,57 +72,33 @@ const Modal = ({show, image, setShow, name} : ModalProps) => {
           </button>
         </div>
 
-        {/* Content */}
-        <div className="p-6">
-          {/* Image Container */}
-          <div className="relative group">
-            {/* Decorative border */}
-            <div className="absolute -inset-2 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 rounded-xl blur opacity-20 group-hover:opacity-30 transition-opacity duration-300"></div>
-            
-            {/* Main Image */}
-            <div className="relative bg-white rounded-xl p-4 shadow-lg border border-amber-100">
+        {/* Content (Image or Gallery quick view) */}
+        <div className="p-6 flex items-center justify-center">
+          <div className="relative bg-white rounded-xl p-4 shadow-lg border border-amber-100 max-w-full w-full">
+            {images && images.length > 0 ? (
+              <ProductImageGallery images={images} productName={name || 'Product'} />
+            ) : (
               <img 
-                className="
-                  w-full h-auto max-h-96 object-contain 
-                  rounded-lg transition-transform duration-500 
-                  group-hover:scale-105
-                " 
-                src={image} 
+                className="w-full h-auto max-h-[80vh] object-contain rounded-lg"
+                src={image}
                 alt={name || 'Product image'}
                 loading="lazy"
               />
-              
-              {/* Overlay gradient for premium feel */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/5 via-transparent to-transparent rounded-lg pointer-events-none"></div>
-            </div>
-            
-            {/* Premium badge */}
-            <div className="absolute -top-3 -right-3 bg-gradient-to-r from-amber-500 to-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
-              ⌚ Premium
-            </div>
-          </div>
-
-          {/* Product Info */}
-          <div className="mt-6 space-y-4">
-            {/* Product Name */}
-            <div className="text-center">
-              <h3 className="text-2xl font-bold text-gray-800 mb-2">
-                {name || 'Luxury Timepiece'}
-              </h3>
-             
-            </div>
-
-            {/* Features */}
-            
+            )}
           </div>
         </div>
 
         {/* Footer */}
         <div className="px-6 py-4 bg-gradient-to-r from-amber-50 to-yellow-50 border-t border-amber-100/50">
-          <div className="flex items-center justify-center gap-2 text-amber-700">
-            <span className="text-sm">Tap outside or press</span>
-            <kbd className="px-2 py-1 text-xs font-semibold bg-white rounded border border-amber-200">ESC</kbd>
-            <span className="text-sm">to close</span>
+          <div className="flex items-center justify-between gap-2 text-amber-700">
+            <div className="flex items-center gap-2">
+              <span className="text-sm">Tap outside or press</span>
+              <kbd className="px-2 py-1 text-xs font-semibold bg-white rounded border border-amber-200">ESC</kbd>
+              <span className="text-sm">to close</span>
+            </div>
+            <div className="text-sm text-amber-700">
+              {productRating ? `${productRating.toFixed(1)}★ • ${totalReviews ?? 0} reviews` : null}
+            </div>
           </div>
         </div>
       </div>

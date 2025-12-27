@@ -17,7 +17,7 @@ const Edit = () => {
   }, [notAdmin, Admin])
   return (
     <Layout>
-        <Editproduct type='Edit'/>
+        <Editproduct />
     </Layout>
   )
 }

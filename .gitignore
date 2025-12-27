@@ -12,7 +12,6 @@ dist
 dist-ssr
 *.local
 /src/Components/tests
-/src/redux
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -23,4 +22,5 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-src/Types/types.ts
+
+.env

@@ -1,18 +1,16 @@
 import { FaSpinner} from "react-icons/fa";
 import { contact } from "../assets";
-import { MessageCenter } from "./Message";
 import ContactValidator from "../Api/ContactValidator";
 
 const Contact = () => {
   
-  const { handleSubmit, success, error, errors, register, submission, loading } = ContactValidator()
+  const { handleSubmit, errors, register, submission, loading } = ContactValidator()
 
   return (
-    <div className="w-full justify-between items-center xs:px-10 xl:px-28 gap-20 flex-col sm:flex-row flex py-10">
-        <MessageCenter success={success} error={error}/>
-     <div className="sm:w-1/2"><img src={contact} className="w-fit" alt="" /></div>
+    <div className="w-full justify-between items-center px-3 xs:px-5 sm:px-8 xl:px-28 gap-5 sm:gap-10 md:gap-20 flex-col sm:flex-row flex py-10">
+     <div className="w-full sm:w-1/2"><img src={contact} className="w-full max-w-sm mx-auto" alt="Contact" /></div>
       <form
-        className="w-full px-5 qy:w-1/2 qy:px-0"
+        className="w-full sm:w-1/2 px-2 xs:px-3 sm:px-0"
         onSubmit={handleSubmit(submission)}
       >
         <div className="flex flex-col gap-8 px-2">
@@ -20,7 +18,7 @@ const Contact = () => {
             <label
               htmlFor="email"
               id="email"
-              className="text-[18px] font-semibold"
+              className="text-base sm:text-lg font-semibold"
             >
               Email
             </label>
@@ -40,7 +38,7 @@ const Contact = () => {
             <label
               htmlFor="name"
               id="name"
-              className="text-[18px] font-semibold"
+              className="text-base sm:text-lg font-semibold"
             >
               Username
             </label>
@@ -58,9 +56,9 @@ const Contact = () => {
           </div>
           <div className="flex flex-col gap-4 items-start text-black text-base font-semibold">
             <label
-              htmlFor="password"
-              id="email"
-              className="text-[18px] font-semibold"
+              htmlFor="subject"
+              id="subject"
+              className="text-base sm:text-lg font-semibold"
             >
               Subject
             </label>
@@ -78,9 +76,9 @@ const Contact = () => {
           </div>
           <div className="flex flex-col gap-4 items-start text-black text-base font-semibold">
             <label
-              htmlFor="password"
-              id="email"
-              className="text-[18px] font-semibold"
+              htmlFor="message"
+              id="message"
+              className="text-base sm:text-lg font-semibold"
             >
               Message
             </label>
@@ -97,7 +95,7 @@ const Contact = () => {
           </div>
           <button
             type="submit"
-            className="rounded-lg  gap-4 py-3 px-7 bg-black-gradient bg-shadow text-white font-semibold text-[18px] tracking-widest"
+            className="rounded-lg gap-4 py-2 px-4 sm:py-3 sm:px-7 bg-black-gradient bg-shadow text-white font-semibold text-sm sm:text-base tracking-widest"
           >
             {loading ? (
               <p className="flex items-center justify-center gap-3">

@@ -25,8 +25,8 @@ const Backtotop = () => {
   }, [])
     
     return (
-        <button className={`${isVisible ? 'flex' : 'hidden'} items-center justify-center rounded-full fixed bottom-2 bg-[#001F3F] size-10 right-5`} onClick={goToTop}>
-            <FaArrowUp className="text-white text-[25px]"/>
+        <button className={`${isVisible ? 'flex' : 'hidden'} items-center justify-center rounded-full fixed bottom-20 md:bottom-4 right-4 xs:right-5 bg-[#001F3F] w-10 h-10 text-white hover:scale-110 transition-transform`} onClick={goToTop}>
+            <FaArrowUp className="text-lg"/>
         </button>
     )
 }

@@ -2,15 +2,10 @@ import { Link } from "react-router-dom";
 import { bg4, social } from "../assets";
 import { FaArrowAltCircleRight, FaClock, FaGem } from "react-icons/fa";
 import { useState, useEffect } from "react";
-import axios from "axios";
-
-interface Product {
-  image: string;
-  quantity: string;
-}
+import { apiClient } from '../Api/axiosConfig';
+import { Product } from '../Types/Product'
 
 const Hero = () => {
-  const URL = "https://ecommerce-9wqc.onrender.com/api/products/get";
   const [products, setProducts] = useState<Product[]>([]);
   
 
@@ -20,7 +15,7 @@ const Hero = () => {
   useEffect(() => {
     const getProducts = async () => {
       try {
-        const res = await axios.get(URL);
+        const res = await apiClient.get('/products/get');
         const data: Product[] = res.data.products;
 
         setProducts(data);
@@ -111,7 +106,7 @@ const Hero = () => {
             <div className="flex flex-col sm:flex-row items-center gap-5">
               <Link
                 to={token === Admin ? '/admin' : user ? '#subscribe' : '/register'}
-                className="group relative inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 text-black rounded-lg shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-amber-500/25 w-fit font-semibold text-lg overflow-hidden"
+                className="group relative inline-flex items-center gap-3 px-4 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 text-black rounded-lg shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-amber-500/25 w-fit font-semibold sm:text-lg text-base overflow-hidden"
                 id="subscribe"
               >
                 {/* Button shine effect */}
@@ -124,7 +119,7 @@ const Hero = () => {
               
               {token === Admin && (
                 <Link 
-                  className="group inline-flex items-center gap-3 px-8 py-4 bg-white/10 backdrop-blur-sm text-white border border-white/20 rounded-lg shadow-lg transition-all duration-300 hover:bg-white/20 hover:scale-105 w-fit font-semibold text-lg"  
+                  className="group inline-flex items-center gap-3 px-4 sm:px-8 py-3 sm:py-4 bg-white/10 backdrop-blur-sm text-white border border-white/20 rounded-lg shadow-lg transition-all duration-300 hover:bg-white/20 hover:scale-105 w-fit font-semibold sm:text-lg text-base"  
                   to='/notification'
                 >
                   <button>
@@ -140,8 +135,8 @@ const Hero = () => {
           <div className="mt-10 md:mt-0 md:w-1/2 flex justify-center relative">
             {/* Decorative rings - contained within this section */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="w-96 h-96 border border-amber-400/20 rounded-full animate-spin-slow"></div>
-              <div className="absolute w-80 h-80 border border-yellow-300/10 rounded-full animate-pulse"></div>
+              <div className="w-64 sm:w-80 md:w-96 h-64 sm:h-80 md:h-96 border border-amber-400/20 rounded-full animate-spin-slow"></div>
+              <div className="absolute w-56 sm:w-72 md:w-80 h-56 sm:h-72 md:h-80 border border-yellow-300/10 rounded-full animate-pulse"></div>
             </div>
             
             {/* Product image with enhanced styling - proper containment */}

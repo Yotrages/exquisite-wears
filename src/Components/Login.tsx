@@ -1,16 +1,11 @@
 import { FaEye, FaSpinner, FaEyeSlash } from "react-icons/fa";
 import Question from "./Question";
-import { MessageCenter } from "./Message";
 import LoginValidator from "../Api/LoginValidator";
 import Button from "./ui/Button";
 import { useState } from "react";
 
 const Login = () => {
-  const searchParams = new URLSearchParams(window.location.search);
-  const oAuthError = searchParams.get('error');
-  const oAuthSuccess = searchParams.get('success');
-  
-  const {handleSubmit, success, error, submission, register, errors, password, setPassword, loading: apiLoading} = LoginValidator();
+  const {handleSubmit, submission, register, errors, password, setPassword, loading: apiLoading} = LoginValidator();
   const [loading, setLoading] = useState<string | null>(null);
  
   const handleOAuthLogin = (provider: string, intent = 'login') => {
@@ -24,16 +19,12 @@ const Login = () => {
     
     window.location.href = `https://ecommerce-9wqc.onrender.com/api/users/auth/${provider}?state=${state}`;
   };
-
-  const displaySuccess = oAuthSuccess || success;
-  const displayError = oAuthError || error;
  
   return (
     <>
-      <div className="w-full relative flex justify-center items-center">
-        <MessageCenter success={displaySuccess} error={displayError}/>
+      <div className="w-full relative flex justify-center items-center px-3 xs:px-4">
         <form
-          className="xs:w-[500px] w-full px-5"
+          className="w-full max-w-[500px] px-2 xs:px-3"
           onSubmit={handleSubmit(submission)}
         >
           <div className="flex flex-col gap-4 px-2">
@@ -41,7 +32,7 @@ const Login = () => {
               <label
                 htmlFor="email"
                 id="email"
-                className="text-[18px] font-semibold"
+                className="text-base sm:text-lg font-semibold"
               >
                 Email
               </label>
@@ -60,8 +51,8 @@ const Login = () => {
             <div className="flex flex-col gap-4 items-start text-white text-base font-semibold">
               <label
                 htmlFor="password"
-                id="email"
-                className="text-[18px] font-semibold"
+                id="password"
+                className="text-base sm:text-lg font-semibold"
               >
                 Password
               </label>
@@ -75,7 +66,7 @@ const Login = () => {
                   className="px-3 py-3 w-full focus:outline-none text-black rounded-lg"
                 />
                 <span
-                  className="absolute right-4 top-4 text-[22px] cursor-pointer rounded-full text-black"
+                  className="absolute right-3 top-3 text-lg sm:text-xl cursor-pointer rounded-full text-black"
                   onClick={() => setPassword((prev) => !prev)}
                 >
                   {password ? <FaEyeSlash /> : <FaEye />}
@@ -103,7 +94,7 @@ const Login = () => {
             </div>
             <button
               type="submit"
-              className="rounded-lg  gap-4 py-3 px-7 bg-black-gradient bg-shadow text-white font-semibold text-[18px] tracking-widest"
+              className="rounded-lg gap-4 py-2 px-4 sm:py-3 sm:px-7 bg-black-gradient bg-shadow text-white font-semibold text-sm sm:text-base tracking-widest"
             >
               {apiLoading ? (
                 <p className={`flex items-center justify-center gap-3`}>

@@ -1,17 +1,14 @@
 import { useState, useEffect, useRef } from "react";
-import axios from "axios";
+import { apiClient } from '../Api/axiosConfig';
 import Button from "./Button";
 import Modal from "./Modal";
 import useProductValidator from "../Api/ProductValidator";
-
-interface Product {
-  _id: string;
-  image: string;
-  name: string;
-  description: string;
-  price: number;
-  quantity: string;
-}
+import { useDispatch, useSelector } from 'react-redux'
+import toast from 'react-hot-toast'
+import { addItem } from '../redux/cartSlice'
+import { useNavigate } from 'react-router-dom'
+import { Product } from '../Types/Product'
+import { setCart } from '../redux/cartSlice'
 
 const SliderSkeletonCard = () => (
   <div className="flex-shrink-0 w-72 sm:w-80 lg:w-84">
@@ -29,7 +26,6 @@ const SliderSkeletonCard = () => (
 );
 
 const WatchSlider = () => {
-  const URL = "https://ecommerce-9wqc.onrender.com/api/products/get";
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   
@@ -39,10 +35,16 @@ const WatchSlider = () => {
 
   const [show, setShow] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string>("");
+  const [images, setImages] = useState<string[] | undefined>(undefined);
   const [selectedName, setSelectedName] = useState<string>("");
+  const [selectedProductId, setSelectedProductId] = useState<string>("");
+  const [selectedProductRating, setSelectedProductRating] = useState<number>(0);
+  const [selectedProductReviews, setSelectedProductReviews] = useState<number>(0);
 
-  const token = localStorage.getItem("admin");
-  const notAdmin = "true";
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const authState = useSelector((state: any) => state.authSlice);
+  const token = authState?.token || null;
 
   const getCardWidth = () => {
     if (typeof window === 'undefined') return 320;
@@ -66,7 +68,7 @@ const WatchSlider = () => {
     const getProducts = async () => {
       try {
         setIsLoading(true);
-        const res = await axios.get(URL);
+        const res = await apiClient.get('/products/get');
         const data: Product[] = res.data.products;
         setProducts(data);
         
@@ -112,7 +114,7 @@ const WatchSlider = () => {
     setCurrentSlide(prev => prev === 0 ? maxSlides - 1 : prev - 1);
   };
 
-  const {handleEdit, deletePost} = useProductValidator()
+  const {} = useProductValidator()
 
   const SliderCard = ({ item, index }: { item: Product, index: number }) => (
     <div className="flex-shrink-0 w-72 sm:w-80 lg:w-84 group">
@@ -139,8 +141,12 @@ const WatchSlider = () => {
             alt={item.name}
             onClick={() => {
               setShow(true);
-              setSelectedImage(item.image);
+              setImages(item?.images || (item?.image ? [item.image] : []));
+              setSelectedImage("");
               setSelectedName(item.name);
+              setSelectedProductId(item._id);
+              setSelectedProductRating(item.rating || 0);
+              setSelectedProductReviews(item.reviews || 0);
             }}
           />
           
@@ -185,35 +191,48 @@ const WatchSlider = () => {
             <span className="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded-full border border-blue-200">Sapphire Glass</span>
           </div>
 
-          <div className="pt-2 sm:pt-3">
+            <div className="pt-2 sm:pt-3 flex gap-2">
             <Button
-              onSmash={() => {
-                const message = `Hello! I'm interested in this luxury timepiece:\n\n⌚ *${item.name}*\n💰 Price: ${item.price?.toLocaleString("en-NG", { style: "currency", currency: "NGN" })}\n📸 Image: ${item.image}\n\nI'd like to know more about this watch's features and availability.`;
-                const whatsappUrl = `https://api.whatsapp.com/send?phone=08145534450&text=${encodeURIComponent(message)}`;
-                window.open(whatsappUrl, "_blank");
+              onSmash={async () => {
+                if (!token) {
+                  toast.error('Please log in first')
+                  navigate(`/login?redirect=/`)
+                  return
+                }
+
+                // optimistic
+                dispatch(addItem({ id: item._id, name: item.name, price: item.price, quantity: 1, image: item.image}))
+                try {
+                  const res = await apiClient.post('/cart/add', { productId: item._id, quantity: 1 })
+                  if (res.data && res.data.cart && res.data.cart.items) {
+                    const items = res.data.cart.items.map((it: any) => ({
+                      id: it.product._id || it.product,
+                      name: it.product.name,
+                      price: it.product.price,
+                      originalPrice: it.product.originalPrice,
+                      discount: it.product.discount,
+                      image: it.product.image,
+                      quantity: it.quantity,
+                      stock: it.product.quantity,
+                    }));
+                    dispatch(setCart({ items }));
+                  }
+                } catch (err) { 
+                  console.error(err);
+                }
               }}
-              styles="w-full rounded-xl text-white bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl text-center font-semibold py-3 sm:py-4 text-sm sm:text-base"
-              buttonText="💬 Inquire via WhatsApp"
+              styles="w-1/2 rounded-xl text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl text-center font-semibold py-3 sm:py-4 text-sm sm:text-base"
+              buttonText="Add to cart"
+              router=""
+            />
+
+            <Button
+              onSmash={() => navigate(`/product/${item._id}`)}
+              styles="w-1/2 rounded-xl border border-gray-200 text-gray-700 bg-white hover:bg-gray-50 text-center font-semibold py-3 sm:py-4 text-sm sm:text-base"
+              buttonText="View details"
               router=""
             />
           </div>
-
-          {token === notAdmin && (
-            <div className="flex gap-2 pt-3 border-t border-gray-100">
-              <button
-                onClick={() => handleEdit(item._id)}
-                className="flex-1 rounded-lg py-2 px-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold text-sm transition-all duration-300 hover:scale-105 shadow-md"
-              >
-                ✏️ Edit
-              </button>
-              <button
-                onClick={() => deletePost(item._id)}
-                className="flex-1 rounded-lg py-2 px-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold text-sm transition-all duration-300 hover:scale-105 shadow-md"
-              >
-                🗑️ Delete
-              </button>
-            </div>
-          )}
         </div>
       </div>
     </div>
@@ -221,7 +240,16 @@ const WatchSlider = () => {
 
   return (
     <section className="py-12 sm:py-20 bg-gradient-to-br from-gray-50 via-white to-amber-50 overflow-hidden">
-      <Modal name={selectedName} setShow={setShow} show={show} image={selectedImage} />
+      <Modal 
+        name={selectedName} 
+        setShow={setShow} 
+        show={show} 
+        image={selectedImage}
+        images={images}
+        productId={selectedProductId}
+        productRating={selectedProductRating}
+        totalReviews={selectedProductReviews}
+      />
 
       {/* Header Section */}
       <div className="text-center mb-12 sm:mb-16 px-4">

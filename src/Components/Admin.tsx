@@ -1,15 +1,12 @@
 import AdminValidator from "../Api/AdminValidator";
 import { FaSpinner } from "react-icons/fa";
-import { MessageCenter } from "./Message";
 import Button from "./Button";
 
 const Admin = ({ type }: { type: string }) => {
   const {
-    error,
     errors,
     handleImageChange,
     handleSubmit,
-    success,
     products,
     imagePreview,
     register,
@@ -21,10 +18,9 @@ const Admin = ({ type }: { type: string }) => {
 
   return (
     <div className="w-full flex flex-col justify-center items-center py-12 px-4">
-     <MessageCenter error={error} success={success}/>
      <div
-          className={`bg-primary text-white fixed top-28 h-fit rounded-lg justify-center items-center z-10 transition-all duration-500 ease-in-out flex flex-col ${
-            show ? "w-[200px] opacity-100" : "w-0 opacity-0"
+          className={`bg-primary text-white fixed top-28 left-1/2 -translate-x-1/2 h-fit rounded-lg justify-center items-center z-10 transition-all duration-500 ease-in-out flex flex-col ${
+            show ? "w-[180px] xs:w-[200px] opacity-100" : "w-0 opacity-0"
           } py-2 px-3`}
         >
           <p className="text-lg font-poppins font-semibold text-center">Do you want to continue posting</p>
@@ -47,17 +43,17 @@ const Admin = ({ type }: { type: string }) => {
         {type} post
       </h4>
       <form className="w-full" onSubmit={handleSubmit(products)}>
-        <div className="flex flex-col items-center gap-9 w-full qy:w-[500px] mt-9 sm:mt-20 px-3 mx-auto">
+        <div className="flex flex-col items-center gap-9 w-full max-w-[500px] mt-9 sm:mt-20 px-3 mx-auto">
           <div className="flex flex-col items-center w-full gap-3">
             <label
               htmlFor="image"
               id="image"
-              className="font-semibold text-[24px] orange_gradient"
+              className="font-semibold text-xl sm:text-2xl orange_gradient"
             >
               Image
             </label>
             <span className="relative flex rounded-lg">
-              <div className="qy:size-[350px] md:size-[400px] size-64 border-red-300 flex items-center justify-center bg-gray-200 rounded-lg">
+              <div className="w-64 h-64 sm:w-80 sm:h-80 md:w-[400px] md:h-[400px] border-red-300 flex items-center justify-center bg-gray-200 rounded-lg">
                 {imagePreview ? (
                   <img
                     src={imagePreview}
@@ -85,7 +81,7 @@ const Admin = ({ type }: { type: string }) => {
             <label
               htmlFor="name"
               id="product"
-              className="font-semibold text-[20px] orange_gradient"
+              className="font-semibold text-lg sm:text-xl orange_gradient"
             >
               Product name
             </label>
@@ -119,6 +115,25 @@ const Admin = ({ type }: { type: string }) => {
           </div>
           <div className="flex flex-col items-start w-full gap-2">
             <label
+              htmlFor="originalPrice"
+              id="originalPrice"
+              className="font-semibold text-[20px] orange_gradient"
+            >
+              Original Price (optional)
+            </label>
+            <input
+              type="number"
+              placeholder="Enter original price if applicable"
+              {...register("originalPrice", { valueAsNumber: true })}
+              className="w-full px-3 py-3 rounded-lg border border-[#ebebeb] bg-[#f2f2f2] focus:outline-red-300"
+            />
+            {errors.originalPrice && (
+              <p className="text-red-500">{errors.originalPrice.message}</p>
+            )}
+          </div>
+
+          <div className="flex flex-col items-start w-full gap-2">
+            <label
               htmlFor="price"
               id="price"
               className="font-semibold text-[20px] orange_gradient"
@@ -135,6 +150,79 @@ const Admin = ({ type }: { type: string }) => {
               <p className="text-red-500">{errors.price.message}</p>
             )}
           </div>
+
+          <div className="flex flex-col items-start w-full gap-2">
+            <label
+              htmlFor="discount"
+              id="discount"
+              className="font-semibold text-[20px] orange_gradient"
+            >
+              Discount (%)
+            </label>
+            <input
+              type="number"
+              placeholder="Enter discount percentage, e.g., 20"
+              {...register("discount", { valueAsNumber: true })}
+              className="w-full px-3 py-3 rounded-lg border border-[#ebebeb] bg-[#f2f2f2] focus:outline-red-300"
+            />
+            {errors.discount && (
+              <p className="text-red-500">{errors.discount.message}</p>
+            )}
+          </div>
+
+          <div className="flex flex-col items-start w-full gap-2">
+            <label
+              htmlFor="brand"
+              id="brand"
+              className="font-semibold text-[20px] orange_gradient"
+            >
+              Brand (optional)
+            </label>
+            <input
+              type="text"
+              placeholder="Enter brand"
+              {...register("brand")}
+              className="w-full px-3 py-3 rounded-lg border border-[#ebebeb] bg-[#f2f2f2] focus:outline-red-300"
+            />
+            {errors.brand && (
+              <p className="text-red-500">{errors.brand.message}</p>
+            )}
+          </div>
+
+          <div className="flex flex-col items-start w-full gap-2">
+            <label
+              htmlFor="specifications"
+              id="specifications"
+              className="font-semibold text-[20px] orange_gradient"
+            >
+              Specifications (JSON)
+            </label>
+            <textarea
+              placeholder='{"color":"black","size":"42mm"} - enter as JSON'
+              {...register("specifications")}
+              className="w-full px-3 py-3 rounded-lg border border-[#ebebeb] bg-[#f2f2f2] focus:outline-red-300 h-28"
+            />
+            {errors.specifications && errors.specifications.message && (
+              <p className="text-red-500">{String(errors.specifications.message)}</p>
+            )}
+          </div>
+
+          <div className="flex flex-col items-start w-full gap-2">
+            <label
+              htmlFor="seller"
+              id="seller"
+              className="font-semibold text-[20px] orange_gradient"
+            >
+              Seller name (optional)
+            </label>
+            <input
+              type="text"
+              placeholder="Enter seller name"
+              {...register("seller")}
+              className="w-full px-3 py-3 rounded-lg border border-[#ebebeb] bg-[#f2f2f2] focus:outline-red-300"
+            />
+          </div>
+
           <div className="flex flex-col items-start w-full gap-2">
             <label
               htmlFor="quantity"
