@@ -230,7 +230,7 @@ const WatchSlider = () => {
               onSmash={() => navigate(`/product/${item._id}`)}
               styles="w-1/2 rounded-xl border border-gray-200 text-gray-700 bg-white hover:bg-gray-50 text-center font-semibold py-3 sm:py-4 text-sm sm:text-base"
               buttonText="View details"
-              router=""
+              router={`/product/${item._id}`}
             />
           </div>
         </div>

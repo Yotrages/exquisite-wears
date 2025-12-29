@@ -137,7 +137,6 @@ const Feeds = () => {
 
   return (
     <section className="py-12 bg-gray-50">
-      <MessageRight success={success} error={error} />
       <Modal
         name={name}
         setShow={setShow}
@@ -209,7 +208,7 @@ const Feeds = () => {
                         onClick={() => {
                           setShow(true);
                           setImages(item?.images || (item?.image ? [item.image] : []));
-                          setImage(undefined);
+                          setImage(item?.image);
                           setName(item?.name);
                           setSelectedProductId(item?._id);
                           setSelectedProductRating(item?.rating || 0);

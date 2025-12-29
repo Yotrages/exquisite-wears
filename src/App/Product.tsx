@@ -72,7 +72,7 @@ export default function ProductDetailsPage() {
   const fetchRelatedProducts = async (productId: string) => {
     try {
       const { data } = await apiClient.get(`/products/${productId}/related`)
-      setRelatedProducts(data.slice(0, 6))
+      setRelatedProducts(Array.isArray(data) ? data.slice(0, 6) : [])
     } catch (error) {
       console.error('Error fetching related products:', error)
     }
@@ -81,7 +81,8 @@ export default function ProductDetailsPage() {
   const checkWishlistStatus = async (productId: string) => {
     try {
       const { data: wishlist } = await apiClient.get('/wishlist')
-      setIsInWishlist(wishlist.some((item: any) => item._id === productId))
+      const wishlistArray = Array.isArray(wishlist) ? wishlist : []
+      setIsInWishlist(wishlistArray.some((item: any) => item._id === productId))
     } catch (error) {
       console.error('Error checking wishlist:', error)
     }
