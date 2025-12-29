@@ -1,5 +1,4 @@
 import useProductValidator from "../Api/ProductValidator";
-import { MessageRight } from "./Message";
 import Modal from "./Modal";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
@@ -25,9 +24,7 @@ const Feeds = () => {
   const {
     handleEdit,
     deletePost,
-    success,
     products,
-    error,
     setCurrentPage,
     currentPage,
     totalPages,
