@@ -69,7 +69,7 @@ const WatchSlider = () => {
       try {
         setIsLoading(true);
         const res = await apiClient.get('/products/get');
-        const data: Product[] = res.data.products;
+        const data: Product[] = (Array.isArray(res.data?.products) ? res.data.products : Array.isArray(res.data) ? res.data : []) || [];
         setProducts(data);
         
         const quantities = data.map((item) => item.quantity);

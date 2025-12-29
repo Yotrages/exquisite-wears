@@ -50,7 +50,7 @@ export default function FlashSales() {
   const fetchFlashDeals = async () => {
     try {
       const { data } = await apiClient.get(`/products/flash-deals`)
-      setDeals(data)
+      setDeals((Array.isArray(data) ? data : Array.isArray(data?.items) ? data.items : []) || [])
     } catch (error) {
       console.error('Error fetching flash deals:', error)
     } finally {

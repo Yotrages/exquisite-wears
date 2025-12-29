@@ -72,7 +72,7 @@ export default function ProductDetailsPage() {
   const fetchRelatedProducts = async (productId: string) => {
     try {
       const { data } = await apiClient.get(`/products/${productId}/related`)
-      setRelatedProducts(Array.isArray(data) ? data.slice(0, 6) : [])
+      setRelatedProducts((Array.isArray(data) ? data.slice(0, 6) : []) || [])
     } catch (error) {
       console.error('Error fetching related products:', error)
     }

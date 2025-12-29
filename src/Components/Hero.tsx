@@ -16,12 +16,14 @@ const Hero = () => {
     const getProducts = async () => {
       try {
         const res = await apiClient.get('/products/get');
-        const data: Product[] = res.data.products;
+        const data: Product[] = res.data?.products || [];
 
         setProducts(data);
        
-        const quantities = data.map((item) => item.quantity);
-        localStorage.setItem("quantity", JSON.stringify(quantities));
+        if (Array.isArray(data) && data.length > 0) {
+          const quantities = data.map((item) => item.quantity);
+          localStorage.setItem("quantity", JSON.stringify(quantities));
+        }
       } catch (error: any) {
         console.error("Error fetching products:", error.message);
       }

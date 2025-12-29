@@ -2,11 +2,12 @@ import { useState } from 'react'
 import { FaSearchPlus, FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 
 interface Props {
-  images: string[]
+  images?: string[]
   productName: string
 }
 
-export default function ProductImageGallery({ images, productName }: Props) {
+export default function ProductImageGallery({ images = [], productName }: Props) {
+  const safeImages = images || [];
   const [selectedImage, setSelectedImage] = useState(0)
   const [isZoomed, setIsZoomed] = useState(false)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
@@ -22,11 +23,11 @@ export default function ProductImageGallery({ images, productName }: Props) {
   }
 
   const handlePrevious = () => {
-    setSelectedImage((prev) => (prev === 0 ? images.length - 1 : prev - 1))
+    setSelectedImage((prev) => (prev === 0 ? Math.max(safeImages.length - 1, 0) : prev - 1))
   }
 
   const handleNext = () => {
-    setSelectedImage((prev) => (prev === images.length - 1 ? 0 : prev + 1))
+    setSelectedImage((prev) => (prev === safeImages.length - 1 ? 0 : prev + 1))
   }
 
   return (
@@ -40,7 +41,7 @@ export default function ProductImageGallery({ images, productName }: Props) {
           onMouseLeave={() => setIsZoomed(false)}
         >
           <img
-            src={images[selectedImage] || '/placeholder.jpg'}
+            src={safeImages[selectedImage] || '/placeholder.jpg'}
             alt={`${productName} - View ${selectedImage + 1}`}
             className={`w-full h-full object-contain transition-all duration-300 ${
               isZoomed ? 'scale-150' : 'scale-100'
@@ -67,7 +68,7 @@ export default function ProductImageGallery({ images, productName }: Props) {
         </button>
 
         {/* Navigation Arrows */}
-        {images.length > 1 && (
+        {safeImages.length > 1 && (
           <>
             <button
               onClick={handlePrevious}
@@ -86,14 +87,14 @@ export default function ProductImageGallery({ images, productName }: Props) {
 
         {/* Image Counter */}
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-full text-sm">
-          {selectedImage + 1} / {images.length}
+          {selectedImage + 1} / {safeImages.length}
         </div>
       </div>
 
       {/* Thumbnail Gallery */}
-      {images.length > 1 && (
+      {safeImages.length > 1 && (
         <div className="flex gap-2 overflow-x-auto pb-2">
-          {images.map((img, idx) => (
+          {safeImages.map((img, idx) => (
             <button
               key={idx}
               onClick={() => setSelectedImage(idx)}

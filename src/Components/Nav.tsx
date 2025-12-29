@@ -136,9 +136,9 @@ const Nav = ({
           </div>
 
           {/* Display Search Results */}
-          {(data.length > 0 || error) && (
+          {((data?.length || 0) > 0 || error) && (
             <ul className="absolute md:flex flex-col hidden max-h-[85vh] top-full left-0 w-full bg-white text-black z-[100] overflow-y-auto shadow-xl rounded-lg mt-2 border border-gray-200">
-              {data.map((item, index) => (
+              {(data || []).map((item, index) => (
                 <li
                   key={index}
                   className="py-3 px-4 flex flex-row cursor-pointer items-center hover:bg-gray-50 transition-colors border-b last:border-b-0"

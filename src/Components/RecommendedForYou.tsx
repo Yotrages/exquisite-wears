@@ -27,13 +27,13 @@ const RecommendedForYou = () => {
     setLoading(true);
     try {
       const res = await apiClient.get('/recommendations/for-you');
-      setProducts(res.data.recommendations || res.data || []);
+      setProducts((Array.isArray(res.data?.recommendations) ? res.data.recommendations : Array.isArray(res.data) ? res.data : []) || []);
     } catch (error) {
       console.error('Failed to fetch recommendations:', error);
       // Fallback to regular products if recommendations fail
       try {
         const fallback = await apiClient.get('/products?limit=8');
-        setProducts(fallback.data.products || fallback.data || []);
+        setProducts((Array.isArray(fallback.data?.products) ? fallback.data.products : Array.isArray(fallback.data) ? fallback.data : []) || []);
       } catch (err) {
         console.error('Fallback also failed:', err);
       }
