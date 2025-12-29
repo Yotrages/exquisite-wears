@@ -13,6 +13,7 @@ const SearchValidator = () => {
     const [toggle, setToggle] = useState(false);
     const navigate = useNavigate();
     const authState = useSelector((state: rootState) => state.authSlice);
+    const userCredentials = authState.user
     const user = authState?.user?.name || null;
     const userName = user?.charAt(0).toUpperCase();
     
@@ -51,7 +52,7 @@ const SearchValidator = () => {
       });
     });
 
-    return { handleSearchToggle, searchTerm, searchToggle, handleSearch, toggle, setToggle, data, userName, error, setSearchTerm, user, setSearchToggle}
+    return { handleSearchToggle, searchTerm, userCredentials, searchToggle, handleSearch, toggle, setToggle, data, userName, error, setSearchTerm, user, setSearchToggle}
     
 }
 

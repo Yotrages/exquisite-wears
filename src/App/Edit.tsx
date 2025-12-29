@@ -2,19 +2,20 @@ import Layout from '../Components/Layout'
 import Editproduct from '../Components/Editproduct'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import SearchValidator from '../Api/Search'
 
 const Edit = () => {
-  const notAdmin = 'true'
-  const Admin = localStorage.getItem('admin')
+  const { userCredentials } = SearchValidator()
+  const Admin = userCredentials?.isAdmin
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (Admin === notAdmin) {
+    if (Admin) {
       console.log('true')
     } else {
       navigate('/login')
     }
-  }, [notAdmin, Admin])
+  }, [])
   return (
     <Layout>
         <Editproduct />

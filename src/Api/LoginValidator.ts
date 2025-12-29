@@ -68,7 +68,7 @@ const LoginValidator = () => {
           } else if (!data.isAdmin) {
             navigate("/");
           } else {
-            navigate("/admin");
+            navigate("/dashboard");
           }
         }
       } catch (error: any) {

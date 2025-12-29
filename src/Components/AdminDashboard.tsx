@@ -10,6 +10,7 @@ import {
   FaExclamationTriangle,
   FaSpinner,
 } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -162,9 +163,9 @@ const AdminDashboard = () => {
                   <div className="bg-gray-50 rounded-lg p-6">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
                     <div className="space-y-3">
-                      <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition">
+                      <Link to={"/admin"} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition">
                         Add New Product
-                      </button>
+                      </Link>
                       <button className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition">
                         View All Orders
                       </button>
