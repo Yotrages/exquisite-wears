@@ -101,7 +101,7 @@ const Feeds = () => {
         { productId: item._id, quantity: 1 }
       );
       if (res.data && res.data.cart && res.data.cart.items) {
-        const items = res.data.cart.items.map((it: any) => ({
+        const items = (res.data.cart.items || []).map((it: any) => ({
           id: it.product._id || it.product,
           name: it.product.name,
           price: it.product.price,

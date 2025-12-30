@@ -188,7 +188,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({
 
           {/* Rating Distribution */}
           <div className="md:col-span-3">
-            {ratingDistribution.map(({ rating, count, percentage }) => (
+            {(ratingDistribution || []).map(({ rating, count, percentage }) => (
               <div key={rating} className="flex items-center gap-3 mb-2">
                 <button
                   onClick={() => setFilterRating(filterRating === rating ? null : rating)}
@@ -346,7 +346,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({
         </div>
       ) : (
         <div className="space-y-6">
-          {filteredReviews.map((review) => (
+          {(filteredReviews || []).map((review) => (
             <div key={review._id} className="border-b pb-6 last:border-b-0">
               {/* Review Header */}
               <div className="flex items-start justify-between mb-2">
@@ -392,9 +392,9 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({
               <p className="text-gray-700 mb-4">{review.comment}</p>
 
               {/* Review Images */}
-              {review.images && review.images.length > 0 && (
+              {(review.images || []).length > 0 && (
                 <div className="flex gap-2 mb-4">
-                  {review.images.map((image, index) => (
+                  {(review.images || []).map((image, index) => (
                     <img
                       key={index}
                       src={image}

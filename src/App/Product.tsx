@@ -108,7 +108,7 @@ export default function ProductDetailsPage() {
       })
 
       if (data && data.cart && data.cart.items) {
-        const items = data.cart.items.map((it: any) => ({
+        const items = (data.cart.items || []).map((it: any) => ({
           id: it.product._id || it.product,
           name: it.product.name,
           price: it.product.price,
@@ -469,7 +469,7 @@ export default function ProductDetailsPage() {
           <div className="mt-8">
             <h2 className="text-2xl font-bold mb-6">Customers Also Bought</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {relatedProducts.map((relatedProduct) => (
+              {(relatedProducts || []).map((relatedProduct) => (
                 <Link
                   key={relatedProduct._id}
                   to={`/product/${relatedProduct._id}`}
