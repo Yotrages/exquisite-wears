@@ -66,8 +66,8 @@ const Cart = () => {
           '/cart/update',
           { productId: id, quantity: qty }
         );
-        if (res.data && res.data.cart && res.data.cart.items) {
-          const items = (res.data.cart.items || []).map((it: any) => ({
+        if (res.data?.cart?.items && Array.isArray(res.data.cart.items)) {
+          const items = res.data.cart.items.map((it: any) => ({
             id: it.product._id || it.product,
             name: it.product.name,
             price: it.product.price,
@@ -92,8 +92,8 @@ const Cart = () => {
           '/cart/update',
           { productId: id, quantity: 0 }
         );
-        if (res.data && res.data.cart && res.data.cart.items) {
-          const items = (res.data.cart.items || []).map((it: any) => ({
+        if (res.data?.cart?.items && Array.isArray(res.data.cart.items)) {
+          const items = res.data.cart.items.map((it: any) => ({
             id: it.product._id || it.product,
             name: it.product.name,
             price: it.product.price,

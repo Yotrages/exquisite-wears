@@ -107,8 +107,8 @@ export default function ProductDetailsPage() {
         color: selectedColor
       })
 
-      if (data && data.cart && data.cart.items) {
-        const items = (data.cart.items || []).map((it: any) => ({
+      if (data?.cart?.items && Array.isArray(data.cart.items)) {
+        const items = data.cart.items.map((it: any) => ({
           id: it.product._id || it.product,
           name: it.product.name,
           price: it.product.price,

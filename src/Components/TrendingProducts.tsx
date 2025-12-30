@@ -45,8 +45,8 @@ const TrendingProducts = () => {
         '/cart/add',
         { productId: product._id, quantity: 1 }
       );
-      if (res.data && res.data.cart && res.data.cart.items) {
-        const items = (res.data.cart.items || []).map((it: any) => ({
+      if (res.data?.cart?.items && Array.isArray(res.data.cart.items)) {
+        const items = res.data.cart.items.map((it: any) => ({
           id: it.product._id || it.product,
           name: it.product.name,
           price: it.product.price,
@@ -98,7 +98,7 @@ const TrendingProducts = () => {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {(products?.slice(0, 8) || []).map((product) => (
+          {(Array.isArray(products) ? products.slice(0, 8) : []).map((product) => (
             <div
               key={product._id}
               className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden group"
