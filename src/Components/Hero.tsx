@@ -20,10 +20,6 @@ const Hero = () => {
 
         setProducts(data);
        
-        if (Array.isArray(data) && data?.length > 0) {
-          const quantities = data?.map((item) => item.quantity);
-          localStorage.setItem("quantity", JSON.stringify(quantities));
-        }
       } catch (error: any) {
         console.error("Error fetching products:", error.message);
       }

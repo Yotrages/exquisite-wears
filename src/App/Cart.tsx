@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateQuantity, removeItem, setCart } from '../redux/cartSlice';
 import { apiClient } from '../Api/axiosConfig';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { getAuthToken } from '../utils/cookieManager';
 import Layout from '../Components/Layout';
 import { FaShoppingCart, FaTrash, FaHeart, FaArrowRight, FaTruck, FaShieldAlt, FaUndo } from 'react-icons/fa';
@@ -62,23 +62,14 @@ const Cart = () => {
     const token = getAuthToken() || null;
     if (token) {
       try {
-        const res = await apiClient.put(
+        await apiClient.put(
           '/cart/update',
           { productId: id, quantity: qty }
         );
-        if (res.data?.cart?.items && Array.isArray(res.data.cart.items)) {
-          const items = res.data.cart.items?.map((it: any) => ({
-            id: it.product._id || it.product,
-            name: it.product.name,
-            price: it.product.price,
-            image: it.product.image,
-            quantity: it.quantity,
-            availableStock: it.product.quantity
-          }))
-          dispatch(setCart({ items }));
-        }
       } catch (err) {
         console.error(err);
+        // Sync from server if update fails
+        syncFromServer();
       }
     }
   };
@@ -88,23 +79,15 @@ const Cart = () => {
     const token = getAuthToken() || null;
     if (token) {
       try {
-        const res = await apiClient.put(
+        await apiClient.put(
           '/cart/update',
           { productId: id, quantity: 0 }
         );
-        if (res.data?.cart?.items && Array.isArray(res.data.cart.items)) {
-          const items = res.data.cart.items?.map((it: any) => ({
-            id: it.product._id || it.product,
-            name: it.product.name,
-            price: it.product.price,
-            image: it.product.image,
-            quantity: it.quantity,
-            availableStock: it.product.quantity
-          }))
-          dispatch(setCart({ items }));
-        }
+        // Don't replace cart data - removeItem dispatch above already updated Redux
       } catch (err) {
         console.error(err);
+        // Sync from server if remove fails
+        syncFromServer();
       }
     }
   };
@@ -350,13 +333,13 @@ const Cart = () => {
                 </div>
 
                 {/* Checkout Button */}
-                <button
-                  onClick={() => navigate('/checkout')}
+                <Link
+                to="/checkout"
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-lg transition-colors flex items-center justify-center gap-2 mb-4"
                 >
                   Proceed to Checkout
                   <FaArrowRight />
-                </button>
+                </Link>
 
                 {/* Trust Badges */}
                 <div className="space-y-3 pt-6 border-t">

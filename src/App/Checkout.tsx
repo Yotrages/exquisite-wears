@@ -22,7 +22,7 @@ type CheckoutFormData = z.infer<typeof checkoutSchema>;
 
 const Checkout = () => {
   const navigate = useNavigate();
-  const { cart } = useSelector((state: any) => state.cart);
+  const items = useSelector((state: any) => state.cart.items) as any[];
   const authState = useSelector((state: any) => state.authSlice);
   const token = authState?.token || null;
   
@@ -67,10 +67,10 @@ const Checkout = () => {
       navigate(`/login?redirect=/checkout`);
       return;
     }
-    if (!cart || cart.items?.length === 0) {
+    if (!items || items?.length === 0) {
       navigate('/cart');
     }
-  }, [cart, token, navigate]);
+  }, [items, token, navigate]);
 
   const handlePaystackSuccess = async (reference: string) => {
     setLoading(true);
@@ -84,7 +84,7 @@ const Checkout = () => {
   };
 
   const onSubmit = async (data: CheckoutFormData) => {
-    if (!cart || cart.items?.length === 0) {
+    if (!items || items?.length === 0) {
       alert('Cart is empty');
       return;
     }
@@ -106,17 +106,27 @@ const Checkout = () => {
         country: data.country,
       };
 
-      const result = await initializePayment(cart.items, shippingAddress);
+      // Transform items to match backend expected format
+      const paymentItems = items.map((item: any) => ({
+        product: item.id,
+        quantity: item.quantity,
+      }));
+
+      const result = await initializePayment(paymentItems, shippingAddress);
       
       setCurrentPaymentId(result.paymentId);
       setPaymentInitialized(true);
 
       // Open Paystack payment modal
       const publicKey = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY;
+      
+      // Calculate the total amount in kobo (Paystack expects amount in kobo)
+      const totalAmountInKobo = totalPrice * 100;
+      
       const handler = ((window as any).PaystackPop).setup({
         key: publicKey,
         email: data.email,
-        amount: (result as any).amount || 0, // Amount in kobo
+        amount: totalAmountInKobo, // Amount in kobo
         ref: result.reference,
         onClose: () => {
           console.log('Payment closed');
@@ -134,7 +144,7 @@ const Checkout = () => {
     }
   };
 
-  if (!cart) {
+  if (!items || items.length === 0) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <FaSpinner className="animate-spin text-4xl" />
@@ -143,8 +153,8 @@ const Checkout = () => {
   }
 
   // Calculate totals
-  const itemsPrice = cart.items?.reduce(
-    (sum: number, item: any) => sum + (item.product?.price || 0) * item.quantity,
+  const itemsPrice = items?.reduce(
+    (sum: number, item: any) => sum + (item.price || 0) * item.quantity,
     0
   ) || 0;
   const taxPrice = Math.round(itemsPrice * 0.07 * 100) / 100;
@@ -324,14 +334,14 @@ const Checkout = () => {
 
               {/* Items */}
               <div className="space-y-4 mb-4 pb-4 border-b border-gray-200">
-                {cart.items?.map((item: any) => (
-                  <div key={item.product?._id} className="flex justify-between text-sm">
+                {items?.map((item: any) => (
+                  <div key={item.id} className="flex justify-between text-sm">
                     <div>
-                      <p className="font-medium text-gray-900">{item.product?.name}</p>
+                      <p className="font-medium text-gray-900">{item.name}</p>
                       <p className="text-gray-600">Qty: {item.quantity}</p>
                     </div>
                     <p className="font-medium text-gray-900">
-                      ₦{((item.product?.price || 0) * item.quantity).toLocaleString()}
+                      ₦{((item.price || 0) * item.quantity).toLocaleString()}
                     </p>
                   </div>
                 ))}

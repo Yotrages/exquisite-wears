@@ -258,10 +258,17 @@ const Nav = ({
               )}
             </div>
 
+            <button
+              className="text-black ss:hidden flex hover:text-blue-600"
+              onClick={() => setToggle((prev) => !prev)}
+            >
+              <CgMenuGridO className="text-3xl" />
+            </button>
+
             {/* Cart */}
             <Link
               to="/cart"
-              className="relative hover:text-blue-600 transition-colors"
+              className="relative ss:flex hidden hover:text-blue-600 transition-colors"
               title="Shopping Cart"
             >
               <FaShoppingCart className="text-2xl" />
