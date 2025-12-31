@@ -90,11 +90,11 @@ const NotificationPreferences: React.FC = () => {
     const keys = path.split('.');
     let current = newPrefs as any;
 
-    for (let i = 0; i < keys.length - 1; i++) {
+    for (let i = 0; i < keys?.length - 1; i++) {
       current = current[keys[i]];
     }
 
-    current[keys[keys.length - 1]] = value;
+    current[keys[keys?.length - 1]] = value;
     setPreferences(newPrefs);
   };
 
@@ -392,7 +392,7 @@ const NotificationPreferences: React.FC = () => {
                   Quiet hours: {preferences.doNotDisturb.startTime} -{' '}
                   {preferences.doNotDisturb.endTime}
                 </p>
-                {preferences.doNotDisturb.daysOfWeek && preferences.doNotDisturb.daysOfWeek.length > 0 && (
+                {preferences.doNotDisturb.daysOfWeek && preferences.doNotDisturb.daysOfWeek?.length > 0 && (
                   <p className="text-sm text-gray-600">
                     On: {preferences.doNotDisturb.daysOfWeek.join(', ')}
                   </p>

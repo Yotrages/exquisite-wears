@@ -70,7 +70,7 @@ const Nav = ({
     try {
       const res = await apiClient.get('/notifications');
       const unread = res.data.notifications?.filter((n: any) => !n.read) || [];
-      setNotificationCount(unread.length);
+      setNotificationCount(unread?.length);
       setNotifications(res.data.notifications || []);
     } catch (err) {
       console.error('Failed to fetch notifications:', err);
@@ -222,7 +222,7 @@ const Nav = ({
                       ✕
                     </button>
                   </div>
-                  {notifications.length === 0 ? (
+                  {notifications?.length === 0 ? (
                     <div className="px-4 py-8 text-center text-gray-500">
                       No notifications
                     </div>

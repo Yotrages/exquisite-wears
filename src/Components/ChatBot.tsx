@@ -21,7 +21,7 @@ const Chatbot = () => {
 
   // Initial greeting
   useEffect(() => {
-    if (isOpen && messages.length === 0) {
+    if (isOpen && messages?.length === 0) {
       addBotMessage(
         "Hi! 👋 I'm your shopping assistant. How can I help you today?",
         [

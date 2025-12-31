@@ -119,7 +119,7 @@ const WishlistPage = () => {
     );
   };
 
-  if (!wishlistItems.length && token) {
+  if (!wishlistItems?.length && token) {
     return (
       <Layout>
         <div className="flex items-center justify-center min-h-screen">
@@ -138,11 +138,11 @@ const WishlistPage = () => {
             <FaHeart className="text-3xl text-red-500" />
             <h1 className="text-3xl font-bold text-gray-900">My Wishlist</h1>
             <span className="bg-red-100 text-red-600 px-3 py-1 rounded-full font-semibold">
-              {wishlistItems.length} {wishlistItems.length === 1 ? 'item' : 'items'}
+              {wishlistItems?.length} {wishlistItems?.length === 1 ? 'item' : 'items'}
             </span>
           </div>
 
-          {wishlistItems.length > 0 && (
+          {wishlistItems?.length > 0 && (
             <button
               onClick={addAllToCart}
               className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
@@ -154,7 +154,7 @@ const WishlistPage = () => {
         </div>
 
         {/* Wishlist Items */}
-        {wishlistItems.length === 0 ? (
+        {wishlistItems?.length === 0 ? (
           <div className="bg-white rounded-lg shadow-md p-12 text-center">
             <FaHeart className="text-6xl text-gray-300 mx-auto mb-4" />
             <h2 className="text-2xl font-bold text-gray-900 mb-2">Your wishlist is empty</h2>
@@ -251,7 +251,7 @@ const WishlistPage = () => {
         )}
 
         {/* Back to Shopping */}
-        {wishlistItems.length > 0 && (
+        {wishlistItems?.length > 0 && (
           <div className="mt-8 text-center">
             <button
               onClick={() => navigate('/')}

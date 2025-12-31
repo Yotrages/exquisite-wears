@@ -93,7 +93,7 @@ const RecommendedForYou = () => {
     );
   }
 
-  if (products.length === 0) return null;
+  if (products?.length === 0) return null;
 
   return (
     <section className="py-12 bg-gradient-to-r from-purple-50 to-pink-50">

@@ -30,7 +30,7 @@ const Feeds = () => {
     totalPages,
   } = useProductValidator();
 
-  const isLoading = products.length === 0;
+  const isLoading = products?.length === 0;
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const authState = useSelector((state: rootState) => state.authSlice);
@@ -158,7 +158,7 @@ const Feeds = () => {
             ? Array(10)
                 .fill(0)
                 ?.map((_, index) => <SkeletonCard key={index} />)
-            : products?.map((item) => (
+            : (Array.isArray(products) ? products : [])?.map((item) => (
                 <div
                   key={item?._id}
                   className="group bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col"

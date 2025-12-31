@@ -106,7 +106,7 @@ const OrderTracking = () => {
   ];
 
   const currentStepIndex = statusSteps.findIndex((step) => step.status === order.status);
-  const progress = ((currentStepIndex + 1) / statusSteps.length) * 100;
+  const progress = ((currentStepIndex + 1) / statusSteps?.length) * 100;
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">

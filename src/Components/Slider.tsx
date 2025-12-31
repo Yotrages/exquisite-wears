@@ -81,14 +81,14 @@ const WatchSlider = () => {
   }, [navigator.onLine]);
 
   useEffect(() => {
-    if (!isPaused && !isLoading && products.length > 0) {
+    if (!isPaused && !isLoading && products?.length > 0) {
       const interval = setInterval(() => {
-        const maxSlides = Math.max(1, products.length - (window.innerWidth < 640 ? 0 : window.innerWidth < 1024 ? 1 : 2));
+        const maxSlides = Math.max(1, products?.length - (window.innerWidth < 640 ? 0 : window.innerWidth < 1024 ? 1 : 2));
         setCurrentSlide(prev => (prev + 1) % maxSlides);
       }, 5000);
       return () => clearInterval(interval);
     }
-  }, [isPaused, isLoading, products.length]);
+  }, [isPaused, isLoading, products?.length]);
 
   useEffect(() => {
     if (sliderRef.current) {
@@ -101,12 +101,12 @@ const WatchSlider = () => {
   }, [currentSlide, cardWidth]);
 
   const nextSlide = () => {
-    const maxSlides = Math.max(1, products.length - (window.innerWidth < 640 ? 0 : window.innerWidth < 1024 ? 1 : 2));
+    const maxSlides = Math.max(1, products?.length - (window.innerWidth < 640 ? 0 : window.innerWidth < 1024 ? 1 : 2));
     setCurrentSlide(prev => (prev + 1) % maxSlides);
   };
 
   const prevSlide = () => {
-    const maxSlides = Math.max(1, products.length - (window.innerWidth < 640 ? 0 : window.innerWidth < 1024 ? 1 : 2));
+    const maxSlides = Math.max(1, products?.length - (window.innerWidth < 640 ? 0 : window.innerWidth < 1024 ? 1 : 2));
     setCurrentSlide(prev => prev === 0 ? maxSlides - 1 : prev - 1);
   };
 
@@ -298,7 +298,7 @@ const WatchSlider = () => {
           >
             {isLoading
               ? Array(6).fill(0)?.map((_, index) => <SliderSkeletonCard key={index} />)
-              : products?.map((item, index) => (
+              : (Array.isArray(products) ? products : [])?.map((item, index) => (
                   <div key={item._id} style={{ scrollSnapAlign: 'start' }}>
                     <SliderCard item={item} index={index} />
                   </div>
@@ -306,9 +306,9 @@ const WatchSlider = () => {
           </div>
         </div>
 
-        {!isLoading && products.length > 1 && (
+        {!isLoading && (Array.isArray(products) ? products : [])?.length > 1 && (
           <div className="flex justify-center mt-6 sm:mt-8 gap-2 sm:gap-3 px-4">
-            {Array(Math.max(1, products.length - (window.innerWidth < 640 ? 0 : window.innerWidth < 1024 ? 1 : 2)))
+            {Array(Math.max(1, products?.length - (window.innerWidth < 640 ? 0 : window.innerWidth < 1024 ? 1 : 2)))
               .fill(0)
               ?.map((_, index) => (
                 <button

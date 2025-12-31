@@ -157,7 +157,7 @@ const Cart = () => {
           <FaShoppingCart className="text-3xl text-blue-600" />
           <h1 className="xs:text-3xl text-xl font-bold text-gray-900">Shopping Cart</h1>
           <span className="bg-blue-100 text-blue-600 px-3 py-1 rounded-full font-semibold">
-            {items.length} {items.length === 1 ? 'item' : 'items'}
+            {items?.length} {items?.length === 1 ? 'item' : 'items'}
           </span>
         </div>
 
@@ -167,7 +167,7 @@ const Cart = () => {
           </div>
         )}
 
-        {items.length === 0 ? (
+        {items?.length === 0 ? (
           <div className="bg-white rounded-lg shadow-md p-12 text-center">
             <FaShoppingCart className="text-6xl text-gray-300 mx-auto mb-4" />
             <h2 className="text-2xl font-bold text-gray-900 mb-2">Your cart is empty</h2>

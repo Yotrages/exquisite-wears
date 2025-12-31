@@ -16,7 +16,7 @@ export default function ComparePage() {
 
   useEffect(() => {
     const ids = searchParams.get('ids')?.split(',') || []
-    if (ids.length === 0) {
+    if (ids?.length === 0) {
       navigate('/')
       return
     }
@@ -81,7 +81,7 @@ export default function ComparePage() {
     )
   }
 
-  if (products.length === 0) {
+  if (products?.length === 0) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
         <h2 className="text-2xl font-bold mb-4">No products to compare</h2>
@@ -109,7 +109,7 @@ export default function ComparePage() {
         </div>
         
         <p className="text-gray-600">
-          Comparing {products.length} {products.length === 1 ? 'product' : 'products'}
+          Comparing {products?.length} {products?.length === 1 ? 'product' : 'products'}
         </p>
       </div>
 

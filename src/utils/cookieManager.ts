@@ -54,7 +54,7 @@ export const getAuthToken = (): string | null => {
     for (let cookie of cookieArray) {
       cookie = cookie.trim();
       if (cookie.indexOf(name) === 0) {
-        return cookie.substring(name.length);
+        return cookie.substring(name?.length);
       }
     }
     

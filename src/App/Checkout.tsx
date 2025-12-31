@@ -67,7 +67,7 @@ const Checkout = () => {
       navigate(`/login?redirect=/checkout`);
       return;
     }
-    if (!cart || cart.items.length === 0) {
+    if (!cart || cart.items?.length === 0) {
       navigate('/cart');
     }
   }, [cart, token, navigate]);
@@ -84,7 +84,7 @@ const Checkout = () => {
   };
 
   const onSubmit = async (data: CheckoutFormData) => {
-    if (!cart || cart.items.length === 0) {
+    if (!cart || cart.items?.length === 0) {
       alert('Cart is empty');
       return;
     }

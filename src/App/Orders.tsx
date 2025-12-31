@@ -77,14 +77,14 @@ const Orders = () => {
         </div>
 
         {/* Orders List */}
-        {filteredOrders.length === 0 ? (
+        {filteredOrders?.length === 0 ? (
           <div className="bg-white rounded-lg shadow p-12 text-center">
             <FaBox className="text-6xl text-gray-300 mx-auto mb-4" />
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              {orders.length === 0 ? 'No Orders Yet' : 'No Orders Found'}
+              {orders?.length === 0 ? 'No Orders Yet' : 'No Orders Found'}
             </h2>
             <p className="text-gray-600 mb-6">
-              {orders.length === 0
+              {orders?.length === 0
                 ? "You haven't placed any orders yet. Start shopping now!"
                 : 'No orders match the selected filter.'}
             </p>
@@ -151,7 +151,7 @@ const Orders = () => {
                         ))}
                         {order.items?.length > 3 && (
                           <span className="inline-block px-2 py-1 bg-gray-100 text-gray-700 text-sm rounded">
-                            +{order.items.length - 3} more
+                            +{order.items?.length - 3} more
                           </span>
                         )}
                       </div>

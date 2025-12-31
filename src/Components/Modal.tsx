@@ -75,7 +75,7 @@ const Modal = ({show, images = [], image, setShow, name, productId, productRatin
         {/* Content (Image or Gallery quick view) */}
         <div className="p-6 flex items-center justify-center">
           <div className="relative bg-white rounded-xl p-4 shadow-lg border border-amber-100 max-w-full w-full">
-            {images && images.length > 0 ? (
+            {images && images?.length > 0 ? (
               <ProductImageGallery images={images} productName={name || 'Product'} />
             ) : (
               <img 

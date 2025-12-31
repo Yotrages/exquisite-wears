@@ -146,7 +146,7 @@ const EditValidator = () => {
           setValue("inStock", typeof data.inStock !== 'undefined' ? data.inStock : (data.quantity > 0));
           setValue("category", data.category || "");
           setValue("sku", data.sku || "");
-          if (data.tags && data.tags.length > 0) {
+          if (data.tags && data.tags?.length > 0) {
             setValue("tags", data.tags);
           }
           setImagePreview(data.image); 

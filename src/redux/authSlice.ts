@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { getAuthToken } from "../utils/cookieManager";
 
 interface User {
   _id?: string;
@@ -19,9 +20,9 @@ interface AuthState {
 }
 
 const initialState: AuthState = {
-  token: localStorage.getItem('token') || localStorage.getItem('auth_token') || null,
-  user: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null,
-  isAuthenticated: !!(localStorage.getItem('token') || localStorage.getItem('auth_token')),
+  token: null,
+  user: null,
+  isAuthenticated: false,
   loading: false,
   error: null,
 };
@@ -37,6 +38,8 @@ const authSlice = createSlice({
       state.isAuthenticated = true;
       state.error = null;
       state.loading = false;
+      // Persist to localStorage
+      localStorage.setItem('user', JSON.stringify(action.payload.user));
     },
 
     // OAuth login
@@ -46,6 +49,8 @@ const authSlice = createSlice({
       state.isAuthenticated = true;
       state.error = null;
       state.loading = false;
+      // Persist to localStorage
+      localStorage.setItem('user', JSON.stringify(action.payload.user));
     },
 
     // Logout
@@ -54,6 +59,8 @@ const authSlice = createSlice({
       state.user = null;
       state.isAuthenticated = false;
       state.error = null;
+      // Clear localStorage
+      localStorage.removeItem('user');
     },
 
     // Set loading state
@@ -68,16 +75,30 @@ const authSlice = createSlice({
 
     // Restore from localStorage
     restoreAuth: (state) => {
-      const token = localStorage.getItem('token') || localStorage.getItem('auth_token');
+      const token = getAuthToken();
       const user = localStorage.getItem('user');
       if (token && user) {
-        state.token = token;
-        state.user = JSON.parse(user);
-        state.isAuthenticated = true;
+        try {
+          state.token = token;
+          state.user = JSON.parse(user);
+          state.isAuthenticated = true;
+        } catch (err) {
+          console.error('Failed to parse stored user data:', err);
+          localStorage.removeItem('user');
+          state.isAuthenticated = false;
+        }
+      }
+    },
+
+    // Update user profile
+    updateUserProfile: (state, action: PayloadAction<User>) => {
+      state.user = action.payload;
+      if (state.user) {
+        localStorage.setItem('user', JSON.stringify(action.payload));
       }
     },
   },
 });
 
-export const { loginSuccess, oauthLoginSuccess, logout, setLoading, setError, restoreAuth } = authSlice.actions;
+export const { loginSuccess, oauthLoginSuccess, logout, setLoading, setError, restoreAuth, updateUserProfile } = authSlice.actions;
 export default authSlice.reducer;

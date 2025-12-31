@@ -92,7 +92,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({
       setFormError('Review comment is required');
       return;
     }
-    if (formData.comment.trim().length < 10) {
+    if (formData.comment.trim()?.length < 10) {
       setFormError('Review must be at least 10 characters');
       return;
     }
@@ -152,8 +152,8 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({
   // Rating distribution
   const ratingDistribution = Array.from({ length: 5 }, (_, i) => {
     const rating = 5 - i;
-    const count = reviews.filter((r) => r.rating === rating).length;
-    const percentage = reviews.length > 0 ? (count / reviews.length) * 100 : 0;
+    const count = reviews.filter((r) => r.rating === rating)?.length;
+    const percentage = reviews?.length > 0 ? (count / reviews?.length) * 100 : 0;
     return { rating, count, percentage };
   });
 
@@ -271,7 +271,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
               />
               <p className="text-xs text-gray-500 mt-1">
-                {formData.comment.length}/1000 characters
+                {formData.comment?.length}/1000 characters
               </p>
             </div>
 
@@ -300,7 +300,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({
       )}
 
       {/* Filters and Sort */}
-      {reviews.length > 0 && (
+      {reviews?.length > 0 && (
         <div className="border-t pt-6 mb-6">
           <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
             {filterRating && (
@@ -334,14 +334,14 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({
       )}
 
       {/* Reviews List */}
-      {isLoading && reviews.length === 0 ? (
+      {isLoading && reviews?.length === 0 ? (
         <div className="text-center py-8">
           <p className="text-gray-600">Loading reviews...</p>
         </div>
-      ) : filteredReviews.length === 0 ? (
+      ) : filteredReviews?.length === 0 ? (
         <div className="text-center py-8">
           <p className="text-gray-600">
-            {reviews.length === 0 ? 'No reviews yet' : 'No reviews match your filter'}
+            {reviews?.length === 0 ? 'No reviews yet' : 'No reviews match your filter'}
           </p>
         </div>
       ) : (
@@ -392,7 +392,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({
               <p className="text-gray-700 mb-4">{review.comment}</p>
 
               {/* Review Images */}
-              {(review.images || []).length > 0 && (
+              {(review.images || [])?.length > 0 && (
                 <div className="flex gap-2 mb-4">
                   {(review.images || [])?.map((image, index) => (
                     <img

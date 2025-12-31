@@ -163,18 +163,18 @@ const AdminDashboard = () => {
                   <div className="bg-gray-50 rounded-lg p-6">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
                     <div className="space-y-3">
-                      <Link to={"/admin"} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition">
+                      <Link to={"/edit/new"} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition block text-center">
                         Add New Product
                       </Link>
-                      <button className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition">
-                        View All Orders
-                      </button>
-                      <button className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg transition">
+                      <Link to={"/admin/products"} className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition block text-center">
+                        Manage Products
+                      </Link>
+                      <Link to={"/admin/reviews"} className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg transition block text-center">
+                        Review Submissions
+                      </Link>
+                      <Link to={"/admin/users"} className="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-2 px-4 rounded-lg transition block text-center">
                         Manage Users
-                      </button>
-                      <button className="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-2 px-4 rounded-lg transition">
-                        View Reports
-                      </button>
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -228,7 +228,7 @@ const AdminDashboard = () => {
                         <div>
                           <h4 className="font-semibold text-yellow-900">Low Stock Alert</h4>
                           <p className="text-sm text-yellow-700 mt-1">
-                            {inventoryAnalytics?.lowStockItems.length} product(s) have low stock levels
+                            {inventoryAnalytics?.lowStockItems?.length} product(s) have low stock levels
                           </p>
                         </div>
                       </div>

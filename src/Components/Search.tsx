@@ -76,7 +76,7 @@ const Search = () => {
     );
 
     // Category filter
-    if (selectedCategories.length > 0) {
+    if (selectedCategories?.length > 0) {
       filtered = filtered.filter(item => 
         item.category && selectedCategories.includes(item.category)
       );
@@ -207,7 +207,7 @@ const Search = () => {
                 Search Results for "{searchTerm || newTerm}"
               </h1>
               <p className="text-gray-600">
-                {filteredData.length} {filteredData.length === 1 ? 'product' : 'products'} found
+                {filteredData?.length} {filteredData?.length === 1 ? 'product' : 'products'} found
               </p>
             </div>
 
@@ -377,7 +377,7 @@ const Search = () => {
               <div className="flex items-center justify-center py-20">
                 <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-600"></div>
               </div>
-            ) : filteredData.length === 0 ? (
+            ) : filteredData?.length === 0 ? (
               <div className="bg-white rounded-lg shadow-md p-12 text-center">
                 <div className="text-6xl mb-4">😕</div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">No products found</h3>
@@ -397,7 +397,7 @@ const Search = () => {
                     : 'space-y-4'
                 }
               >
-                {filteredData?.map((item) => (
+                {(Array.isArray(filteredData) ? filteredData : [])?.map((item) => (
                   <div
                     key={item._id}
                     className={`bg-white rounded-lg shadow-md hover:shadow-xl transition-all overflow-hidden ${

@@ -185,7 +185,7 @@ const Settings: React.FC = () => {
         return;
       }
 
-      if (passwordForm.newPassword.length < 6) {
+      if (passwordForm.newPassword?.length < 6) {
         setPasswordError('Password must be at least 6 characters');
         return;
       }
@@ -442,7 +442,7 @@ const Settings: React.FC = () => {
 
                 {/* Addresses List */}
                 <div className="space-y-4">
-                  {addresses.length === 0 ? (
+                  {addresses?.length === 0 ? (
                     <p className="text-gray-600 text-center py-8">No addresses yet</p>
                   ) : (
                     addresses?.map((address) => (

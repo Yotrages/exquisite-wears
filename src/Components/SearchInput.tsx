@@ -30,7 +30,7 @@ const SearchInput = ({searchToggle, searchTerm, setSearchTerm, setSearchToggle, 
             </div>
 
             {/* Search Results */}
-            {(data.length > 0 || error) && (
+            {(data?.length > 0 || error) && (
               <ul className="absolute top-full max-h-[85vh] left-0 w-full bg-white text-black overflow-y-scroll z-10 shadow-md rounded-lg px-3">
                 {data?.map((item, index) => (
                   <li

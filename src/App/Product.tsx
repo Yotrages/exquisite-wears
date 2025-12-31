@@ -268,7 +268,7 @@ export default function ProductDetailsPage() {
               </div>
             )}
 
-            {product.specifications && Object.keys(product.specifications).length > 0 && (
+            {product.specifications && Object.keys(product.specifications)?.length > 0 && (
               <div className="border-t pt-4">
                 <h3 className="font-semibold mb-2">Specifications</h3>
                 <ul className="text-sm text-gray-700 grid grid-cols-2 gap-2">
@@ -444,7 +444,7 @@ export default function ProductDetailsPage() {
             <p className="text-gray-700 whitespace-pre-line">{product.description}</p>
           </div>
 
-          {product.specifications && Object.keys(product.specifications).length > 0 && (
+          {product.specifications && Object.keys(product.specifications)?.length > 0 && (
             <div className="mt-6">
               <h3 className="text-xl font-bold mb-3">Specifications</h3>
               <table className="w-full">
@@ -465,7 +465,7 @@ export default function ProductDetailsPage() {
         <ReviewSection productId={product._id} />
 
         {/* Related Products */}
-        {relatedProducts.length > 0 && (
+        {relatedProducts?.length > 0 && (
           <div className="mt-8">
             <h2 className="text-2xl font-bold mb-6">Customers Also Bought</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">

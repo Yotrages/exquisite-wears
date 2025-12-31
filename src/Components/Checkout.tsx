@@ -9,7 +9,7 @@ const Pagination = () => {
   const nextSubStep = () => {
     if (currentSubStep < totalSubSteps - 1) {
       setCurrentSubStep((prev) => prev + 1);
-    } else if (currentStep < steps.length - 1) {
+    } else if (currentStep < steps?.length - 1) {
       setCurrentStep((prev) => prev + 1);
       setCurrentSubStep(0);
     }
@@ -79,9 +79,9 @@ const Pagination = () => {
         </button>
         <button
           onClick={nextSubStep}
-          disabled={currentStep === steps.length - 1 && currentSubStep === totalSubSteps - 1}
+          disabled={currentStep === steps?.length - 1 && currentSubStep === totalSubSteps - 1}
           className={`py-2 px-4 rounded-lg ${
-            currentStep === steps.length - 1 && currentSubStep === totalSubSteps - 1
+            currentStep === steps?.length - 1 && currentSubStep === totalSubSteps - 1
               ? "bg-gray-400 cursor-not-allowed"
               : "bg-black text-white hover:bg-gray-800"
           }`}

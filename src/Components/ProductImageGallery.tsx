@@ -23,11 +23,11 @@ export default function ProductImageGallery({ images = [], productName }: Props)
   }
 
   const handlePrevious = () => {
-    setSelectedImage((prev) => (prev === 0 ? Math.max(safeImages.length - 1, 0) : prev - 1))
+    setSelectedImage((prev) => (prev === 0 ? Math.max(safeImages?.length - 1, 0) : prev - 1))
   }
 
   const handleNext = () => {
-    setSelectedImage((prev) => (prev === safeImages.length - 1 ? 0 : prev + 1))
+    setSelectedImage((prev) => (prev === safeImages?.length - 1 ? 0 : prev + 1))
   }
 
   return (
@@ -68,7 +68,7 @@ export default function ProductImageGallery({ images = [], productName }: Props)
         </button>
 
         {/* Navigation Arrows */}
-        {safeImages.length > 1 && (
+        {safeImages?.length > 1 && (
           <>
             <button
               onClick={handlePrevious}
@@ -87,12 +87,12 @@ export default function ProductImageGallery({ images = [], productName }: Props)
 
         {/* Image Counter */}
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-full text-sm">
-          {selectedImage + 1} / {safeImages.length}
+          {selectedImage + 1} / {safeImages?.length}
         </div>
       </div>
 
       {/* Thumbnail Gallery */}
-      {safeImages.length > 1 && (
+      {safeImages?.length > 1 && (
         <div className="flex gap-2 overflow-x-auto pb-2">
           {safeImages?.map((img, idx) => (
             <button

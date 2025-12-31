@@ -20,7 +20,7 @@ const Hero = () => {
 
         setProducts(data);
        
-        if (Array.isArray(data) && data.length > 0) {
+        if (Array.isArray(data) && data?.length > 0) {
           const quantities = data?.map((item) => item.quantity);
           localStorage.setItem("quantity", JSON.stringify(quantities));
         }
