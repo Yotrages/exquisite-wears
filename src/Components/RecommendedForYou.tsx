@@ -49,11 +49,11 @@ const RecommendedForYou = () => {
       return
     }
 
-    dispatch(addItem({ id: product._id, name: product.name, price: product.price, quantity: 1 }));
+    dispatch(addItem({ id: product._id, name: product.name, price: product.price, quantity: product?.quantity || 1 }));
     try {
       const res = await apiClient.post(
         '/cart/add',
-        { productId: product._id, quantity: 1 }
+        { productId: product._id, quantity: product.quantity }
       );
       if (res.data && res.data.cart && res.data.cart.items) {
         const items = res.data?.cart.items?.map((it: any) => ({
@@ -84,7 +84,7 @@ const RecommendedForYou = () => {
             <h2 className="text-3xl font-bold text-gray-900">Recommended For You</h2>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {[...Array(8)].map((_, i) => (
+            {[...Array(8)]?.map((_, i) => (
               <div key={i} className="animate-pulse bg-gray-200 rounded-lg h-64"></div>
             ))}
           </div>
@@ -109,7 +109,7 @@ const RecommendedForYou = () => {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {(Array.isArray(products) ? products.slice(0, 8) : []).map((product) => (
+          {(Array.isArray(products) ? products?.slice(0, 8) : [])?.map((product) => (
             <div
               key={product._id}
               className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden group"

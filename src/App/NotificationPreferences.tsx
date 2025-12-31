@@ -248,7 +248,7 @@ const NotificationPreferences: React.FC = () => {
                     },
                     { key: 'priceDrops', label: 'Price drops on wishlisted items' },
                     { key: 'reviews', label: 'Request to review purchases' },
-                  ].map(({ key, label }) => (
+                  ]?.map(({ key, label }) => (
                     <div key={key} className="flex items-center gap-3">
                       <input
                         type="checkbox"
@@ -307,7 +307,7 @@ const NotificationPreferences: React.FC = () => {
                       { key: 'orderUpdates', label: 'Order updates' },
                       { key: 'promotions', label: 'Promotions' },
                       { key: 'productRecommendations', label: 'Product recommendations' },
-                    ].map(({ key, label }) => (
+                    ]?.map(({ key, label }) => (
                       <div key={key} className="flex items-center gap-3">
                         <input
                           type="checkbox"
@@ -493,7 +493,7 @@ const NotificationPreferences: React.FC = () => {
                   <div>
                     <label className="block text-sm font-medium mb-2">Apply to days</label>
                     <div className="space-y-2">
-                      {daysOfWeek.map((day) => (
+                      {daysOfWeek?.map((day) => (
                         <div key={day} className="flex items-center gap-3">
                           <input
                             type="checkbox"

@@ -36,7 +36,7 @@ const Cart = () => {
       setSyncing(true);
       const res = await apiClient.get('/cart');
       const serverCart = res.data.items || [];
-      const items = (serverCart || []).map((it: any) => ({
+      const items = (serverCart || [])?.map((it: any) => ({
         id: it.product._id || it.product,
         name: it.product.name,
         price: it.product.price,
@@ -67,7 +67,7 @@ const Cart = () => {
           { productId: id, quantity: qty }
         );
         if (res.data?.cart?.items && Array.isArray(res.data.cart.items)) {
-          const items = res.data.cart.items.map((it: any) => ({
+          const items = res.data.cart.items?.map((it: any) => ({
             id: it.product._id || it.product,
             name: it.product.name,
             price: it.product.price,
@@ -93,7 +93,7 @@ const Cart = () => {
           { productId: id, quantity: 0 }
         );
         if (res.data?.cart?.items && Array.isArray(res.data.cart.items)) {
-          const items = res.data.cart.items.map((it: any) => ({
+          const items = res.data.cart.items?.map((it: any) => ({
             id: it.product._id || it.product,
             name: it.product.name,
             price: it.product.price,
@@ -186,7 +186,7 @@ const Cart = () => {
             {/* Cart Items */}
             <div className="lg:col-span-2 space-y-4">
               <div className="bg-white rounded-lg shadow-md overflow-hidden">
-                {items.map((it: CartItem) => (
+                {items?.map((it: CartItem) => (
                   <div
                     key={it.id}
                     className="flex flex-col sm:flex-row gap-4 p-4 border-b last:border-b-0 hover:bg-gray-50 transition-colors"

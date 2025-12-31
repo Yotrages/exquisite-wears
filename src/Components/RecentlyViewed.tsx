@@ -11,7 +11,7 @@ export default function RecentlyViewed() {
     if (viewed) {
       try {
         const parsedProducts = JSON.parse(viewed)
-        setProducts(parsedProducts.slice(0, 6)) // Show max 6 products
+        setProducts(parsedProducts?.slice(0, 6)) // Show max 6 products
       } catch (error) {
         console.error('Error parsing recently viewed products:', error)
         localStorage.removeItem('recentlyViewed')
@@ -29,7 +29,7 @@ export default function RecentlyViewed() {
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        {(products || []).map((product) => (
+        {(products || [])?.map((product) => (
           <Link
             key={product._id}
             to={`/product/${product._id}`}
@@ -39,7 +39,7 @@ export default function RecentlyViewed() {
               {/* Product Image */}
               <div className="relative aspect-square overflow-hidden rounded-lg mb-3 bg-gray-50">
                 <img
-                  src={product.image || '/placeholder.jpg'}
+                  src={product.image}
                   alt={product.name}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                   loading="lazy"
@@ -59,7 +59,7 @@ export default function RecentlyViewed() {
                   {product.name}
                 </h3>
                 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center justify-between">
                   <p className="text-green-600 font-bold text-lg">
                     ₦{product.price.toLocaleString()}
                   </p>
@@ -72,7 +72,7 @@ export default function RecentlyViewed() {
               </div>
 
               {/* View Again Hint */}
-              <div className="mt-2 text-xs text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="mt-2 text-xs text-black opacity-0 group-hover:opacity-100 transition-opacity">
                 View again →
               </div>
             </div>
@@ -110,7 +110,7 @@ export function addToRecentlyViewed(product: Product) {
     products.unshift(product)
     
     // Keep only last 10
-    products = products.slice(0, 10)
+    products = products?.slice(0, 10)
     
     localStorage.setItem('recentlyViewed', JSON.stringify(products))
   } catch (error) {

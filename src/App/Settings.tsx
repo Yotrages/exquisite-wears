@@ -254,7 +254,7 @@ const Settings: React.FC = () => {
                 { id: 'addresses', label: 'Addresses', icon: Home },
                 { id: 'security', label: 'Security', icon: Lock },
                 { id: 'privacy', label: 'Privacy', icon: Eye },
-              ].map(({ id, label, icon: Icon }) => (
+              ]?.map(({ id, label, icon: Icon }) => (
                 <button
                   key={id}
                   onClick={() => setActiveTab(id as any)}
@@ -445,7 +445,7 @@ const Settings: React.FC = () => {
                   {addresses.length === 0 ? (
                     <p className="text-gray-600 text-center py-8">No addresses yet</p>
                   ) : (
-                    addresses.map((address) => (
+                    addresses?.map((address) => (
                       <div key={address._id} className="border rounded-lg p-4">
                         <div className="flex items-start justify-between mb-2">
                           <div>

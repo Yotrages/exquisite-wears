@@ -138,7 +138,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({
 
       // Update local state
       setReviews(
-        reviews.map((review) =>
+        reviews?.map((review) =>
           review._id === reviewId
             ? { ...review, helpfulCount: (review.helpfulCount || 0) + 1 }
             : review
@@ -171,7 +171,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({
               <span className="text-gray-600">out of 5</span>
             </div>
             <div className="flex gap-1">
-              {[...Array(5)].map((_, i) => (
+              {[...Array(5)]?.map((_, i) => (
                 <Star
                   key={i}
                   size={20}
@@ -188,7 +188,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({
 
           {/* Rating Distribution */}
           <div className="md:col-span-3">
-            {(ratingDistribution || []).map(({ rating, count, percentage }) => (
+            {(ratingDistribution || [])?.map(({ rating, count, percentage }) => (
               <div key={rating} className="flex items-center gap-3 mb-2">
                 <button
                   onClick={() => setFilterRating(filterRating === rating ? null : rating)}
@@ -226,7 +226,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({
             <div>
               <label className="block text-sm font-medium mb-2">Rating</label>
               <div className="flex gap-2">
-                {[1, 2, 3, 4, 5].map((rating) => (
+                {[1, 2, 3, 4, 5]?.map((rating) => (
                   <button
                     key={rating}
                     type="button"
@@ -346,7 +346,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({
         </div>
       ) : (
         <div className="space-y-6">
-          {(filteredReviews || []).map((review) => (
+          {(filteredReviews || [])?.map((review) => (
             <div key={review._id} className="border-b pb-6 last:border-b-0">
               {/* Review Header */}
               <div className="flex items-start justify-between mb-2">
@@ -374,7 +374,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({
 
               {/* Rating */}
               <div className="flex gap-1 mb-2">
-                {[...Array(5)].map((_, i) => (
+                {[...Array(5)]?.map((_, i) => (
                   <Star
                     key={i}
                     size={16}
@@ -394,7 +394,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({
               {/* Review Images */}
               {(review.images || []).length > 0 && (
                 <div className="flex gap-2 mb-4">
-                  {(review.images || []).map((image, index) => (
+                  {(review.images || [])?.map((image, index) => (
                     <img
                       key={index}
                       src={image}

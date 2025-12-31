@@ -142,7 +142,7 @@ const OrderTracking = () => {
                         : 'bg-gray-600'
                 }`}
               >
-                {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                {order.status.charAt(0).toUpperCase() + order.status?.slice(1)}
               </span>
             </div>
           </div>
@@ -164,7 +164,7 @@ const OrderTracking = () => {
 
           {/* Status Steps */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {statusSteps.map((step, index) => {
+            {statusSteps?.map((step, index) => {
               const Icon = step.icon;
               const isCompleted = index <= currentStepIndex;
               const isCurrent = index === currentStepIndex;
@@ -208,7 +208,7 @@ const OrderTracking = () => {
         <div className="bg-white rounded-lg shadow">
           {/* Tab Navigation */}
           <div className="border-b border-gray-200 flex">
-            {(['tracking', 'details', 'items'] as const).map((tab) => (
+            {(['tracking', 'details', 'items'] as const)?.map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -218,7 +218,7 @@ const OrderTracking = () => {
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
-                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                {tab.charAt(0).toUpperCase() + tab?.slice(1)}
               </button>
             ))}
           </div>

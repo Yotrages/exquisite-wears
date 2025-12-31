@@ -81,7 +81,7 @@ const AdminDashboard = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {statCards.map((card, index) => {
+          {statCards?.map((card, index) => {
             const Icon = card.icon;
             return (
               <div
@@ -110,7 +110,7 @@ const AdminDashboard = () => {
               { id: 'customers', label: 'Customers' },
               { id: 'payments', label: 'Payments' },
               { id: 'performance', label: 'Performance' },
-            ].map((tab) => (
+            ]?.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
@@ -190,7 +190,7 @@ const AdminDashboard = () => {
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">Top Products</h3>
                     <div className="space-y-3">
-                      {salesAnalytics?.topProducts?.slice(0, 5).map((product: any, idx: number) => (
+                      {salesAnalytics?.topProducts?.slice(0, 5)?.map((product: any, idx: number) => (
                         <div key={idx} className="flex justify-between p-3 bg-gray-50 rounded-lg">
                           <span className="text-gray-600">{product._id}</span>
                           <span className="font-semibold">{product.totalOrders} orders</span>
@@ -203,7 +203,7 @@ const AdminDashboard = () => {
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">Categories</h3>
                     <div className="space-y-3">
-                      {salesAnalytics?.categoryAnalytics?.slice(0, 5).map((cat: any, idx: number) => (
+                      {salesAnalytics?.categoryAnalytics?.slice(0, 5)?.map((cat: any, idx: number) => (
                         <div key={idx} className="flex justify-between p-3 bg-gray-50 rounded-lg">
                           <span className="text-gray-600">{cat._id || 'Uncategorized'}</span>
                           <span className="font-semibold">₦{cat.revenue.toLocaleString()}</span>
@@ -282,7 +282,7 @@ const AdminDashboard = () => {
                   <div className="md:col-span-2">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">Top Customers</h3>
                     <div className="space-y-2">
-                      {customerAnalytics?.topCustomers?.slice(0, 5).map((cust: any, idx: number) => (
+                      {customerAnalytics?.topCustomers?.slice(0, 5)?.map((cust: any, idx: number) => (
                         <div key={idx} className="flex justify-between p-3 bg-white border rounded-lg">
                           <span className="text-gray-600">{cust.customerName}</span>
                           <span className="font-semibold">₦{cust.totalSpent.toLocaleString()}</span>

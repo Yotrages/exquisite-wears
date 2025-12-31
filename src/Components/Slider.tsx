@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { apiClient } from '../Api/axiosConfig';
 import Button from "./Button";
 import Modal from "./Modal";
-import useProductValidator from "../Api/ProductValidator";
 import { useDispatch, useSelector } from 'react-redux'
 import toast from 'react-hot-toast'
 import { addItem } from '../redux/cartSlice'
@@ -71,9 +70,6 @@ const WatchSlider = () => {
         const res = await apiClient.get('/products/get');
         const data: Product[] = (Array.isArray(res.data?.products) ? res.data.products : Array.isArray(res.data) ? res.data : []) || [];
         setProducts(data);
-        
-        const quantities = data.map((item) => item.quantity);
-        localStorage.setItem("quantity", JSON.stringify(quantities));
       } catch (error: any) {
         console.error("Error fetching products:", error.message);
       } finally {
@@ -113,8 +109,6 @@ const WatchSlider = () => {
     const maxSlides = Math.max(1, products.length - (window.innerWidth < 640 ? 0 : window.innerWidth < 1024 ? 1 : 2));
     setCurrentSlide(prev => prev === 0 ? maxSlides - 1 : prev - 1);
   };
-
-  const {} = useProductValidator()
 
   const SliderCard = ({ item, index }: { item: Product, index: number }) => (
     <div className="flex-shrink-0 w-72 sm:w-80 lg:w-84 group">
@@ -201,11 +195,11 @@ const WatchSlider = () => {
                 }
 
                 // optimistic
-                dispatch(addItem({ id: item._id, name: item.name, price: item.price, quantity: 1, image: item.image}))
+                dispatch(addItem({ id: item._id, name: item.name, price: item.price, quantity: item.quantity || 1, image: item.image}))
                 try {
                   const res = await apiClient.post('/cart/add', { productId: item._id, quantity: 1 })
                   if (res.data?.cart?.items && Array.isArray(res.data.cart.items)) {
-                    const items = res.data.cart.items.map((it: any) => ({
+                    const items = res.data.cart.items?.map((it: any) => ({
                       id: it.product._id || it.product,
                       name: it.product.name,
                       price: it.product.price,
@@ -303,8 +297,8 @@ const WatchSlider = () => {
             }}
           >
             {isLoading
-              ? Array(6).fill(0).map((_, index) => <SliderSkeletonCard key={index} />)
-              : products.map((item, index) => (
+              ? Array(6).fill(0)?.map((_, index) => <SliderSkeletonCard key={index} />)
+              : products?.map((item, index) => (
                   <div key={item._id} style={{ scrollSnapAlign: 'start' }}>
                     <SliderCard item={item} index={index} />
                   </div>
@@ -316,7 +310,7 @@ const WatchSlider = () => {
           <div className="flex justify-center mt-6 sm:mt-8 gap-2 sm:gap-3 px-4">
             {Array(Math.max(1, products.length - (window.innerWidth < 640 ? 0 : window.innerWidth < 1024 ? 1 : 2)))
               .fill(0)
-              .map((_, index) => (
+              ?.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => setCurrentSlide(index)}

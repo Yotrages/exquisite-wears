@@ -72,7 +72,7 @@ export default function ProductDetailsPage() {
   const fetchRelatedProducts = async (productId: string) => {
     try {
       const { data } = await apiClient.get(`/products/${productId}/related`)
-      setRelatedProducts((Array.isArray(data) ? data.slice(0, 6) : []) || [])
+      setRelatedProducts((Array.isArray(data) ? data?.slice(0, 6) : []) || [])
     } catch (error) {
       console.error('Error fetching related products:', error)
     }
@@ -108,7 +108,7 @@ export default function ProductDetailsPage() {
       })
 
       if (data?.cart?.items && Array.isArray(data.cart.items)) {
-        const items = data.cart.items.map((it: any) => ({
+        const items = data.cart.items?.map((it: any) => ({
           id: it.product._id || it.product,
           name: it.product.name,
           price: it.product.price,
@@ -272,7 +272,7 @@ export default function ProductDetailsPage() {
               <div className="border-t pt-4">
                 <h3 className="font-semibold mb-2">Specifications</h3>
                 <ul className="text-sm text-gray-700 grid grid-cols-2 gap-2">
-                  {Object.entries(product.specifications).map(([k, v]) => (
+                  {Object.entries(product.specifications)?.map(([k, v]) => (
                     <li key={k} className="flex justify-between">
                       <span className="text-gray-500">{k}</span>
                       <span className="font-medium">{String(v)}</span>
@@ -285,7 +285,7 @@ export default function ProductDetailsPage() {
             {/* Rating */}
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-1">
-                {[...Array(5)].map((_, i) => (
+                {[...Array(5)]?.map((_, i) => (
                   <FaStar
                     key={i}
                     className={i < Math.floor(product?.averageRating || 0) 
@@ -420,7 +420,7 @@ export default function ProductDetailsPage() {
                 <p className="font-semibold">{product.seller.name}</p>
                 <div className="flex items-center gap-2 mt-1">
                   <div className="flex">
-                    {[...Array(5)].map((_, i) => (
+                    {[...Array(5)]?.map((_, i) => (
                       <FaStar
                         key={i}
                         className={i < Math.floor(product.seller?.rating ?? 0) ? 'text-yellow-400' : 'text-gray-300'}
@@ -449,7 +449,7 @@ export default function ProductDetailsPage() {
               <h3 className="text-xl font-bold mb-3">Specifications</h3>
               <table className="w-full">
                 <tbody>
-                  {Object.entries(product.specifications).map(([key, value], index) => (
+                  {Object.entries(product.specifications)?.map(([key, value], index) => (
                     <tr key={key} className={index % 2 === 0 ? 'bg-gray-50' : ''}>
                       <td className="py-2 px-4 font-semibold">{key}</td>
                       <td className="py-2 px-4">{value}</td>
@@ -469,7 +469,7 @@ export default function ProductDetailsPage() {
           <div className="mt-8">
             <h2 className="text-2xl font-bold mb-6">Customers Also Bought</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {(relatedProducts || []).map((relatedProduct) => (
+              {(relatedProducts || [])?.map((relatedProduct) => (
                 <Link
                   key={relatedProduct._id}
                   to={`/product/${relatedProduct._id}`}

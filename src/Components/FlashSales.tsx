@@ -64,7 +64,7 @@ export default function FlashSales() {
     )
   }
 
-  if (deals.length === 0) return null
+  if (deals?.length === 0) return null
 
   return (
     <section className="relative overflow-hidden rounded-xl my-8 shadow-2xl">
@@ -122,7 +122,7 @@ export default function FlashSales() {
 
         {/* Flash Deal Products */}
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {(deals || []).map((deal) => {
+          {(deals || [])?.map((deal) => {
             const stockPercentage = (deal.stockLeft / deal.totalStock) * 100
             
             return (

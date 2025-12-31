@@ -25,7 +25,7 @@ export default function ComparePage() {
 
   const fetchProducts = async (ids: string[]) => {
     try {
-      const promises = ids.map(id =>
+      const promises = ids?.map(id =>
         apiClient.get(`/api/products/get/${id}`).then(res => res.data.product || res.data)
       )
       const results = await Promise.all(promises)
@@ -41,7 +41,7 @@ export default function ComparePage() {
   const removeProduct = (id: string) => {
     const updatedIds = products
       .filter(p => p._id !== id)
-      .map(p => p._id)
+      ?.map(p => p._id)
       .join(',')
     
     if (updatedIds) {
@@ -61,7 +61,7 @@ export default function ComparePage() {
     try {
       await apiClient.post('/api/cart', {
         productId: product._id,
-        quantity: 1
+        quantity: product.quantity
       })
 
       toast.success('Added to cart!')
@@ -121,7 +121,7 @@ export default function ComparePage() {
               <th className="border p-2 xs:p-4 text-left font-semibold text-gray-700 sticky left-0 bg-gray-50 z-10 min-w-[120px] text-xs xs:text-sm">
                 Feature
               </th>
-              {products.map((product) => (
+              {products?.map((product) => (
                 <th key={product._id} className="border p-2 xs:p-4 bg-gray-50 relative min-w-[200px] xs:min-w-[250px]">
                   {/* Remove Button */}
                   <button
@@ -168,7 +168,7 @@ export default function ComparePage() {
               <td className="border p-4 font-semibold bg-gray-50 sticky left-0 z-10">
                 Price
               </td>
-              {products.map((product) => (
+              {products?.map((product) => (
                 <td key={product._id} className="border p-4 text-center">
                   <div className="flex flex-col items-center gap-1">
                     <span className="text-2xl font-bold text-green-600">
@@ -189,7 +189,7 @@ export default function ComparePage() {
               <td className="border p-4 font-semibold sticky left-0 bg-gray-50 z-10">
                 Rating
               </td>
-              {products.map((product) => (
+              {products?.map((product) => (
                 <td key={product._id} className="border p-4 text-center">
                   <div className="flex items-center justify-center gap-2">
                     <span className="text-2xl">⭐</span>
@@ -208,7 +208,7 @@ export default function ComparePage() {
                 <td className="border p-4 font-semibold bg-gray-50 sticky left-0 z-10">
                   Brand
                 </td>
-                {products.map((product) => (
+                {products?.map((product) => (
                   <td key={product._id} className="border p-4 text-center">
                     {product.brand || 'N/A'}
                   </td>
@@ -221,7 +221,7 @@ export default function ComparePage() {
               <td className="border p-4 font-semibold sticky left-0 bg-gray-50 z-10">
                 Category
               </td>
-              {products.map((product) => (
+              {products?.map((product) => (
                 <td key={product._id} className="border p-4 text-center">
                   {product.category || 'N/A'}
                 </td>
@@ -233,7 +233,7 @@ export default function ComparePage() {
               <td className="border p-4 font-semibold bg-gray-50 sticky left-0 z-10">
                 Availability
               </td>
-              {products.map((product) => (
+              {products?.map((product) => (
                 <td key={product._id} className="border p-4 text-center">
                   {product.stock && product.stock > 0 ? (
                     <div className="flex items-center justify-center gap-2 text-green-600">
@@ -253,7 +253,7 @@ export default function ComparePage() {
                 <td className="border p-4 font-semibold sticky left-0 bg-gray-50 z-10">
                   Discount
                 </td>
-                {products.map((product) => (
+                {products?.map((product) => (
                   <td key={product._id} className="border p-4 text-center">
                     {product.discount ? (
                       <span className="inline-block bg-red-500 text-white px-3 py-1 rounded-full font-bold">
@@ -272,7 +272,7 @@ export default function ComparePage() {
               <td className="border p-4 font-semibold bg-gray-50 sticky left-0 z-10">
                 Description
               </td>
-              {products.map((product) => (
+              {products?.map((product) => (
                 <td key={product._id} className="border p-4">
                   <p className="text-sm text-gray-700 line-clamp-4">
                     {product.description || 'No description available'}

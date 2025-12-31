@@ -72,17 +72,17 @@ const WishlistPage = () => {
       id: product._id,
       name: product.name,
       price: product.price,
-      quantity: 1,
+      quantity: product.quantity,
       image: product.image
     }));
 
     try {
       const res = await apiClient.post(
         '/cart/add',
-        { productId: product._id, quantity: 1 }
+        { productId: product._id, quantity: product.quantity }
       );
       if (res.data?.cart?.items && Array.isArray(res.data.cart.items)) {
-        const items = res.data.cart.items.map((it: any) => ({
+        const items = res.data.cart.items?.map((it: any) => ({
           id: it.product._id || it.product,
           name: it.product.name,
           price: it.product.price,
@@ -109,7 +109,7 @@ const WishlistPage = () => {
   const renderStars = (rating: number = 0) => {
     return (
       <div className="flex items-center gap-0.5">
-        {[1, 2, 3, 4, 5].map((star) => (
+        {[1, 2, 3, 4, 5]?.map((star) => (
           <FaStar
             key={star}
             className={`text-sm ${star <= rating ? 'text-yellow-400' : 'text-gray-300'}`}
@@ -170,7 +170,7 @@ const WishlistPage = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {wishlistItems.map((item) => (
+            {wishlistItems?.map((item) => (
               <div
                 key={item._id}
                 className="bg-white rounded-lg shadow-md hover:shadow-xl transition-all overflow-hidden flex flex-col"

@@ -47,7 +47,7 @@ const Pagination = () => {
   return (
     <div className="max-w-lg mx-auto p-6">
       <div className="flex justify-between items-center mb-8">
-        {steps.map((_, index) => (
+        {steps?.map((_, index) => (
           <div key={index} className={getStepStyle(index)}>
             {index + 1}
           </div>

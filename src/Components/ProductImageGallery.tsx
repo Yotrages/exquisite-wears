@@ -94,7 +94,7 @@ export default function ProductImageGallery({ images = [], productName }: Props)
       {/* Thumbnail Gallery */}
       {safeImages.length > 1 && (
         <div className="flex gap-2 overflow-x-auto pb-2">
-          {safeImages.map((img, idx) => (
+          {safeImages?.map((img, idx) => (
             <button
               key={idx}
               onClick={() => setSelectedImage(idx)}

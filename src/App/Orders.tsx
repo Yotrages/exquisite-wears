@@ -59,7 +59,7 @@ const Orders = () => {
 
         {/* Filter */}
         <div className="mb-6 flex flex-wrap gap-2">
-          {['all', 'pending', 'processing', 'shipped', 'delivered', 'cancelled'].map(
+          {['all', 'pending', 'processing', 'shipped', 'delivered', 'cancelled']?.map(
             (status) => (
               <button
                 key={status}
@@ -70,7 +70,7 @@ const Orders = () => {
                     : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
                 }`}
               >
-                {status.charAt(0).toUpperCase() + status.slice(1)}
+                {status.charAt(0).toUpperCase() + status?.slice(1)}
               </button>
             )
           )}
@@ -97,7 +97,7 @@ const Orders = () => {
           </div>
         ) : (
           <div className="space-y-4">
-            {filteredOrders.map((order: any) => (
+            {filteredOrders?.map((order: any) => (
               <div
                 key={order._id}
                 className="bg-white rounded-lg shadow hover:shadow-lg transition p-6"
@@ -114,7 +114,7 @@ const Orders = () => {
                           statusColors[order.status] || statusColors['pending']
                         }`}
                       >
-                        {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                        {order.status.charAt(0).toUpperCase() + order.status?.slice(1)}
                       </span>
                     </div>
 
@@ -141,7 +141,7 @@ const Orders = () => {
                     <div className="mt-4 pt-4 border-t border-gray-200">
                       <p className="text-sm text-gray-600 mb-2">Items:</p>
                       <div className="flex flex-wrap gap-2">
-                        {order.items?.slice(0, 3).map((item: any) => (
+                        {order.items?.slice(0, 3)?.map((item: any) => (
                           <span
                             key={item._id}
                             className="inline-block px-2 py-1 bg-gray-100 text-gray-700 text-sm rounded"

@@ -161,14 +161,14 @@ const Search = () => {
       return
     }
 
-    dispatch(addItem({ id: item._id, name: item.name, price: item.price, quantity: 1, image: item.image }));
+    dispatch(addItem({ id: item._id, name: item.name, price: item.price, quantity: item.quantity || 1, image: item.image }));
     try {
       const res = await apiClient.post(
         '/cart/add',
         { productId: item._id, quantity: 1 }
       );
       if (res.data?.cart?.items && Array.isArray(res.data.cart.items)) {
-        const items = res.data.cart.items.map((it: any) => ({
+        const items = res.data.cart.items?.map((it: any) => ({
           id: it.product._id || it.product,
           name: it.product.name,
           price: it.product.price,
@@ -186,7 +186,7 @@ const Search = () => {
   const renderStars = (rating: number = 0) => {
     return (
       <div className="flex items-center gap-0.5">
-        {[1, 2, 3, 4, 5].map((star) => (
+        {[1, 2, 3, 4, 5]?.map((star) => (
           <FaStar
             key={star}
             className={`text-sm ${star <= rating ? 'text-yellow-400' : 'text-gray-300'}`}
@@ -321,7 +321,7 @@ const Search = () => {
             <div className="mb-6">
               <h3 className="font-semibold text-gray-900 mb-3">Categories</h3>
               <div className="space-y-2">
-                {categories.map((category) => (
+                {categories?.map((category) => (
                   <label key={category} className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="checkbox"
@@ -339,7 +339,7 @@ const Search = () => {
             <div className="mb-6">
               <h3 className="font-semibold text-gray-900 mb-3">Minimum Rating</h3>
               <div className="space-y-2">
-                {[4, 3, 2, 1].map((rating) => (
+                {[4, 3, 2, 1]?.map((rating) => (
                   <label key={rating} className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="radio"
@@ -397,7 +397,7 @@ const Search = () => {
                     : 'space-y-4'
                 }
               >
-                {filteredData.map((item) => (
+                {filteredData?.map((item) => (
                   <div
                     key={item._id}
                     className={`bg-white rounded-lg shadow-md hover:shadow-xl transition-all overflow-hidden ${

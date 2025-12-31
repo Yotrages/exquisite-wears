@@ -93,15 +93,15 @@ const Feeds = () => {
 
     setLoadingCart(item._id);
     // optimistic update
-    dispatch(addItem({ id: item._id, name: item.name, price: item.price, quantity: 1, image: item.image }));
+    dispatch(addItem({ id: item._id, name: item.name, price: item.price, quantity: item.quantity, image: item.image }));
     
     try {
       const res = await apiClient.post(
         '/cart/add',
-        { productId: item._id, quantity: 1 }
+        { productId: item._id, quantity: item.quantity }
       );
       if (res.data?.cart?.items && Array.isArray(res.data.cart.items)) {
-        const items = res.data.cart.items.map((it: any) => ({
+        const items = res.data.cart.items?.map((it: any) => ({
           id: it.product._id || it.product,
           name: it.product.name,
           price: it.product.price,
@@ -122,7 +122,7 @@ const Feeds = () => {
   const renderStars = (rating: number = 0) => {
     return (
       <div className="flex items-center gap-0.5">
-        {[1, 2, 3, 4, 5].map((star) => (
+        {[1, 2, 3, 4, 5]?.map((star) => (
           <FaStar
             key={star}
             className={`text-sm ${star <= rating ? 'text-yellow-400' : 'text-gray-300'}`}
@@ -157,8 +157,8 @@ const Feeds = () => {
           {isLoading
             ? Array(10)
                 .fill(0)
-                .map((_, index) => <SkeletonCard key={index} />)
-            : products.map((item) => (
+                ?.map((_, index) => <SkeletonCard key={index} />)
+            : products?.map((item) => (
                 <div
                   key={item?._id}
                   className="group bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col"
@@ -307,7 +307,7 @@ const Feeds = () => {
           </button>
           
           <div className="flex items-center gap-2">
-            {[...Array(Math.min(5, totalPages))].map((_, idx) => {
+            {[...Array(Math.min(5, totalPages))]?.map((_, idx) => {
               const pageNum = currentPage <= 3 
                 ? idx + 1 
                 : currentPage >= totalPages - 2 
