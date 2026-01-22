@@ -1,7 +1,12 @@
+import { Layout } from "../Components";
 import AdminDashboard from "../Components/AdminDashboard";
 
 const Admindashboard = () => {
-  return <AdminDashboard />;
+  return (
+    <Layout>
+  <AdminDashboard />
+  </Layout>
+  );
 };
 
 export default Admindashboard;

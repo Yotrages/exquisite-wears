@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { FaEdit, FaTrash, FaEye, FaPlus } from 'react-icons/fa'
 import PageLoader from '../Components/PageLoader'
+import { Layout } from '../Components'
 
 interface Product {
   _id: string
@@ -82,6 +83,7 @@ export default function AdminProducts() {
   }
 
   return (
+    <Layout>
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
@@ -225,5 +227,6 @@ export default function AdminProducts() {
         )}
       </div>
     </div>
+    </Layout>
   )
 }

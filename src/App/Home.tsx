@@ -32,7 +32,7 @@ const Home = () => {
       {/* <Preloader /> */}
       <Hero />
       <FlashSales />
-      <Categories />
+      {/* <Categories /> */}
       <WatchSlider />
       <TrendingProducts />
       <Feeds />
