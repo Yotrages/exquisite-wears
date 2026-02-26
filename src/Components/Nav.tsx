@@ -1,6 +1,6 @@
 import {
   FaSearch, FaShoppingCart, FaHeart, FaBell, FaBox,
-  FaCog, FaSignOutAlt, FaChevronDown, FaUser, FaTruck,
+  FaCog, FaSignOutAlt, FaChevronDown, FaTruck,
   FaHeadset, FaTag
 } from "react-icons/fa";
 import { HiMenuAlt3 } from "react-icons/hi";
@@ -13,10 +13,9 @@ import SearchInput from "./SearchInput";
 import Sidebar from "./Sidebar";
 import { useSelector } from 'react-redux';
 import { apiClient } from '../Api/axiosConfig';
-import { getAuthToken } from '../utils/cookieManager';
 
 const Nav = ({
-  change,
+  // change,
   setChange,
 }: {
   change: Boolean;

@@ -121,7 +121,7 @@ export default function FlashSales() {
         {/* Products horizontal scroll */}
         <div ref={scrollRef} className="flex gap-3 overflow-x-auto scrollbar-hide pb-2 -mx-1 px-1">
           {deals.map((deal) => {
-            const stockLeft = deal.stockLeft || deal.quantity || 0
+            const stockLeft = deal.stockLeft || 0
             const totalStock = deal.totalStock || Math.max(stockLeft + Math.floor(Math.random() * 20 + 10), 30)
             const pct = Math.round((stockLeft / totalStock) * 100)
             const sold = 100 - pct

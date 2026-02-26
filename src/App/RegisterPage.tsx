@@ -1,5 +1,5 @@
 import Register from '../Components/Register'
-import { FaGem, FaTruck, FaShieldAlt, FaStar, FaCheckCircle } from 'react-icons/fa'
+import { FaCheckCircle } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 
 const RegisterPage = () => {

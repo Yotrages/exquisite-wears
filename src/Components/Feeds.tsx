@@ -166,10 +166,10 @@ const Feeds = () => {
                       <span className="bg-gray-900 text-white text-xs font-bold px-3 py-1 rounded-lg">Out of Stock</span>
                     </div>
                   )}
-                  {item.discount && item.discount > 0 && item.quantity > 0 && (
+                  {item.discount && item.quantity && item.discount > 0 && item.quantity > 0 && (
                     <span className="absolute top-2 left-2 badge badge-danger text-[10px]">-{item.discount}%</span>
                   )}
-                  {!item.discount && item.originalPrice && item.quantity > 0 && (
+                  {!item.discount && item.quantity && item.originalPrice && item.quantity > 0 && (
                     <span className="absolute top-2 left-2 badge badge-danger text-[10px]">
                       -{Math.round(((item.originalPrice - item.price) / item.originalPrice) * 100)}%
                     </span>

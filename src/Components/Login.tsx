@@ -1,5 +1,4 @@
 import { FaEye, FaSpinner, FaEyeSlash, FaGoogle, FaGithub, FaLock, FaEnvelope } from "react-icons/fa";
-import Question from "./Question";
 import LoginValidator from "../Api/LoginValidator";
 import { useState } from "react";
 import { Link } from "react-router-dom";

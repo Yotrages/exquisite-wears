@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useOrderStore } from '../stores/orderStore';
-import { FaBox, FaTruck, FaSpinner, FaArrowLeft, FaCheckCircle, FaTimesCircle, FaClock, FaChevronRight } from 'react-icons/fa';
+import { FaBox, FaSpinner, FaArrowLeft, FaCheckCircle, FaTimesCircle, FaClock, FaChevronRight } from 'react-icons/fa';
 import { MdLocalShipping } from 'react-icons/md';
 import { format } from 'date-fns';
 import Layout from '../Components/Layout';

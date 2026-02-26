@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Star, ThumbsUp, User, CheckCircle, ChevronDown, X } from 'lucide-react';
+import { Star, ThumbsUp, CheckCircle, ChevronDown, X } from 'lucide-react';
 import { apiClient } from '../Api/axiosConfig';
 import toast from 'react-hot-toast';
 import { useSelector } from 'react-redux';
