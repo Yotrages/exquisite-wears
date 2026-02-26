@@ -55,7 +55,7 @@ export default function RecentlyViewed() {
 
               {/* Product Info */}
               <div className="space-y-1">
-                <h3 className="font-medium text-sm text-gray-800 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                <h3 className="font-medium text-sm text-gray-800 line-clamp-2 group-hover:text-orange-600 transition-colors">
                   {product.name}
                 </h3>
                 

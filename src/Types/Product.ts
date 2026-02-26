@@ -7,10 +7,11 @@ export interface Product {
   discount?: number; // percentage, e.g., 20 for 20%
   image?: string;
   images?: string[];
-  rating?: number;
+  rating?: number;          // average rating stored in DB
+  reviewsCount?: number;     // total approved reviews count in DB
   reviews?: number;
-  averageRating?: number;
-  totalReviews?: number;
+  averageRating?: number;    // alias
+  totalReviews?: number;     // alias
   category?: string;
   quantity?: number;
   stock?: number;

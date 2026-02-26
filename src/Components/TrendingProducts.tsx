@@ -3,75 +3,73 @@ import { apiClient } from '../Api/axiosConfig';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import toast from 'react-hot-toast';
-import { FaFire, FaStar } from 'react-icons/fa';
-import { addItem } from '../redux/cartSlice';
+import { FaFire, FaStar, FaHeart, FaRegHeart, FaShoppingCart, FaChevronRight } from 'react-icons/fa';
+import { addItem, setCart } from '../redux/cartSlice';
 import { Product } from '../Types/Product';
-import { setCart } from '../redux/cartSlice';
+import { getAuthToken } from '../utils/cookieManager';
 
 const TrendingProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [wishlist, setWishlist] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const authState = useSelector((state: any) => state.authSlice);
-  const token = authState?.token || null;
+  const token = authState?.token || getAuthToken();
 
   useEffect(() => {
-    fetchTrendingProducts();
+    apiClient.get('/products/get?limit=10&sort=popular')
+      .then(res => setProducts(res.data.products || res.data || []))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+    if (token) {
+      apiClient.get('/wishlist')
+        .then(res => setWishlist((res.data.items || []).map((i: any) => i.product._id)))
+        .catch(() => {});
+    }
   }, []);
 
-  const fetchTrendingProducts = async () => {
+  const handleAddToCart = async (product: Product) => {
+    if (!token) { toast.error('Please log in first'); navigate('/login?redirect=/'); return; }
+    dispatch(addItem({ id: product._id, name: product.name, price: product.price, quantity: 1, image: product.image }));
     try {
-      // Try to get trending from recommendations API first
-      const res = await apiClient.get('/products/get?limit=8&sort=popular');
-      setProducts(res.data.products || res.data || []);
-    } catch (error) {
-      console.error('Failed to fetch trending products:', error);
-    } finally {
-      setLoading(false);
-    }
+      const res = await apiClient.post('/cart/add', { productId: product._id, quantity: 1 });
+      if (res.data?.cart?.items) {
+        dispatch(setCart({ items: res.data.cart.items.map((it: any) => ({ id: it.product._id, name: it.product.name, price: it.product.price, image: it.product.image, quantity: it.quantity, stock: it.product.quantity })) }));
+      }
+    } catch { }
+    toast.success('Added to cart!');
   };
 
-  const handleAddToCart = async (product: Product) => {
-    if (!token) {
-      toast.error('Please log in first')
-      navigate(`/login?redirect=/`)
-      return
-    }
-
-    dispatch(addItem({ id: product._id, name: product.name, price: product.price, quantity: product.quantity || 1 }));
+  const toggleWishlist = async (e: React.MouseEvent, productId: string) => {
+    e.stopPropagation();
+    if (!token) { navigate('/login'); return; }
     try {
-      const res = await apiClient.post(
-        '/cart/add',
-        { productId: product._id, quantity: 1 }
-      );
-      if (res.data?.cart?.items && Array.isArray(res.data.cart.items)) {
-        const items = res.data.cart.items?.map((it: any) => ({
-          id: it.product._id || it.product,
-          name: it.product.name,
-          price: it.product.price,
-          image: it.product.image,
-          quantity: it.quantity,
-          stock: it.product.quantity,
-        }));
-        dispatch(setCart({ items }));
+      if (wishlist.includes(productId)) {
+        await apiClient.delete(`/wishlist/product/${productId}`);
+        setWishlist(w => w.filter(id => id !== productId));
+      } else {
+        await apiClient.post(`/wishlist/product/${productId}`, { productId });
+        setWishlist(w => [...w, productId]);
       }
-    } catch (err) {
-      console.error('Failed to sync cart with server', err);
-    }
+    } catch { }
   };
 
   if (loading) {
     return (
-      <section className="py-12 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-3 mb-8">
-            <FaFire className="text-3xl text-orange-500" />
-            <h2 className="text-3xl font-bold text-gray-900">Trending Now</h2>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {[...Array(8)]?.map((_, i) => (
-              <div key={i} className="animate-pulse bg-gray-200 rounded-lg h-64"></div>
+      <section className="py-8 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="h-8 w-48 shimmer rounded mb-5" />
+          <div className="product-grid">
+            {[...Array(10)].map((_, i) => (
+              <div key={i} className="bg-white rounded-xl overflow-hidden">
+                <div className="aspect-square shimmer" />
+                <div className="p-3 space-y-2">
+                  <div className="h-3 shimmer rounded w-3/4" />
+                  <div className="h-3 shimmer rounded w-1/2" />
+                  <div className="h-8 shimmer rounded" />
+                </div>
+              </div>
             ))}
           </div>
         </div>
@@ -79,70 +77,103 @@ const TrendingProducts = () => {
     );
   }
 
-  if (products?.length === 0) return null;
+  if (!products.length) return null;
 
   return (
-    <section className="py-12 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between mb-8">
+    <section className="py-8 bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        {/* Header */}
+        <div className="section-header mb-5">
           <div className="flex items-center gap-3">
-            <FaFire className="text-3xl text-orange-500 animate-pulse" />
-            <h2 className="text-3xl font-bold text-gray-900">Trending Now</h2>
+            <div className="w-1 h-6 rounded-full bg-orange-500" />
+            <FaFire className="text-orange-500 animate-pulse" />
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              Trending Products
+            </h2>
           </div>
-          <button
-            onClick={() => navigate('/search/trending')}
-            className="text-blue-600 hover:text-blue-800 font-semibold"
-          >
-            View All →
+          <button onClick={() => navigate('/search/trending')} className="section-link">
+            View all <FaChevronRight className="text-xs" />
           </button>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {(Array.isArray(products) ? products?.slice(0, 8) : [])?.map((product) => (
+        {/* Grid */}
+        <div className="product-grid stagger-children">
+          {products.slice(0, 10).map((product) => (
             <div
               key={product._id}
-              className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden group"
+              className="product-card animate-fade-in-up opacity-0"
+              onClick={() => navigate(`/product/${product._id}`)}
             >
-              <div
-                className="relative cursor-pointer overflow-hidden"
-                onClick={() => navigate(`/product/${product._id}`)}
-              >
+              {/* Image */}
+              <div className="relative aspect-square overflow-hidden bg-gray-50">
                 <img
-                  src={product.image}
+                  src={product.image || (product as any).images?.[0] || '/placeholder-product.jpg'}
                   alt={product.name}
-                  className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+                  className="product-img w-full h-full"
+                  onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder-product.jpg'; }}
                 />
-                <div className="absolute top-2 left-2 bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded">
-                  TRENDING
+                {/* Wishlist */}
+                <button
+                  className="absolute top-2 right-2 w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center hover:scale-110 transition-transform z-10"
+                  onClick={(e) => toggleWishlist(e, product._id)}
+                >
+                  {wishlist.includes(product._id)
+                    ? <FaHeart className="text-red-500 text-sm" />
+                    : <FaRegHeart className="text-gray-400 text-sm" />}
+                </button>
+
+                {/* Trending badge */}
+                <div className="absolute top-2 left-2">
+                  <span className="badge badge-primary text-[10px] flex items-center gap-1">
+                    <FaFire className="text-[9px]" /> Hot
+                  </span>
                 </div>
+
+                {/* Discount badge */}
+                {product.discount && product.discount > 0 && (
+                  <div className="absolute bottom-2 left-2">
+                    <span className="badge badge-danger text-[10px]">-{product.discount}%</span>
+                  </div>
+                )}
               </div>
 
-              <div className="p-4">
-                <h3
-                  className="text-sm font-semibold text-gray-800 mb-1 truncate cursor-pointer hover:text-blue-600"
-                  onClick={() => navigate(`/product/${product._id}`)}
-                >
-                  {product.name}
-                </h3>
-                <p className="text-xs text-gray-500 mb-2 line-clamp-2">{product.description}</p>
+              {/* Info */}
+              <div className="p-3">
+                <h3 className="text-xs sm:text-sm font-semibold text-gray-800 line-clamp-2 mb-1 min-h-[2.5rem]">{product.name}</h3>
 
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-lg font-bold text-orange-600">
-                    ₦{product.price.toLocaleString()}
-                  </span>
-                  {product.rating && (
-                    <div className="flex items-center gap-1">
-                      <FaStar className="text-yellow-400 text-sm" />
-                      <span className="text-xs text-gray-600">{product.rating.toFixed(1)}</span>
+                {/* Rating */}
+                {product.rating && (
+                  <div className="flex items-center gap-1 mb-1.5">
+                    <div className="flex">
+                      {[1,2,3,4,5].map(s => (
+                        <FaStar key={s} className={`text-[10px] ${s <= Math.round(product.rating!) ? 'text-amber-400' : 'text-gray-200'}`} />
+                      ))}
                     </div>
+                    <span className="text-[10px] text-gray-500">({product.reviews || 0})</span>
+                  </div>
+                )}
+
+                {/* Price */}
+                <div className="flex items-baseline gap-1.5 mb-2.5">
+                  <span className="text-sm font-black text-gray-900">₦{product.price.toLocaleString()}</span>
+                  {product.originalPrice && (
+                    <span className="text-[11px] text-gray-400 line-through">₦{product.originalPrice.toLocaleString()}</span>
                   )}
                 </div>
 
+                {/* Add to cart */}
                 <button
-                  onClick={() => handleAddToCart(product)}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 rounded-lg transition-colors"
+                  onClick={(e) => { e.stopPropagation(); handleAddToCart(product); }}
+                  disabled={!product.quantity}
+                  className={`w-full py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200 active:scale-95 ${
+                    product.quantity
+                      ? 'bg-orange-500 hover:bg-orange-600 text-white'
+                      : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  }`}
                 >
-                  Add to Cart
+                  {product.quantity ? (
+                    <><FaShoppingCart className="text-[11px]" /> Add to Cart</>
+                  ) : 'Out of Stock'}
                 </button>
               </div>
             </div>

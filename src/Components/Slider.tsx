@@ -182,7 +182,7 @@ const WatchSlider = () => {
 
           <div className="flex flex-wrap gap-2 py-1 sm:py-2">
             <span className="px-2 py-1 bg-amber-50 text-amber-700 text-xs rounded-full border border-amber-200">Water Resistant</span>
-            <span className="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded-full border border-blue-200">Sapphire Glass</span>
+            <span className="px-2 py-1 bg-orange-50 text-orange-700 text-xs rounded-full border border-orange-200">Sapphire Glass</span>
           </div>
 
             <div className="pt-2 sm:pt-3 flex gap-2">

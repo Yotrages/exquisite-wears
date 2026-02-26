@@ -40,7 +40,7 @@ const Pagination = () => {
     const borderStyle = progress > 0 ? `border-${Math.floor(progress * 4)}` : "border-none";
 
     return `w-10 h-10 rounded-full flex items-center justify-center ${
-      isActiveStep ? "bg-blue-500 text-white" : "bg-gray-300"
+      isActiveStep ? "bg-orange-500 text-white" : "bg-gray-300"
     } ${borderStyle} ${borderColor} transition-all duration-300 ease-in-out`;
   };
 

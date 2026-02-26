@@ -100,7 +100,7 @@ export default function ProductImageGallery({ images = [], productName }: Props)
               onClick={() => setSelectedImage(idx)}
               className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
                 selectedImage === idx
-                  ? 'border-blue-500 ring-2 ring-blue-200'
+                  ? 'border-orange-500 ring-2 ring-orange-200'
                   : 'border-gray-200 hover:border-gray-400'
               }`}
             >

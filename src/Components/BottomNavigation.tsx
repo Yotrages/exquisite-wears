@@ -30,8 +30,8 @@ export default function BottomNavigation() {
               to={item.path}
               className={`flex flex-col items-center justify-center flex-1 h-full relative transition-all ${
                 active
-                  ? 'text-blue-600'
-                  : 'text-gray-600 hover:text-blue-500'
+                  ? 'text-orange-600'
+                  : 'text-gray-600 hover:text-orange-500'
               }`}
             >
               {/* Badge */}
@@ -59,7 +59,7 @@ export default function BottomNavigation() {
 
               {/* Active Indicator */}
               {active && (
-                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-blue-600 rounded-t-full"></div>
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-orange-600 rounded-t-full"></div>
               )}
             </Link>
           )

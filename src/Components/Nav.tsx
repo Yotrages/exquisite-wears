@@ -1,7 +1,11 @@
-import { FaArrowDown, FaSearch, FaShoppingCart, FaHeart, FaBell, FaBox, FaCog, FaSignOutAlt } from "react-icons/fa";
-import { Nigeria } from "../assets";
-import { useState, useEffect } from "react";
-import { CgMenuGridO } from "react-icons/cg";
+import {
+  FaSearch, FaShoppingCart, FaHeart, FaBell, FaBox,
+  FaCog, FaSignOutAlt, FaChevronDown, FaUser, FaTruck,
+  FaHeadset, FaTag
+} from "react-icons/fa";
+import { HiMenuAlt3 } from "react-icons/hi";
+import { MdLocalOffer } from "react-icons/md";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import SearchValidator from "../Api/Search";
 import { handleLogout } from "../constants";
@@ -32,22 +36,41 @@ const Nav = ({
     setSearchToggle,
     toggle,
   } = SearchValidator();
-  
+
   const navigate = useNavigate();
   const cartCount = useSelector((state: any) => state.cart?.items?.length || 0);
-  
+  const cartTotal = useSelector((state: any) =>
+    state.cart?.items?.reduce((s: number, i: any) => s + i.price * i.quantity, 0) || 0
+  );
+
   const [wishlistCount, setWishlistCount] = useState(0);
   const [notificationCount, setNotificationCount] = useState(0);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState<any[]>([]);
+  const [scrolled, setScrolled] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+  const notifRef = useRef<HTMLDivElement>(null);
 
-  // Update parent's change state when searchToggle changes
   useEffect(() => {
     setChange(searchToggle);
   }, [searchToggle, setChange]);
 
-  // Fetch wishlist count
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 10);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) setShowUserMenu(false);
+      if (notifRef.current && !notifRef.current.contains(e.target as Node)) setShowNotifications(false);
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   useEffect(() => {
     if (user) {
       fetchWishlistCount();
@@ -56,348 +79,326 @@ const Nav = ({
   }, [user]);
 
   const fetchWishlistCount = async () => {
-    if (!user) return;
     try {
       const res = await apiClient.get('/wishlist');
       setWishlistCount(res.data.items?.length || 0);
-    } catch (err) {
-      console.error('Failed to fetch wishlist:', err);
-    }
+    } catch { }
   };
 
   const fetchNotifications = async () => {
-    if (!user) return;
     try {
       const res = await apiClient.get('/notifications');
       const unread = res.data.notifications?.filter((n: any) => !n.read) || [];
-      setNotificationCount(unread?.length);
-      setNotifications(res.data.notifications || []);
-    } catch (err) {
-      console.error('Failed to fetch notifications:', err);
-    }
+      setNotificationCount(unread.length);
+      setNotifications(res.data.notifications?.slice(0, 6) || []);
+    } catch { }
   };
 
   const markNotificationAsRead = async (notificationId: string) => {
-    const token = getAuthToken();
-    if (!token) return;
     try {
-      await apiClient.put(
-        `/notifications/${notificationId}/read`,
-        {}
-      );
-    } catch (err) {
-      console.error('Failed to mark notification as read:', err);
-    }
+      await apiClient.put(`/notifications/${notificationId}/read`, {});
+      setNotificationCount(prev => Math.max(0, prev - 1));
+    } catch { }
   };
+
+  const quickLinks = [
+    { label: 'Flash Sales', icon: MdLocalOffer, to: '/search/fashion', color: 'text-red-500' },
+    { label: 'Track Order', icon: FaTruck, to: '/orders', color: 'text-blue-500' },
+    { label: 'Help', icon: FaHeadset, to: '/contact', color: 'text-green-500' },
+    { label: 'Deals', icon: FaTag, to: '/search/electronics', color: 'text-orange-500' },
+  ];
 
   return (
     <>
-      {/* Top Banner - Optional for promotions */}
-      {/* <div className="bg-blue-600 text-white text-center py-2 text-sm">
-        🎉 Free shipping on orders above ₦50,000! Limited time offer.
-      </div> */}
-
-      {/* Main Navbar */}
-      <nav
-        className={`w-full flex top-0 justify-between ${
-          searchToggle && change
-            ? "translate-x-[w-full] z-[1] overflow-hidden"
-            : "fixed top-0 py-4 z-[10]"
-        } items-center sm:px-8 xs:px-5 px-3 bg-white shadow-md text-black ${
-          user ? "pt-5" : "pt-4"
-        }`}
-      >
-        {/* Logo */}
-        <Link to="/" className="hover:opacity-80 transition-opacity">
-          <span className="flex items-center qy:text-[28px] text-[18px]">
-            <h1 className="text-[#001F3F] font-bold tracking-widest">Exquisite</h1>
-            <h1 className="text-[#001F3F] font-bold tracking-widest">Wears</h1>
-          </span>
-        </Link>
-
-        {/* Search Form - Desktop */}
-        <div className="inline-block relative flex-1 max-w-2xl mx-8">
-          <div className="md:flex relative hidden">
-            <input
-              type="search"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSearch(searchTerm)}
-              className="py-3 px-4 focus:ring-2 focus:ring-blue-500 focus:outline-none border-2 border-gray-300 rounded-lg text-black w-full"
-              placeholder="Search for products, brands..."
-              name="input"
-            />
-            <button
-              className="absolute bg-blue-600 hover:bg-blue-700 h-full rounded-r-lg px-6 right-0 flex items-center transition-colors"
-              onClick={() => handleSearch(searchTerm)}
-            >
-              <FaSearch className="text-white" />
-            </button>
+      {/* === TOP PROMO BAR === */}
+      <div className="fixed w-full top-0 bg-gray-900 text-gray-200 text-xs py-1.5 hidden sm:block z-[51]">
+        <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
+          <div className="flex items-center gap-6">
+            {quickLinks.map(({ label, icon: Icon, to, color }) => (
+              <Link key={label} to={to} className={`flex items-center gap-1.5 hover:text-white transition-colors ${color}`}>
+                <Icon className="text-xs" />
+                <span>{label}</span>
+              </Link>
+            ))}
           </div>
-
-          {/* Display Search Results */}
-          {((data?.length || 0) > 0 || error) && (
-            <ul className="absolute md:flex flex-col hidden max-h-[85vh] top-full left-0 w-full bg-white text-black z-[100] overflow-y-auto shadow-xl rounded-lg mt-2 border border-gray-200">
-              {(data || [])?.map((item, index) => (
-                <li
-                  key={index}
-                  className="py-3 px-4 flex flex-row cursor-pointer items-center hover:bg-gray-50 transition-colors border-b last:border-b-0"
-                  onClick={() => {
-                    navigate(`/product/${item?._id}`);
-                    setSearchTerm('');
-                  }}
-                >
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="w-16 h-16 object-contain mr-4 rounded"
-                  />
-                  <div className="flex-1">
-                    <div className="font-semibold text-gray-900">{item.name}</div>
-                    <div className="text-sm text-gray-600">₦{item.price?.toLocaleString()}</div>
-                  </div>
-                </li>
-              ))}
-              {error && <li className="py-3 px-4 text-red-500">{error}</li>}
-            </ul>
-          )}
+          <div className="flex items-center gap-4 text-gray-400">
+            <span>📦 Free delivery on orders above ₦50,000</span>
+          </div>
         </div>
+      </div>
 
-        {/* Right Side Icons & Menu */}
-        {user ? (
-          <div className="flex items-center gap-4">
-            {/* Currency Selector - Desktop only */}
-            <div className="hidden xl:flex items-center gap-1 cursor-pointer hover:text-blue-600 transition-colors">
-              <img className="w-6 h-6" src={Nigeria} alt="NGN" />
-              <span className="font-semibold">NGN</span>
-              <FaArrowDown className="text-xs" />
-            </div>
+      {/* === MAIN NAV === */}
+      <nav className={`w-full fixed top-0 sm:top-7 z-50 bg-white transition-all duration-200 ${scrolled ? 'shadow-md' : 'shadow-sm'}`}>
+        <div className="max-w-7xl mx-auto px-3 sm:px-6">
+          <div className="flex items-center gap-3 py-3">
 
-            {/* Mobile Search Icon */}
-            <button
-              className="md:hidden text-gray-700 hover:text-blue-600 transition-colors"
-              onClick={handleSearchToggle}
-            >
-              <FaSearch className="text-xl" />
-            </button>
-
-            {/* Wishlist */}
-            <Link
-              to="/wishlist"
-              className="relative hover:text-red-500 transition-colors hidden sm:block"
-              title="Wishlist"
-            >
-              <FaHeart className="text-2xl" />
-              {wishlistCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-semibold rounded-full w-5 h-5 flex items-center justify-center">
-                  {wishlistCount}
+            {/* Logo */}
+            <Link to="/" className="flex-shrink-0 group">
+              <div className="flex flex-col leading-none">
+                <span className="text-xl sm:text-2xl font-black tracking-tight text-gray-900 group-hover:text-orange-500 transition-colors" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                  Exquisite
                 </span>
-              )}
+                <span className="text-[10px] tracking-widest text-orange-500 font-semibold uppercase">Wears</span>
+              </div>
             </Link>
 
-            {/* Notifications */}
-            <div className="relative">
-              <button
-                className="hover:text-blue-600 transition-colors hidden sm:block"
-                onClick={() => setShowNotifications(!showNotifications)}
-                title="Notifications"
-              >
-                <FaBell className="text-2xl" />
-                {notificationCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs font-semibold rounded-full w-5 h-5 flex items-center justify-center">
-                    {notificationCount}
-                  </span>
-                )}
-              </button>
+            {/* Search bar - desktop */}
+            <div className="flex-1 max-w-2xl mx-4 hidden md:block relative">
+              <div className="flex items-stretch rounded-lg overflow-hidden border-2 border-orange-400 focus-within:border-orange-500 transition-colors">
+                <input
+                  type="search"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSearch(searchTerm)}
+                  className="flex-1 py-2.5 px-4 text-sm text-gray-800 outline-none bg-white placeholder-gray-400"
+                  placeholder="Search products, brands and categories..."
+                />
+                <button
+                  className="bg-orange-500 hover:bg-orange-600 transition-colors px-5 flex items-center justify-center"
+                  onClick={() => handleSearch(searchTerm)}
+                >
+                  <FaSearch className="text-white text-sm" />
+                </button>
+              </div>
 
-              {/* Notifications Dropdown */}
-              {showNotifications && (
-                <div className="absolute right-0 mt-2 w-72 xs:w-80 bg-white rounded-lg shadow-xl border border-gray-200 z-[100] max-h-96 overflow-y-auto max-w-[calc(100vw-1rem)]">
-                  <div className="px-4 py-3 border-b border-gray-200 flex justify-between items-center">
-                    <h3 className="font-semibold text-gray-900">Notifications</h3>
-                    <button
-                      onClick={() => setShowNotifications(false)}
-                      className="text-gray-400 hover:text-gray-600"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                  {notifications?.length === 0 ? (
-                    <div className="px-4 py-8 text-center text-gray-500">
-                      No notifications
+              {/* Search dropdown */}
+              {((data?.length || 0) > 0 || error) && (
+                <div className="absolute top-full left-0 right-0 bg-white rounded-b-xl shadow-2xl border border-gray-100 z-[200] max-h-[70vh] overflow-y-auto mt-0.5">
+                  {error && (
+                    <div className="px-4 py-3 text-sm text-gray-500 flex items-center gap-2">
+                      <FaSearch className="text-gray-300" />
+                      {error}
                     </div>
-                  ) : (
-                    (notifications || [])?.slice(0, 5)?.map((notif) => (
-                      <div
-                        key={notif._id}
-                        className={`px-4 py-3 border-b border-gray-100 cursor-pointer hover:bg-gray-50 ${
-                          !notif.read ? 'bg-blue-50' : ''
-                        }`}
-                        onClick={() => {
-                          markNotificationAsRead(notif._id);
-                          setShowNotifications(false);
-                          if (notif.link) navigate(notif.link);
-                        }}
-                      >
-                        <div className="font-semibold text-sm text-gray-900">{notif.title}</div>
-                        <div className="text-xs text-gray-600 mt-1">{notif.message}</div>
-                        <div className="text-xs text-gray-400 mt-1">
-                          {new Date(notif.createdAt).toLocaleDateString()}
-                        </div>
-                      </div>
-                    ))
                   )}
-                  <Link
-                    to="/notification"
-                    className="block px-4 py-3 text-center text-blue-600 hover:bg-gray-50 font-semibold"
-                    onClick={() => setShowNotifications(false)}
-                  >
-                    View All
-                  </Link>
+                  {(data || []).map((item, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center gap-3 px-4 py-3 hover:bg-orange-50 cursor-pointer border-b border-gray-50 last:border-0 transition-colors"
+                      onClick={() => { navigate(`/product/${item?._id}`); setSearchTerm(''); }}
+                    >
+                      <img src={item.image} alt={item.name} className="w-12 h-12 object-cover rounded-lg flex-shrink-0 border border-gray-100" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-gray-900 line-clamp-1">{item.name}</p>
+                        {/* <p className="text-xs text-gray-500 mt-0.5">{item.category || 'Product'}</p> */}
+                      </div>
+                      <span className="text-sm font-bold text-orange-500 flex-shrink-0">₦{item.price?.toLocaleString()}</span>
+                    </div>
+                  ))}
+                  {(data?.length || 0) > 0 && (
+                    <button
+                      className="w-full py-3 text-center text-sm font-semibold text-orange-500 hover:bg-orange-50 transition-colors"
+                      onClick={() => { navigate(`/search/${searchTerm}`); setSearchTerm(''); }}
+                    >
+                      See all results for "{searchTerm}" →
+                    </button>
+                  )}
                 </div>
               )}
             </div>
 
-            <button
-              className="text-black ss:hidden flex hover:text-blue-600"
-              onClick={() => setToggle((prev) => !prev)}
-            >
-              <CgMenuGridO className="text-3xl" />
-            </button>
+            {/* Right side */}
+            <div className="flex items-center gap-1 sm:gap-2 ml-auto">
 
-            {/* Cart */}
-            <Link
-              to="/cart"
-              className="relative ss:flex hidden hover:text-blue-600 transition-colors"
-              title="Shopping Cart"
-            >
-              <FaShoppingCart className="text-2xl" />
-              {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs font-semibold rounded-full w-5 h-5 flex items-center justify-center">
-                  {cartCount}
-                </span>
-              )}
-            </Link>
-
-            {/* User Menu */}
-            <div className="relative">
-              <button
-                className="bg-blue-600 hover:bg-blue-700 transition-colors items-center w-9 h-9 rounded-full text-lg font-semibold justify-center flex text-white"
-                onClick={() => setShowUserMenu(!showUserMenu)}
-              >
-                {userName}
+              {/* Mobile search */}
+              <button className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors" onClick={handleSearchToggle}>
+                <FaSearch className="text-gray-700 text-lg" />
               </button>
 
-              {/* User Dropdown Menu */}
-              {showUserMenu && (
-                <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 z-[100] py-2">
-                  <div className="px-4 py-3 border-b border-gray-200">
-                    <div className="font-semibold text-gray-900">Hello, {userName}!</div>
-                    <div className="text-sm text-gray-600">Welcome back</div>
-                  </div>
-
-                  <Link
-                    to="/orders"
-                    className="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors text-gray-700"
-                    onClick={() => setShowUserMenu(false)}
-                  >
-                    <FaBox className="text-lg" />
-                    <span>My Orders</span>
-                  </Link>
-
-                  <Link
-                    to="/wishlist"
-                    className="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors text-gray-700 sm:hidden"
-                    onClick={() => setShowUserMenu(false)}
-                  >
-                    <FaHeart className="text-lg" />
-                    <span>Wishlist</span>
+              {user ? (
+                <>
+                  {/* Wishlist */}
+                  <Link to="/wishlist" className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors hidden sm:flex items-center justify-center" title="Wishlist">
+                    <FaHeart className="text-gray-600 text-lg" />
                     {wishlistCount > 0 && (
-                      <span className="ml-auto bg-red-100 text-red-600 text-xs px-2 py-0.5 rounded-full">
-                        {wishlistCount}
+                      <span className="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                        {wishlistCount > 9 ? '9+' : wishlistCount}
                       </span>
                     )}
                   </Link>
 
-                  <Link
-                    to="/settings"
-                    className="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors text-gray-700"
-                    onClick={() => setShowUserMenu(false)}
-                  >
-                    <FaCog className="text-lg" />
-                    <span>Account Settings</span>
+                  {/* Notifications */}
+                  <div className="relative hidden sm:block" ref={notifRef}>
+                    <button
+                      className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                      onClick={() => { setShowNotifications(v => !v); setShowUserMenu(false); }}
+                    >
+                      <FaBell className="text-gray-600 text-lg" />
+                      {notificationCount > 0 && (
+                        <span className="absolute top-0 right-0 bg-orange-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center animate-pulse">
+                          {notificationCount > 9 ? '9+' : notificationCount}
+                        </span>
+                      )}
+                    </button>
+
+                    {showNotifications && (
+                      <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border border-gray-100 z-[200] overflow-hidden animate-fade-in">
+                        <div className="px-4 py-3 bg-gray-50 border-b flex justify-between items-center">
+                          <h3 className="font-bold text-gray-900 text-sm">Notifications</h3>
+                          {notificationCount > 0 && (
+                            <span className="text-xs bg-orange-500 text-white px-2 py-0.5 rounded-full">{notificationCount} new</span>
+                          )}
+                        </div>
+                        {notifications.length === 0 ? (
+                          <div className="py-10 text-center">
+                            <FaBell className="text-3xl text-gray-200 mx-auto mb-2" />
+                            <p className="text-sm text-gray-500">No notifications yet</p>
+                          </div>
+                        ) : (
+                          notifications.map((notif) => (
+                            <div
+                              key={notif._id}
+                              className={`px-4 py-3 border-b border-gray-50 cursor-pointer hover:bg-orange-50 transition-colors ${!notif.read ? 'bg-orange-50/50' : ''}`}
+                              onClick={() => { markNotificationAsRead(notif._id); setShowNotifications(false); if (notif.link) navigate(notif.link); }}
+                            >
+                              {!notif.read && <span className="inline-block w-2 h-2 bg-orange-500 rounded-full mr-2 mb-0.5" />}
+                              <p className="text-sm font-semibold text-gray-900">{notif.title}</p>
+                              <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{notif.message}</p>
+                              <p className="text-xs text-gray-400 mt-1">{new Date(notif.createdAt).toLocaleDateString()}</p>
+                            </div>
+                          ))
+                        )}
+                        <Link to="/notification" className="block py-3 text-center text-sm font-semibold text-orange-500 hover:bg-orange-50 transition-colors" onClick={() => setShowNotifications(false)}>
+                          View all notifications →
+                        </Link>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Cart */}
+                  <Link to="/cart" className="relative flex items-center gap-2 p-2 sm:px-3 rounded-lg hover:bg-orange-50 transition-colors group">
+                    <div className="relative">
+                      <FaShoppingCart className="text-gray-700 group-hover:text-orange-500 text-lg transition-colors" />
+                      {cartCount > 0 && (
+                        <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                          {cartCount > 9 ? '9+' : cartCount}
+                        </span>
+                      )}
+                    </div>
+                    {cartCount > 0 && (
+                      <div className="hidden sm:block">
+                        <p className="text-xs text-gray-500 leading-none">Cart</p>
+                        <p className="text-sm font-bold text-gray-900 leading-tight">₦{cartTotal.toLocaleString()}</p>
+                      </div>
+                    )}
                   </Link>
 
-                  <div className="border-t border-gray-200 mt-2"></div>
-
-                  <button
-                    onClick={() => {
-                      setShowUserMenu(false);
-                      handleLogout(navigate);
-                    }}
-                    className="flex items-center gap-3 px-4 py-2.5 hover:bg-red-50 transition-colors text-red-600 w-full"
-                  >
-                    <FaSignOutAlt className="text-lg" />
-                    <span>Sign Out</span>
+                  {/* Mobile menu */}
+                  <button className="sm:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors" onClick={() => setToggle(v => !v)}>
+                    <HiMenuAlt3 className="text-2xl text-gray-700" />
                   </button>
-                </div>
+
+                  {/* User avatar menu */}
+                  <div className="relative hidden sm:block" ref={userMenuRef}>
+                    <button
+                      className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+                      onClick={() => { setShowUserMenu(v => !v); setShowNotifications(false); }}
+                    >
+                      <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold text-sm">
+                        {userName}
+                      </div>
+                      <div className="hidden md:block text-left">
+                        <p className="text-xs text-gray-500 leading-none">Hello,</p>
+                        <p className="text-sm font-semibold text-gray-900 leading-tight flex items-center gap-1">
+                          Account <FaChevronDown className="text-xs" />
+                        </p>
+                      </div>
+                    </button>
+
+                    {showUserMenu && (
+                      <div className="absolute right-0 mt-2 w-60 bg-white rounded-xl shadow-2xl border border-gray-100 z-[200] overflow-hidden animate-fade-in">
+                        <div className="px-4 py-3 bg-orange-500">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-orange-500 font-bold text-lg">{userName}</div>
+                            <div>
+                              <p className="font-bold text-white">Hello, {userName}!</p>
+                              <p className="text-xs text-orange-100">Welcome back</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="py-1">
+                          {[
+                            { to: '/orders', icon: FaBox, label: 'My Orders' },
+                            { to: '/wishlist', icon: FaHeart, label: 'Wishlist', badge: wishlistCount },
+                            { to: '/notification', icon: FaBell, label: 'Notifications', badge: notificationCount },
+                            { to: '/settings', icon: FaCog, label: 'Account Settings' },
+                          ].map(({ to, icon: Icon, label, badge }) => (
+                            <Link key={to} to={to} className="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors text-gray-700 text-sm" onClick={() => setShowUserMenu(false)}>
+                              <Icon className="text-gray-400 w-4" />
+                              <span className="flex-1">{label}</span>
+                              {badge && badge > 0 && (
+                                <span className="bg-orange-100 text-orange-600 text-xs font-bold px-2 py-0.5 rounded-full">{badge}</span>
+                              )}
+                            </Link>
+                          ))}
+                          <div className="border-t border-gray-100 mt-1 pt-1">
+                            <button
+                              onClick={() => { setShowUserMenu(false); handleLogout(navigate); }}
+                              className="flex items-center gap-3 px-4 py-2.5 hover:bg-red-50 transition-colors text-red-500 w-full text-sm"
+                            >
+                              <FaSignOutAlt className="w-4" />
+                              Sign Out
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <Link to="/cart" className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors">
+                    <FaShoppingCart className="text-gray-700 text-lg" />
+                    {cartCount > 0 && (
+                      <span className="absolute top-0 right-0 bg-orange-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">{cartCount}</span>
+                    )}
+                  </Link>
+
+                  <button className="sm:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors" onClick={() => setToggle(v => !v)}>
+                    <HiMenuAlt3 className="text-2xl text-gray-700" />
+                  </button>
+
+                  <div className="hidden sm:flex items-center gap-2">
+                    <Link to="/login" className="px-4 py-2 text-sm font-semibold text-orange-500 border-2 border-orange-400 rounded-lg hover:bg-orange-50 transition-colors">
+                      Log in
+                    </Link>
+                    <Link to="/register" className="px-4 py-2 text-sm font-semibold text-white bg-orange-500 hover:bg-orange-600 rounded-lg transition-colors">
+                      Sign up
+                    </Link>
+                  </div>
+                </>
               )}
             </div>
           </div>
-        ) : (
-          <div className="relative flex items-center gap-4">
-            {/* Mobile Search Icon */}
-            <button
-              className="md:hidden text-gray-700 hover:text-blue-600 transition-colors"
-              onClick={handleSearchToggle}
-            >
-              <FaSearch className="text-xl" />
-            </button>
+        </div>
 
-            {/* Auth Buttons */}
-            <Link
-              to="/register"
-              className="px-4 py-2 ss:flex hidden hover:bg-blue-700 transition-colors rounded-lg bg-blue-600 text-white font-semibold"
-            >
-              Sign Up
-            </Link>
-
-            <Link
-              to="/login"
-              className="px-4 py-2 ss:flex hidden hover:bg-gray-100 transition-colors rounded-lg border-2 border-blue-600 text-blue-600 font-semibold"
-            >
-              Login
-            </Link>
-
-            {/* Mobile Menu Icon */}
-            <button
-              className="text-black ss:hidden flex hover:text-blue-600"
-              onClick={() => setToggle((prev) => !prev)}
-            >
-              <CgMenuGridO className="text-3xl" />
-            </button>
-
-            {/* Cart for non-logged users */}
-            <Link
-              to="/cart"
-              className="relative hidden ss:flex hover:text-blue-600 transition-colors"
-              title="Shopping Cart"
-            >
-              <FaShoppingCart className="text-2xl" />
-              {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs font-semibold rounded-full w-5 h-5 flex items-center justify-center">
-                  {cartCount}
-                </span>
-              )}
-            </Link>
+        {/* === CATEGORY NAV BAR (desktop) === */}
+        <div className="hidden md:block border-t border-gray-100">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="flex items-center gap-6 py-2 text-sm overflow-x-auto scrollbar-hide">
+              {[
+                'Fashion', 'Electronics', 'Phones & Tablets', 'Home & Living',
+                'Sports', 'Beauty', 'Baby Products', 'Books', 'Computing'
+              ].map(cat => (
+                <Link
+                  key={cat}
+                  to={`/search/${cat}`}
+                  className="whitespace-nowrap text-gray-600 hover:text-orange-500 font-medium transition-colors py-1 border-b-2 border-transparent hover:border-orange-500"
+                >
+                  {cat}
+                </Link>
+              ))}
+              <Link to="/search/all" className="whitespace-nowrap text-orange-500 hover:text-orange-600 font-semibold ml-auto flex items-center gap-1">
+                All Categories <FaChevronDown className="text-xs" />
+              </Link>
+            </div>
           </div>
-        )}
+        </div>
       </nav>
 
-      {/* Sidebar for Mobile */}
-      <Sidebar toggle={toggle} setToggle={setToggle} />
+      {/* Spacer */}
+      <div className="h-[58px] sm:h-[135px]" />
 
-      {/* Mobile Search */}
+      <Sidebar toggle={toggle} setToggle={setToggle} />
       <SearchInput
         searchTerm={searchTerm}
         handleSearch={handleSearch}

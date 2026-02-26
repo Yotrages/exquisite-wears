@@ -1,162 +1,231 @@
 import { Link } from "react-router-dom";
 import { bg4, social } from "../assets";
-import { FaArrowAltCircleRight, FaClock, FaGem } from "react-icons/fa";
+import { FaChevronRight, FaGem, FaPlay, FaStar } from "react-icons/fa";
+import { HiSparkles } from "react-icons/hi";
 import { useState, useEffect } from "react";
 import { apiClient } from '../Api/axiosConfig';
-import { Product } from '../Types/Product'
+import { Product } from '../Types/Product';
+import { useNavigate } from "react-router-dom";
+
+const SLIDES = [
+  {
+    badge: "New Collection",
+    headline: ["Timeless", "Luxury", "On Your Wrist"],
+    sub: "Discover Swiss-crafted timepieces that define elegance and precision for every occasion.",
+    cta: "Shop Collection",
+    ctaLink: "/search/all",
+    ctaSecondary: "View Lookbook",
+    bgFrom: "#1a1a2e",
+    bgTo: "#16213e",
+    accent: "#f57c00",
+  },
+  {
+    badge: "Flash Sale — Up to 60% Off",
+    headline: ["Exclusive", "Deals", "Today Only"],
+    sub: "Limited time offers on our most sought-after timepieces. Don't miss out.",
+    cta: "Grab Deals",
+    ctaLink: "/search/flash sales",
+    ctaSecondary: "See All Offers",
+    bgFrom: "#7b1fa2",
+    bgTo: "#4a148c",
+    accent: "#ffd600",
+  },
+  {
+    badge: "Free Delivery",
+    headline: ["Premium", "Watches", "Free Shipping"],
+    sub: "Orders above ₦50,000 get free nationwide delivery. Luxury made accessible.",
+    cta: "Shop Now",
+    ctaLink: "/search/all",
+    ctaSecondary: "Learn More",
+    bgFrom: "#0d47a1",
+    bgTo: "#1565c0",
+    accent: "#00e5ff",
+  },
+];
+
+const Trust = [
+  { icon: "🚚", label: "Free Delivery", sub: "Orders ₦50k+" },
+  { icon: "🔒", label: "Secure Payment", sub: "100% Protected" },
+  { icon: "↩️", label: "Easy Returns", sub: "7-day policy" },
+  { icon: "⭐", label: "Premium Quality", sub: "Certified authentic" },
+];
 
 const Hero = () => {
   const [products, setProducts] = useState<Product[]>([]);
-  
+  const [slide, setSlide] = useState(0);
+  const [transitioning, setTransitioning] = useState(false);
+  const navigate = useNavigate();
 
-  const getLast = products[0]?.image ?? social;
-
+  const featuredImage = products[0]?.image ?? social;
 
   useEffect(() => {
-    const getProducts = async () => {
-      try {
-        const res = await apiClient.get('/products/get');
-        const data: Product[] = res.data?.products || [];
-
-        setProducts(data);
-       
-      } catch (error: any) {
-        console.error("Error fetching products:", error.message);
-      }
-    };
-    getProducts();
+    apiClient.get('/products/get').then(res => {
+      setProducts(res.data?.products || []);
+    }).catch(() => {});
   }, []);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTransitioning(true);
+      setTimeout(() => {
+        setSlide(s => (s + 1) % SLIDES.length);
+        setTransitioning(false);
+      }, 300);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const current = SLIDES[slide];
   const token = localStorage.getItem("admin");
-  const Admin = "true";
   const user = localStorage.getItem("userName");
 
   return (
-    <section className="w-full relative overflow-hidden isolate">
-      <div className="relative w-full min-h-screen">
-        {/* Enhanced Background with Overlay */}
-        <div className="absolute inset-0 z-0">
-          <img
-            src={bg4}
-            className="w-full h-full object-cover"
-            alt="Luxury Background"
-          />
-          {/* Gradient Overlay for better text readability */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent"></div>
-          {/* Subtle pattern overlay */}
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/30"></div>
+    <section className="w-full">
+      {/* === HERO BANNER === */}
+      <div
+        className="relative w-full overflow-hidden"
+        style={{
+          background: `linear-gradient(135deg, ${current.bgFrom} 0%, ${current.bgTo} 100%)`,
+          minHeight: '480px',
+          transition: 'background 0.5s ease',
+        }}
+      >
+        {/* Background image overlay */}
+        <div className="absolute inset-0">
+          <img src={bg4} className="w-full h-full object-cover opacity-20" alt="" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
         </div>
-        
-        {/* Floating decorative elements */}
-        <div className="absolute top-20 right-10 opacity-10 animate-pulse z-10">
-          <FaGem className="text-6xl text-white transform rotate-12" />
-        </div>
-        <div className="absolute bottom-32 left-16 opacity-10 animate-pulse z-10">
-          <FaClock className="text-8xl text-white transform -rotate-12" />
-        </div>
-        
-        <div className="relative z-20 flex flex-col sm:py-28 md:py-40 py-16 md:flex-row gap-10 md:justify-between items-center md:items-start w-full md:h-full px-8 xl:px-16 md:px-14">
-          <div className="flex flex-col md:items-start items-center gap-8 qy:gap-14 md:w-1/2 text-center md:text-left">
-            {/* Premium badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500/20 to-yellow-600/20 backdrop-blur-sm border border-amber-400/30 rounded-full text-amber-300 text-sm font-medium">
-              <FaGem className="text-xs" />
-              <span>Premium Timepieces</span>
+
+        {/* Decorative shapes */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full opacity-5 -translate-y-1/2 translate-x-1/3"
+          style={{ background: current.accent, filter: 'blur(80px)' }} />
+        <div className="absolute bottom-0 left-1/3 w-[300px] h-[300px] rounded-full opacity-10 translate-y-1/2"
+          style={{ background: current.accent, filter: 'blur(60px)' }} />
+
+        <div className={`relative z-10 max-w-7xl mx-auto px-4 sm:px-8 py-12 sm:py-20 flex flex-col lg:flex-row items-center gap-8 lg:gap-16 transition-opacity duration-300 ${transitioning ? 'opacity-0' : 'opacity-100'}`}>
+
+          {/* Left content */}
+          <div className="flex-1 text-white space-y-5">
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold border"
+              style={{ borderColor: current.accent + '60', background: current.accent + '20', color: current.accent }}>
+              <HiSparkles />
+              {current.badge}
             </div>
 
-            {/* Main Headline */}
-            <h1 className="xs:text-4xl text-3xl md:text-6xl lg:text-7xl font-bold text-white tracking-tight leading-tight">
-              <span className="bg-gradient-to-r from-amber-300 via-yellow-200 to-amber-400 bg-clip-text text-transparent">
-                Timeless
-              </span>
-              <br />
-              <span className="text-white">Elegance</span>
-              <br />
-              <span className="text-amber-300">On Your Wrist</span>
+            {/* Headline */}
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              {current.headline.map((line, i) => (
+                <div key={i} className={i === 1 ? 'text-gradient' : ''} style={i === 1 ? { WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundImage: `linear-gradient(135deg, ${current.accent}, #fff)` } : {}}>
+                  {line}
+                </div>
+              ))}
             </h1>
 
-            {/* Subheading */}
-            <div className="flex flex-col gap-4 max-w-2xl">
-              <h2 className="xs:text-xl text-lg md:text-2xl lg:text-3xl font-light text-gray-200 leading-relaxed">
-                Discover our exquisite collection of luxury wristwatches - where Swiss precision meets contemporary design.
-              </h2>
-              <h2 className="xs:text-lg text-base md:text-xl text-gray-300 leading-relaxed font-light">
-                From classic dress watches to modern sports timepieces, each watch tells a story of craftsmanship, heritage, and impeccable style. Elevate every moment with timepieces that define sophistication.
-              </h2>
+            <p className="text-gray-300 text-base sm:text-lg max-w-md leading-relaxed">{current.sub}</p>
+
+            {/* Rating social proof */}
+            <div className="flex items-center gap-3">
+              <div className="flex">
+                {[1,2,3,4,5].map(i => <FaStar key={i} className="text-amber-400 text-sm" />)}
+              </div>
+              <span className="text-sm text-gray-300">4.9/5 from <span className="text-white font-semibold">2,400+</span> reviews</span>
             </div>
 
-            {/* Features highlight */}
-            <div className="flex flex-wrap gap-6 text-sm text-gray-300">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-amber-400 rounded-full"></div>
-                <span>Swiss Movement</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-amber-400 rounded-full"></div>
-                <span>Lifetime Warranty</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-amber-400 rounded-full"></div>
-                <span>Free Engraving</span>
-              </div>
-            </div>
-
-            {/* Enhanced CTA Buttons */}
-            <div className="flex flex-col sm:flex-row items-center gap-5">
+            {/* CTA buttons */}
+            <div className="flex flex-wrap items-center gap-3 pt-2">
               <Link
-                to={token === Admin ? '/admin' : user ? '#subscribe' : '/register'}
-                className="group relative inline-flex items-center gap-3 px-4 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 text-black rounded-lg shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-amber-500/25 w-fit font-semibold sm:text-lg text-base overflow-hidden"
-                id="subscribe"
+                to={token === "true" ? '/admin' : user ? (current as any).ctaLink || '/search/all' : '/register'}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-bold text-sm transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg"
+                style={{ background: current.accent, color: '#fff' }}
               >
-                {/* Button shine effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-                <button className="relative z-10">
-                  {token === Admin ? "Manage Collection" : user ? 'Explore Watches' : 'Start Your Journey' }
-                </button>
-                <FaArrowAltCircleRight className="relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
+                {current.cta}
+                <FaChevronRight className="text-xs" />
               </Link>
-              
-              {token === Admin && (
-                <Link 
-                  className="group inline-flex items-center gap-3 px-4 sm:px-8 py-3 sm:py-4 bg-white/10 backdrop-blur-sm text-white border border-white/20 rounded-lg shadow-lg transition-all duration-300 hover:bg-white/20 hover:scale-105 w-fit font-semibold sm:text-lg text-base"  
-                  to='/notification'
-                >
-                  <button>
-                    Notify Collectors
-                  </button>
-                  <FaArrowAltCircleRight className="group-hover:translate-x-1 transition-transform duration-300" />
-                </Link>
-              )}
+              <button
+                onClick={() => navigate('/search/all')}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold text-sm bg-white/10 hover:bg-white/20 border border-white/20 text-white transition-all duration-200 backdrop-blur-sm"
+              >
+                <FaPlay className="text-xs" />
+                {current.ctaSecondary}
+              </button>
+            </div>
+
+            {/* Slide indicators */}
+            <div className="flex items-center gap-2 pt-2">
+              {SLIDES.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setSlide(i)}
+                  className="rounded-full transition-all duration-300"
+                  style={{
+                    width: i === slide ? '24px' : '8px',
+                    height: '8px',
+                    background: i === slide ? current.accent : 'rgba(255,255,255,0.4)',
+                  }}
+                />
+              ))}
             </div>
           </div>
 
-          {/* Enhanced Product Image Section - Fixed positioning */}
-          <div className="mt-10 md:mt-0 md:w-1/2 flex justify-center relative">
-            {/* Decorative rings - contained within this section */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="w-64 sm:w-80 md:w-96 h-64 sm:h-80 md:h-96 border border-amber-400/20 rounded-full animate-spin-slow"></div>
-              <div className="absolute w-56 sm:w-72 md:w-80 h-56 sm:h-72 md:h-80 border border-yellow-300/10 rounded-full animate-pulse"></div>
-            </div>
-            
-            {/* Product image with enhanced styling - proper containment */}
-            <div className="relative z-10 group max-w-lg">
-              <div className="absolute -inset-4 bg-gradient-to-r from-amber-600 to-yellow-400 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-300"></div>
-              <div className="relative">
+          {/* Right: featured product */}
+          <div className="flex-shrink-0 relative w-full max-w-xs lg:max-w-sm">
+            <div className="relative group">
+              {/* Glow */}
+              <div className="absolute inset-0 rounded-2xl blur-2xl opacity-30 group-hover:opacity-50 transition-opacity duration-500"
+                style={{ background: current.accent }} />
+
+              <div className="relative rounded-2xl overflow-hidden border-2 border-white/20 shadow-2xl">
                 <img
-                  src={getLast}
-                  className="w-full h-auto object-cover rounded-2xl shadow-2xl transform group-hover:scale-105 transition-all duration-500 border-2 border-amber-400/30 max-h-[600px]"
-                  alt="Featured Luxury Watch"
+                  src={featuredImage}
+                  alt="Featured Product"
+                  className="w-full h-72 sm:h-80 object-cover group-hover:scale-105 transition-transform duration-700"
                 />
-                {/* Product highlight badge */}
-                <div className="absolute -top-4 -right-4 bg-gradient-to-r from-red-500 to-pink-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg animate-pulse">
-                  Featured
-                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+
+                {/* Product info overlay */}
+                {products[0] && (
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <p className="text-white font-bold text-sm line-clamp-1">{products[0].name}</p>
+                    <div className="flex items-center justify-between mt-1">
+                      <span className="text-amber-400 font-black text-lg">₦{products[0].price?.toLocaleString()}</span>
+                      <button
+                        onClick={() => navigate(`/product/${products[0]._id}`)}
+                        className="text-xs px-3 py-1.5 rounded-lg font-semibold transition-colors"
+                        style={{ background: current.accent, color: '#fff' }}
+                      >
+                        View →
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Gem badge */}
+              <div className="absolute -top-3 -right-3 w-12 h-12 rounded-full flex items-center justify-center shadow-lg"
+                style={{ background: current.accent }}>
+                <FaGem className="text-white text-lg" />
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Bottom gradient fade */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/50 to-transparent z-10"></div>
+      {/* === TRUST BADGES BAR === */}
+      <div className="bg-white border-y border-gray-100 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 py-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 divide-x divide-gray-100">
+            {Trust.map(({ icon, label, sub }) => (
+              <div key={label} className="flex items-center gap-3 justify-center sm:justify-start px-4">
+                <span className="text-2xl">{icon}</span>
+                <div>
+                  <p className="text-sm font-bold text-gray-900">{label}</p>
+                  <p className="text-xs text-gray-500">{sub}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );

@@ -6,27 +6,29 @@ import Chatbot from './ChatBot'
 
 const Footer = React.lazy(() => import('./Footer'))
 const BackToTop = React.lazy(() => import('./Backtotop'))
-interface LayoutProps {
-    children: React.ReactNode,
-}
-const Layout = ({children} : LayoutProps) => {
 
+interface LayoutProps {
+  children: React.ReactNode
+}
+
+const Layout = ({ children }: LayoutProps) => {
   const [change, setChange] = useState(false)
+
   return (
-    <div className='w-full'>
+    <div className='w-full min-h-screen flex flex-col'>
       <Preloader />
-        <Nav setChange={setChange} change={change} />
-        <main className={`${change ? 'mt-4' : 'mt-16'}`}>
-            {children}
-        </main>
-        <Suspense fallback={<div className='text-red-500 animate-pulse'>loading...</div>}>
-          <BackToTop />
-        </Suspense>
-        <Suspense fallback={<div className='text-red-400 animate-bounce'>Loading...</div>}>
+      <Nav setChange={setChange} change={change} />
+      <main className={`flex-1 ${change ? 'mt-4' : 'mt-4'}`}>
+        {children}
+      </main>
+      <Suspense fallback={null}>
+        <BackToTop />
+      </Suspense>
+      <Suspense fallback={<div className="bg-black h-40" />}>
         <Footer />
-        </Suspense>
-         <Chatbot />
-        <BottomNavigation />
+      </Suspense>
+      <Chatbot />
+      <BottomNavigation />
     </div>
   )
 }

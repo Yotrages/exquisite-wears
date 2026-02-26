@@ -1,40 +1,67 @@
 import { useNavigate } from 'react-router-dom';
-import { FaTshirt, FaLaptop, FaMobileAlt, FaHome, FaBook, FaBaby, FaFootballBall, FaHeartbeat } from 'react-icons/fa';
+import {
+  FaTshirt, FaLaptop, FaMobileAlt, FaHome, FaBook,
+  FaBaby, FaFootballBall, FaHeartbeat, FaGem, FaCamera, FaCarrot
+} from 'react-icons/fa';
+import { MdKitchen } from 'react-icons/md';
+import { FaChevronRight } from 'react-icons/fa';
+
+const categories = [
+  { name: 'Fashion',     icon: FaTshirt,     bg: '#fff3e0', color: '#e65100', ring: '#f57c00' },
+  { name: 'Electronics', icon: FaLaptop,     bg: '#e3f2fd', color: '#0d47a1', ring: '#1976d2' },
+  { name: 'Phones',      icon: FaMobileAlt,  bg: '#f3e5f5', color: '#6a1b9a', ring: '#8e24aa' },
+  { name: 'Home',        icon: FaHome,       bg: '#e8f5e9', color: '#1b5e20', ring: '#43a047' },
+  { name: 'Books',       icon: FaBook,       bg: '#fffde7', color: '#f57f17', ring: '#fbc02d' },
+  { name: 'Baby',        icon: FaBaby,       bg: '#fce4ec', color: '#880e4f', ring: '#e91e63' },
+  { name: 'Sports',      icon: FaFootballBall, bg: '#fff3e0', color: '#bf360c', ring: '#ff5722' },
+  { name: 'Health',      icon: FaHeartbeat,  bg: '#e0f2f1', color: '#004d40', ring: '#00897b' },
+  { name: 'Jewellery',   icon: FaGem,        bg: '#fce4ec', color: '#c62828', ring: '#e53935' },
+  { name: 'Kitchen',     icon: MdKitchen,    bg: '#f1f8e9', color: '#33691e', ring: '#7cb342' },
+  { name: 'Cameras',     icon: FaCamera,     bg: '#e8eaf6', color: '#283593', ring: '#3f51b5' },
+  { name: 'Food',        icon: FaCarrot,     bg: '#fff8e1', color: '#e65100', ring: '#fb8c00' },
+];
 
 const Categories = () => {
   const navigate = useNavigate();
 
-  const categories = [
-    { name: 'Fashion', icon: FaTshirt, color: 'bg-pink-100', iconColor: 'text-pink-600' },
-    { name: 'Electronics', icon: FaLaptop, color: 'bg-blue-100', iconColor: 'text-blue-600' },
-    { name: 'Phones', icon: FaMobileAlt, color: 'bg-purple-100', iconColor: 'text-purple-600' },
-    { name: 'Home', icon: FaHome, color: 'bg-green-100', iconColor: 'text-green-600' },
-    { name: 'Books', icon: FaBook, color: 'bg-yellow-100', iconColor: 'text-yellow-600' },
-    { name: 'Baby', icon: FaBaby, color: 'bg-red-100', iconColor: 'text-red-600' },
-    { name: 'Sports', icon: FaFootballBall, color: 'bg-orange-100', iconColor: 'text-orange-600' },
-    { name: 'Health', icon: FaHeartbeat, color: 'bg-teal-100', iconColor: 'text-teal-600' },
-  ];
-
   return (
-    <section className="py-12 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Shop by Category</h2>
-          <p className="text-gray-600">Discover products in your favorite categories</p>
+    <section className="py-8 bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        {/* Section header */}
+        <div className="section-header mb-5">
+          <div className="flex items-center gap-3">
+            <div className="w-1 h-6 rounded-full bg-orange-500" />
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              Shop by Category
+            </h2>
+          </div>
+          <button
+            onClick={() => navigate('/search/all')}
+            className="section-link text-sm"
+          >
+            See all <FaChevronRight className="text-xs" />
+          </button>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-4">
-          {categories?.map((category) => (
-            <div
+        {/* Categories grid */}
+        <div className="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-12 gap-2 sm:gap-3">
+          {categories.map((category) => (
+            <button
               key={category.name}
               onClick={() => navigate(`/search/${category.name}`)}
-              className={`${category.color} rounded-xl p-6 flex flex-col items-center justify-center gap-3 cursor-pointer hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300`}
+              className="group flex flex-col items-center gap-2 p-3 rounded-xl cursor-pointer transition-all duration-200 hover:shadow-md"
+              style={{ background: category.bg }}
             >
-              <div className={`${category.iconColor} text-4xl`}>
-                <category.icon />
+              <div
+                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-transform duration-200 group-hover:scale-110"
+                style={{ background: category.color + '20', border: `2px solid ${category.ring}30` }}
+              >
+                <category.icon style={{ color: category.color }} className="text-lg sm:text-xl" />
               </div>
-              <h3 className="text-sm font-semibold text-gray-800 text-center">{category.name}</h3>
-            </div>
+              <span className="text-[10px] sm:text-xs font-semibold text-gray-700 text-center leading-tight line-clamp-1">
+                {category.name}
+              </span>
+            </button>
           ))}
         </div>
       </div>

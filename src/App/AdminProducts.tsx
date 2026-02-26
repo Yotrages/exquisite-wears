@@ -94,7 +94,7 @@ export default function AdminProducts() {
           </div>
           <button
             onClick={() => navigate('/edit/new')}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+            className="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
           >
             <FaPlus /> Add Product
           </button>
@@ -107,7 +107,7 @@ export default function AdminProducts() {
             placeholder="Search products by name or category..."
             value={searchTerm}
             onChange={handleSearch}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
           />
         </div>
 
@@ -176,7 +176,7 @@ export default function AdminProducts() {
                         <div className="flex gap-2">
                           <button
                             onClick={() => navigate(`/product/${product._id}`)}
-                            className="p-2 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                            className="p-2 text-orange-600 hover:bg-orange-50 rounded transition-colors"
                             title="View"
                           >
                             <FaEye />

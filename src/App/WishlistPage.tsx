@@ -6,7 +6,8 @@ import toast from 'react-hot-toast';
 import { getAuthToken } from '../utils/cookieManager';
 import { addItem, setCart } from '../redux/cartSlice';
 import Layout from '../Components/Layout';
-import { FaHeart, FaShoppingCart, FaStar, FaTrash } from 'react-icons/fa';
+import { FaHeart, FaShoppingCart, FaStar, FaTrash, FaChevronRight } from 'react-icons/fa';
+import { HiOutlineShoppingBag } from 'react-icons/hi';
 
 interface WishlistItem {
   _id: string;
@@ -14,6 +15,8 @@ interface WishlistItem {
     _id: string;
     name: string;
     price: number;
+    originalPrice?: number;
+    discount?: number;
     image: string;
     description: string;
     quantity: number;
@@ -25,105 +28,88 @@ interface WishlistItem {
 
 const WishlistPage = () => {
   const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [removing, setRemoving] = useState<string | null>(null);
+  const [addingToCart, setAddingToCart] = useState<string | null>(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const authState = useSelector((state: any) => state.authSlice);
   const token = authState?.token || getAuthToken();
 
-  useEffect(() => {
-    fetchWishlist();
-  }, []);
+  useEffect(() => { fetchWishlist(); }, []);
 
   const fetchWishlist = async () => {
-    const tokenToUse = getAuthToken();
-    if (!tokenToUse) {
-      navigate('/login');
-      return;
-    }
-
+    const t = getAuthToken();
+    if (!t) { navigate('/login'); return; }
     try {
       const res = await apiClient.get('/wishlist');
       setWishlistItems(res.data.items || []);
     } catch (err: any) {
-      console.error(err?.response?.data?.message || 'Failed to load wishlist');
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
   const removeFromWishlist = async (productId: string) => {
-    const tokenToUse = getAuthToken();
-    if (!tokenToUse) return;
-
+    setRemoving(productId);
     try {
       await apiClient.delete(`/wishlist/product/${productId}`);
-      setWishlistItems(wishlistItems.filter(item => item.product._id !== productId));
-    } catch (err) {
-      console.error('Failed to remove from wishlist:', err);
-    }
+      setWishlistItems(w => w.filter(i => i.product._id !== productId));
+      toast.success('Removed from wishlist');
+    } catch { toast.error('Failed to remove'); }
+    finally { setRemoving(null); }
   };
 
-  const addToCart = async (product: any) => {
-    if (!token) {
-      toast.error('Please log in first')
-      navigate(`/login?redirect=/wishlist`)
-      return
-    }
-
-    dispatch(addItem({
-      id: product._id,
-      name: product.name,
-      price: product.price,
-      quantity: product.quantity,
-      image: product.image
-    }));
-
+  const addToCart = async (product: WishlistItem['product']) => {
+    if (!token) { toast.error('Please log in first'); navigate('/login?redirect=/wishlist'); return; }
+    setAddingToCart(product._id);
+    dispatch(addItem({ id: product._id, name: product.name, price: product.price, quantity: 1, image: product.image }));
     try {
-      const res = await apiClient.post(
-        '/cart/add',
-        { productId: product._id, quantity: product.quantity }
-      );
-      if (res.data?.cart?.items && Array.isArray(res.data.cart.items)) {
-        const items = res.data.cart.items?.map((it: any) => ({
-          id: it.product._id || it.product,
-          name: it.product.name,
-          price: it.product.price,
-          image: it.product.image,
-          quantity: it.quantity,
-          stock: it.product.quantity,
-        }));
-        dispatch(setCart({ items }));
+      const res = await apiClient.post('/cart/add', { productId: product._id, quantity: 1 });
+      if (res.data?.cart?.items) {
+        dispatch(setCart({ items: res.data.cart.items.map((it: any) => ({ id: it.product._id, name: it.product.name, price: it.product.price, image: it.product.image, quantity: it.quantity, stock: it.product.quantity })) }));
       }
-    } catch (err) {
-      console.error('Failed to sync cart:', err);
-    }
+      toast.success('Added to cart!');
+    } catch { }
+    finally { setAddingToCart(null); }
+  };
+
+  const moveToCart = async (item: WishlistItem) => {
+    await addToCart(item.product);
+    await removeFromWishlist(item.product._id);
   };
 
   const addAllToCart = async () => {
     for (const item of wishlistItems) {
-      if (item.product.quantity > 0) {
-        await addToCart(item.product);
-      }
+      if (item.product.quantity > 0) await addToCart(item.product);
     }
     navigate('/cart');
   };
 
-  const renderStars = (rating: number = 0) => {
-    return (
-      <div className="flex items-center gap-0.5">
-        {[1, 2, 3, 4, 5]?.map((star) => (
-          <FaStar
-            key={star}
-            className={`text-sm ${star <= rating ? 'text-yellow-400' : 'text-gray-300'}`}
-          />
-        ))}
-      </div>
-    );
-  };
+  const stars = (r = 0) => (
+    <div className="flex items-center gap-0.5">
+      {[1,2,3,4,5].map(s => <FaStar key={s} className={`text-xs ${s <= Math.round(r) ? 'text-amber-400' : 'text-gray-200'}`} />)}
+    </div>
+  );
 
-  if (!wishlistItems?.length && token) {
+  if (loading) {
     return (
       <Layout>
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-red-500"></div>
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <div className="h-8 w-48 shimmer rounded mb-8" />
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="bg-white rounded-xl overflow-hidden">
+                <div className="aspect-square shimmer" />
+                <div className="p-3 space-y-2">
+                  <div className="h-3 shimmer rounded" />
+                  <div className="h-3 shimmer rounded w-2/3" />
+                  <div className="h-8 shimmer rounded" />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </Layout>
     );
@@ -131,136 +117,160 @@ const WishlistPage = () => {
 
   return (
     <Layout>
-      <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-3">
-            <FaHeart className="text-3xl text-red-500" />
-            <h1 className="text-3xl font-bold text-gray-900">My Wishlist</h1>
-            <span className="bg-red-100 text-red-600 px-3 py-1 rounded-full font-semibold">
-              {wishlistItems?.length} {wishlistItems?.length === 1 ? 'item' : 'items'}
-            </span>
+      <div className="min-h-screen bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+          {/* Breadcrumb */}
+          <div className="flex items-center gap-2 text-xs text-gray-500 mb-5">
+            <button onClick={() => navigate('/')} className="hover:text-orange-500 transition-colors">Home</button>
+            <FaChevronRight className="text-[10px]" />
+            <span className="text-gray-900 font-medium">Wishlist</span>
           </div>
 
-          {wishlistItems?.length > 0 && (
-            <button
-              onClick={addAllToCart}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
-            >
-              <FaShoppingCart />
-              Add All to Cart
-            </button>
+          {/* Header */}
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <FaHeart className="text-2xl text-red-500" />
+              <div>
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-900" style={{ fontFamily: 'Outfit, sans-serif' }}>My Wishlist</h1>
+                <p className="text-sm text-gray-500">{wishlistItems.length} saved item{wishlistItems.length !== 1 ? 's' : ''}</p>
+              </div>
+            </div>
+
+            {wishlistItems.length > 0 && (
+              <button
+                onClick={addAllToCart}
+                className="hidden sm:flex items-center gap-2 px-4 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-sm font-bold transition-all active:scale-95"
+              >
+                <FaShoppingCart className="text-sm" />
+                Add All to Cart
+              </button>
+            )}
+          </div>
+
+          {wishlistItems.length === 0 ? (
+            /* Empty state */
+            <div className="bg-white rounded-2xl border border-gray-100 py-20 text-center">
+              <div className="w-24 h-24 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-5">
+                <FaHeart className="text-4xl text-red-200" />
+              </div>
+              <h2 className="text-xl font-bold text-gray-900 mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>Your wishlist is empty</h2>
+              <p className="text-gray-500 mb-6 max-w-sm mx-auto text-sm">
+                Save items you love to your wishlist. Review them anytime and easily add to cart.
+              </p>
+              <button
+                onClick={() => navigate('/')}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-semibold text-sm transition-all active:scale-95"
+              >
+                <HiOutlineShoppingBag className="text-lg" />
+                Continue Shopping
+              </button>
+            </div>
+          ) : (
+            <>
+              {/* Mobile add all */}
+              <button
+                onClick={addAllToCart}
+                className="sm:hidden w-full mb-4 flex items-center justify-center gap-2 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-xl text-sm font-bold transition-all active:scale-95"
+              >
+                <FaShoppingCart /> Add All to Cart
+              </button>
+
+              {/* Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
+                {wishlistItems.map((item) => (
+                  <div key={item._id} className="product-card group">
+                    {/* Image */}
+                    <div className="relative aspect-square overflow-hidden bg-gray-50">
+                      <img
+                        src={(
+                          (item.product.image && item.product.image.startsWith('http') ? item.product.image : null) ||
+                          ((item.product as any).images?.find?.((img: string) => img?.startsWith('http'))) ||
+                          '/placeholder-product.jpg'
+                        )}
+                        alt={item.product.name}
+                        className="product-img w-full h-full cursor-pointer"
+                        onClick={() => navigate(`/product/${item.product._id}`)}
+                        onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder-product.jpg'; }}
+                      />
+
+                      {/* Badges */}
+                      {item.product.discount && item.product.discount > 0 && (
+                        <span className="absolute top-2 left-2 badge badge-danger text-[10px]">-{item.product.discount}%</span>
+                      )}
+                      {item.product.quantity === 0 && (
+                        <div className="absolute inset-0 bg-white/70 flex items-center justify-center">
+                          <span className="bg-gray-800 text-white text-xs px-2 py-1 rounded">Out of Stock</span>
+                        </div>
+                      )}
+
+                      {/* Remove */}
+                      <button
+                        onClick={() => removeFromWishlist(item.product._id)}
+                        disabled={removing === item.product._id}
+                        className="absolute top-2 right-2 w-7 h-7 rounded-full bg-white shadow-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-50 disabled:opacity-50"
+                      >
+                        {removing === item.product._id
+                          ? <div className="w-3 h-3 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
+                          : <FaTrash className="text-red-500 text-xs" />}
+                      </button>
+                    </div>
+
+                    {/* Info */}
+                    <div className="p-3">
+                      <h3
+                        className="text-xs sm:text-sm font-semibold text-gray-800 line-clamp-2 mb-1 cursor-pointer hover:text-orange-500 transition-colors min-h-[2.5rem]"
+                        onClick={() => navigate(`/product/${item.product._id}`)}
+                      >
+                        {item.product.name}
+                      </h3>
+
+                      {/* Rating */}
+                      <div className="flex items-center gap-1 mb-1.5">
+                        {stars(item.product.rating || 0)}
+                        <span className="text-[10px] text-gray-400">({item.product.reviews || 0})</span>
+                      </div>
+
+                      {/* Price */}
+                      <div className="flex items-baseline gap-1.5 mb-2.5">
+                        <span className="text-sm font-black text-gray-900">₦{item.product.price.toLocaleString()}</span>
+                        {item.product.originalPrice && (
+                          <span className="text-[11px] text-gray-400 line-through">₦{item.product.originalPrice.toLocaleString()}</span>
+                        )}
+                      </div>
+
+                      {/* Move to cart */}
+                      <button
+                        onClick={() => moveToCart(item)}
+                        disabled={item.product.quantity === 0 || addingToCart === item.product._id}
+                        className={`w-full py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 ${
+                          item.product.quantity === 0
+                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                            : 'bg-orange-500 hover:bg-orange-600 text-white'
+                        }`}
+                      >
+                        {addingToCart === item.product._id
+                          ? <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          : <FaShoppingCart className="text-[11px]" />}
+                        {item.product.quantity === 0 ? 'Out of Stock' : 'Move to Cart'}
+                      </button>
+
+                      <p className="text-[10px] text-gray-400 mt-1.5 text-center">
+                        Saved {new Date(item.addedAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Bottom CTA */}
+              <div className="mt-8 text-center">
+                <button onClick={() => navigate('/')} className="text-sm font-semibold text-orange-500 hover:text-orange-600 transition-colors">
+                  ← Continue Shopping
+                </button>
+              </div>
+            </>
           )}
         </div>
-
-        {/* Wishlist Items */}
-        {wishlistItems?.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-md p-12 text-center">
-            <FaHeart className="text-6xl text-gray-300 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Your wishlist is empty</h2>
-            <p className="text-gray-600 mb-6">
-              Save your favorite items here so you don't lose sight of them!
-            </p>
-            <button
-              onClick={() => navigate('/')}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
-            >
-              Continue Shopping
-            </button>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {wishlistItems?.map((item) => (
-              <div
-                key={item._id}
-                className="bg-white rounded-lg shadow-md hover:shadow-xl transition-all overflow-hidden flex flex-col"
-              >
-                {/* Image */}
-                <div className="relative">
-                  <img
-                    src={item.product.image}
-                    alt={item.product.name}
-                    className="w-full h-56 object-cover cursor-pointer hover:opacity-90 transition-opacity"
-                    onClick={() => navigate(`/product/${item.product._id}`)}
-                  />
-                  {item.product.quantity === 0 && (
-                    <div className="absolute top-2 left-2 bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded">
-                      Out of Stock
-                    </div>
-                  )}
-                  <button
-                    onClick={() => removeFromWishlist(item.product._id)}
-                    className="absolute top-2 right-2 bg-white rounded-full p-2 shadow-md hover:bg-red-50 transition-colors"
-                    title="Remove from wishlist"
-                  >
-                    <FaTrash className="text-red-500" />
-                  </button>
-                </div>
-
-                {/* Product Info */}
-                <div className="p-4 flex flex-col flex-grow">
-                  <h3
-                    className="font-semibold text-gray-900 mb-2 cursor-pointer hover:text-blue-600 line-clamp-2 min-h-[3rem]"
-                    onClick={() => navigate(`/product/${item.product._id}`)}
-                  >
-                    {item.product.name}
-                  </h3>
-
-                  <p className="text-sm text-gray-600 mb-2 line-clamp-2">
-                    {item.product.description}
-                  </p>
-
-                  {/* Rating */}
-                  <div className="flex items-center gap-2 mb-2">
-                    {renderStars(item.product.rating || 0)}
-                    <span className="text-xs text-gray-500">
-                      ({item.product.reviews || 0})
-                    </span>
-                  </div>
-
-                  {/* Price */}
-                  <div className="text-xl font-bold text-blue-600 mb-3">
-                    ₦{item.product.price.toLocaleString()}
-                  </div>
-
-                  {/* Added Date */}
-                  <div className="text-xs text-gray-500 mb-3">
-                    Added {new Date(item.addedAt).toLocaleDateString()}
-                  </div>
-
-                  {/* Add to Cart Button */}
-                  <button
-                    onClick={() => {
-                      addToCart(item.product);
-                      removeFromWishlist(item.product._id);
-                    }}
-                    disabled={item.product.quantity === 0}
-                    className={`w-full py-2.5 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors mt-auto ${
-                      item.product.quantity === 0
-                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                        : 'bg-blue-600 hover:bg-blue-700 text-white'
-                    }`}
-                  >
-                    <FaShoppingCart />
-                    {item.product.quantity === 0 ? 'Out of Stock' : 'Add to Cart'}
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Back to Shopping */}
-        {wishlistItems?.length > 0 && (
-          <div className="mt-8 text-center">
-            <button
-              onClick={() => navigate('/')}
-              className="text-blue-600 hover:text-blue-700 font-semibold underline"
-            >
-              ← Continue Shopping
-            </button>
-          </div>
-        )}
       </div>
     </Layout>
   );

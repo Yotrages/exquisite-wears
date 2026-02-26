@@ -1,7 +1,6 @@
 import Feeds from "../Components/Feeds";
 import Hero from "../Components/Hero";
 import Layout from "../Components/Layout";
-import WatchSlider from "../Components/Slider";
 import RecommendedForYou from "../Components/RecommendedForYou";
 import TrendingProducts from "../Components/TrendingProducts";
 import Categories from "../Components/Categories";
@@ -16,7 +15,6 @@ const Home = () => {
   const authState = useSelector((state: any) => state.authSlice);
 
   useEffect(() => {
-    // Wait for auth to be restored before rendering
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 500);
@@ -29,15 +27,13 @@ const Home = () => {
 
   return (
     <Layout>
-      {/* <Preloader /> */}
       <Hero />
+      <Categories />
       <FlashSales />
-      {/* <Categories /> */}
-      <WatchSlider />
       <TrendingProducts />
-      <Feeds />
       <RecentlyViewed />
-      {authState?.isAuthenticated && <RecommendedForYou />}
+      {(authState?.isAuthenticated || authState?.token || authState?.user) && <RecommendedForYou />}
+      <Feeds />
     </Layout>
   );
 };

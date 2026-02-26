@@ -173,8 +173,8 @@ export default function AdminUsers() {
                                 onClick={() => toggleAdmin(user._id, user.isAdmin)}
                                 className={`p-2 rounded transition-colors ${
                                   user.isAdmin
-                                    ? 'text-blue-600 hover:bg-blue-50'
-                                    : 'text-gray-400 hover:text-blue-600 hover:bg-blue-50'
+                                    ? 'text-orange-600 hover:bg-orange-50'
+                                    : 'text-gray-400 hover:text-orange-600 hover:bg-orange-50'
                                 }`}
                                 title={user.isAdmin ? 'Remove admin' : 'Make admin'}
                               >

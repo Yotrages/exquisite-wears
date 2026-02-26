@@ -369,6 +369,114 @@ const AdminDashboard = () => {
             <p className="text-red-700">{error}</p>
           </div>
         )}
+
+        {/* Admin Tools */}
+        <AdminTools />
+      </div>
+    </div>
+  );
+};
+
+// ─── Admin Tools: Migration + Notifications ──────────────────────────────────
+import { apiClient } from '../Api/axiosConfig';
+import toast from 'react-hot-toast';
+
+const AdminTools = () => {
+  const [migrating, setMigrating] = useState(false);
+  const [migResult, setMigResult] = useState<string | null>(null);
+  const [sending, setSending] = useState(false);
+  const [notifForm, setNotifForm] = useState({ title: '', message: '', type: 'promo', broadcast: true, userId: '' });
+
+  const runMigration = async () => {
+    if (!window.confirm('Run product migration? This will update all existing products with missing fields (brand, rating, images, discount). Continue?')) return;
+    setMigrating(true); setMigResult(null);
+    try {
+      const res = await apiClient.post('/admin/migrate/products');
+      setMigResult(res.data.message);
+      toast.success('Migration completed!');
+    } catch (e: any) {
+      toast.error(e.response?.data?.message || 'Migration failed');
+    } finally {
+      setMigrating(false);
+    }
+  };
+
+  const sendNotification = async () => {
+    if (!notifForm.title || !notifForm.message) { toast.error('Title and message required'); return; }
+    setSending(true);
+    try {
+      await apiClient.post('/admin/notifications/send', notifForm);
+      toast.success(notifForm.broadcast ? 'Notification broadcast to all users!' : 'Notification sent!');
+      setNotifForm({ title: '', message: '', type: 'promo', broadcast: true, userId: '' });
+    } catch (e: any) {
+      toast.error(e.response?.data?.error || 'Failed to send');
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
+    <div className="mt-8 grid md:grid-cols-2 gap-6">
+      {/* Migration Tool */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+        <h3 className="text-lg font-bold text-gray-900 mb-1">🔧 Product Migration</h3>
+        <p className="text-sm text-gray-500 mb-4">Backfill missing fields (brand, rating, images, discount) on all existing products. Run once after initial setup.</p>
+        {migResult && (
+          <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-xl text-sm text-green-700">{migResult}</div>
+        )}
+        <button
+          onClick={runMigration}
+          disabled={migrating}
+          className="w-full py-3 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 text-white font-bold rounded-xl text-sm flex items-center justify-center gap-2 transition-all"
+        >
+          {migrating ? <><FaSpinner className="animate-spin" /> Running...</> : '▶ Run Migration'}
+        </button>
+      </div>
+
+      {/* Send Notification */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+        <h3 className="text-lg font-bold text-gray-900 mb-1">🔔 Send Notification</h3>
+        <p className="text-sm text-gray-500 mb-4">Send a notification to all users or a specific user.</p>
+        <div className="space-y-3">
+          <input
+            type="text" placeholder="Title (e.g. 🔥 Weekend Sale!)" value={notifForm.title}
+            onChange={e => setNotifForm(f => ({ ...f, title: e.target.value }))}
+            className="w-full px-3 py-2.5 border-2 border-gray-200 rounded-xl text-sm focus:outline-none focus:border-orange-400"
+          />
+          <textarea
+            placeholder="Message..." rows={2} value={notifForm.message}
+            onChange={e => setNotifForm(f => ({ ...f, message: e.target.value }))}
+            className="w-full px-3 py-2.5 border-2 border-gray-200 rounded-xl text-sm focus:outline-none focus:border-orange-400 resize-none"
+          />
+          <div className="flex items-center gap-3">
+            <select value={notifForm.type} onChange={e => setNotifForm(f => ({ ...f, type: e.target.value }))}
+              className="flex-1 px-3 py-2.5 border-2 border-gray-200 rounded-xl text-sm focus:outline-none focus:border-orange-400"
+            >
+              <option value="promo">Promo</option>
+              <option value="order">Order</option>
+              <option value="system">System</option>
+              <option value="price_drop">Price Drop</option>
+            </select>
+            <label className="flex items-center gap-2 text-sm font-medium cursor-pointer whitespace-nowrap">
+              <input type="checkbox" checked={notifForm.broadcast} onChange={e => setNotifForm(f => ({ ...f, broadcast: e.target.checked }))}
+                className="w-4 h-4 accent-orange-500" />
+              Broadcast all
+            </label>
+          </div>
+          {!notifForm.broadcast && (
+            <input type="text" placeholder="User ID" value={notifForm.userId}
+              onChange={e => setNotifForm(f => ({ ...f, userId: e.target.value }))}
+              className="w-full px-3 py-2.5 border-2 border-gray-200 rounded-xl text-sm focus:outline-none focus:border-orange-400"
+            />
+          )}
+          <button
+            onClick={sendNotification}
+            disabled={sending}
+            className="w-full py-3 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 text-white font-bold rounded-xl text-sm flex items-center justify-center gap-2 transition-all"
+          >
+            {sending ? <><FaSpinner className="animate-spin" /> Sending...</> : '📤 Send Notification'}
+          </button>
+        </div>
       </div>
     </div>
   );

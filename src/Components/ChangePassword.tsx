@@ -1,80 +1,60 @@
 import ForgotPasswordValidator from '../Api/ForgotPassword'
-import { FaEye, FaEyeSlash, FaSpinner } from 'react-icons/fa'
+import { FaEye, FaEyeSlash, FaSpinner, FaEnvelope, FaLock } from 'react-icons/fa'
 
 const ChangePassword = () => {
+  const { errors, handleSubmit, ForgotPassword, register, loading, password, setPassword } = ForgotPasswordValidator()
 
-    const { errors, handleSubmit, ForgotPassword , register, loading, password, setPassword} = ForgotPasswordValidator()
   return (
-       <div className="w-full absolute justify-center items-center flex top-1/4 px-3 xs:px-4">
-               <form
-                 className="w-full max-w-[500px] px-2 xs:px-3"
-                 onSubmit={handleSubmit(ForgotPassword)}
-               >
-                 <div className="flex flex-col gap-8 px-2">
-                   <div className="flex flex-col gap-4 items-start text-white text-base font-semibold">
-                     <label
-                       htmlFor="email"
-                       id="email"
-                       className="text-base sm:text-lg font-semibold"
-                     >
-                       Email
-                     </label>
-                     <input
-                       type="email"
-                       id="email"
-                       required
-                       {...register("email", { required: true })}
-                       className="px-3 py-3 w-full text-black rounded-lg focus:outline-none"
-                       placeholder="Enter your Email"
-                     />
-                     {errors.email && (
-                       <p className="text-red-600">{errors.email.message}</p>
-                     )}
-                   </div>
-                   <div className="flex flex-col gap-4 items-start text-white text-base font-semibold">
-                     <label
-                       htmlFor="password"
-                       id="password"
-                       className="text-base sm:text-lg font-semibold"
-                     >
-                       new password
-                     </label>
-                     <div className="flex flex-col relative w-full">
-                       <input
-                         type={password ? "text" : "password"}
-                         id="password"
-                         {...register("password", { required: true })}
-                         required
-                         placeholder="Enter your password"
-                         className="px-3 py-3 w-full focus:outline-none text-black rounded-lg"
-                       />
-                       <span
-                         className="absolute right-3 top-3 text-lg sm:text-xl cursor-pointer rounded-full text-black"
-                         onClick={() => setPassword((prev) => !prev)}
-                       >
-                         {password ? <FaEyeSlash /> : <FaEye />}
-                       </span>
-                     </div>
-                     {errors.password && (
-                       <p className="text-red-600">{errors.password.message}</p>
-                     )}
-                   </div>
-                   <button
-                     type="submit"
-                     className="rounded-lg  gap-4 py-3 px-7 bg-black-gradient bg-shadow text-white font-semibold text-[18px] tracking-widest"
-                   >
-                     {loading ? (
-                       <p className={`flex items-center justify-center gap-3`}>
-                         <FaSpinner className="animate-spin" />
-                        Submit
-                       </p>
-                     ) : (
-                       <p>Submit</p>
-                     )}
-                   </button> 
-                   </div>
-                   </form>
-    </div>
+    <form onSubmit={handleSubmit(ForgotPassword)} className="space-y-4">
+      {/* Email */}
+      <div>
+        <label className="block text-sm font-semibold text-gray-700 mb-1.5">Email address</label>
+        <div className="relative">
+          <FaEnvelope className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none" />
+          <input
+            type="email"
+            id="email"
+            required
+            {...register("email", { required: true })}
+            className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:border-orange-400 transition-colors placeholder-gray-400"
+            placeholder="you@example.com"
+          />
+        </div>
+        {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+      </div>
+
+      {/* New Password */}
+      <div>
+        <label className="block text-sm font-semibold text-gray-700 mb-1.5">New password</label>
+        <div className="relative">
+          <FaLock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none" />
+          <input
+            type={password ? "text" : "password"}
+            id="password"
+            {...register("password", { required: true })}
+            required
+            placeholder="Enter new password"
+            className="w-full pl-10 pr-11 py-3 border-2 border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:border-orange-400 transition-colors placeholder-gray-400"
+          />
+          <button
+            type="button"
+            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+            onClick={() => setPassword(prev => !prev)}
+          >
+            {password ? <FaEyeSlash /> : <FaEye />}
+          </button>
+        </div>
+        {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
+      </div>
+
+      <button
+        type="submit"
+        disabled={loading}
+        className="w-full py-3.5 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl text-sm transition-all active:scale-95 disabled:opacity-70 flex items-center justify-center gap-2 shadow-lg shadow-orange-200"
+      >
+        {loading ? <><FaSpinner className="animate-spin" /> Submitting...</> : 'Reset Password'}
+      </button>
+    </form>
   )
 }
 
