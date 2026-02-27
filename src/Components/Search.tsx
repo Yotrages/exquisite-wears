@@ -2,9 +2,10 @@ import { apiClient } from '../Api/axiosConfig';
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import {
-  FaSearch, FaStar, FaHeart, FaRegHeart, FaShoppingCart,
-  FaTh, FaList, FaFilter, FaChevronDown, FaTimes, FaChevronRight
+  FaSearch, FaHeart, FaRegHeart, FaShoppingCart,
+  FaTh, FaList, FaFilter, FaChevronDown, FaTimes, FaChevronRight, FaStar
 } from "react-icons/fa";
+import StarRating from './StarRating';
 import { useDispatch, useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 import { getAuthToken } from '../utils/cookieManager';
@@ -420,9 +421,8 @@ const Search = () => {
                       </div>
                       <div className="p-3">
                         <h3 className="text-xs sm:text-sm font-semibold text-gray-800 line-clamp-2 mb-1 min-h-[2.5rem]">{item.name}</h3>
-                        <div className="flex items-center gap-1 mb-2">
-                          <div className="flex">{stars(item.rating || 0)}</div>
-                          <span className="text-[10px] text-gray-400">({item.reviewsCount || item.reviews || 0})</span>
+                        <div className="mb-2">
+                          <StarRating rating={item.rating || item.averageRating || 0} size="xs" showValue={(item.rating || 0) > 0} showCount={item.reviewsCount || item.reviews || 0} />
                         </div>
                         <div className="flex items-baseline gap-1.5 mb-2.5">
                           <span className="text-sm font-black text-gray-900">₦{item.price.toLocaleString()}</span>
@@ -449,11 +449,11 @@ const Search = () => {
                       <div className="flex-1 p-4">
                         <h3 className="font-bold text-gray-900 mb-1 line-clamp-2">{item.name}</h3>
                         <p className="text-sm text-gray-500 mb-2 line-clamp-2">{item.description}</p>
-                        <div className="flex items-center gap-1 mb-2"><div className="flex">{stars(item.rating || 0)}</div><span className="text-xs text-gray-400">({item.reviewsCount || item.reviews || 0})</span></div>
+                        <div className="mb-2"><StarRating rating={item.rating || item.averageRating || 0} size="sm" showValue={(item.rating || 0) > 0} showCount={item.reviewsCount || item.reviews || 0} /></div>
                         <div className="flex items-center gap-3">
                           <span className="text-lg font-black text-gray-900">₦{item.price.toLocaleString()}</span>
-                          {item.originalPrice && <span className="text-sm text-gray-400 line-through">₦{item.originalPrice.toLocaleString()}</span>}
-                          {item.discount && item.discount > 0 && <span className="badge badge-danger">{item.discount}% off</span>}
+                          {/* {item.originalPrice && <span className="text-sm text-gray-400 line-through">₦{item.originalPrice.toLocaleString()}</span>} */}
+                          {/* {item.discount && item.discount > 0 && <span className="badge badge-danger">{item.discount}% off</span>} */}
                         </div>
                         <button
                           onClick={(e) => handleAddToCart(e, item)}

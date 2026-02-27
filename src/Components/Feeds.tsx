@@ -216,7 +216,7 @@ const Feeds = () => {
                         <FaStar key={s} className={`text-[10px] ${s <= Math.round(item.rating || 0) ? 'text-amber-400' : 'text-gray-200'}`} />
                       ))}
                     </div>
-                    <span className="text-[10px] text-gray-400">({item.reviews || 0})</span>
+                    <span className="text-[10px] text-gray-400">({item.reviewsCount || item.reviews || 0})</span>
                   </div>
 
                   {/* Price */}

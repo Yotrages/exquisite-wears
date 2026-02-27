@@ -101,10 +101,10 @@ const Nav = ({
   };
 
   const quickLinks = [
-    { label: 'Flash Sales', icon: MdLocalOffer, to: '/search/fashion', color: 'text-red-500' },
+    { label: 'Flash Sales', icon: MdLocalOffer, to: '/flash-sales', color: 'text-red-500' },
     { label: 'Track Order', icon: FaTruck, to: '/orders', color: 'text-blue-500' },
     { label: 'Help', icon: FaHeadset, to: '/contact', color: 'text-green-500' },
-    { label: 'Deals', icon: FaTag, to: '/search/electronics', color: 'text-orange-500' },
+    { label: 'Deals', icon: FaTag, to: '/search/all', color: 'text-orange-500' },
   ];
 
   return (
@@ -375,15 +375,22 @@ const Nav = ({
           <div className="max-w-7xl mx-auto px-6">
             <div className="flex items-center gap-6 py-2 text-sm overflow-x-auto scrollbar-hide">
               {[
-                'Fashion', 'Electronics', 'Phones & Tablets', 'Home & Living',
-                'Sports', 'Beauty', 'Baby Products', 'Books', 'Computing'
-              ].map(cat => (
+                { label: 'Fashion', cat: 'Fashion' },
+                { label: 'Electronics', cat: 'Electronics' },
+                { label: 'Phones & Tablets', cat: 'Phones' },
+                { label: 'Home & Living', cat: 'Home' },
+                { label: 'Sports', cat: 'Sports' },
+                { label: 'Beauty', cat: 'Beauty' },
+                { label: 'Baby Products', cat: 'Baby' },
+                { label: 'Books', cat: 'Books' },
+                { label: 'Health', cat: 'Health' },
+              ].map(({ label, cat }) => (
                 <Link
                   key={cat}
-                  to={`/search/${cat}`}
+                  to={`/category/${encodeURIComponent(cat)}`}
                   className="whitespace-nowrap text-gray-600 hover:text-orange-500 font-medium transition-colors py-1 border-b-2 border-transparent hover:border-orange-500"
                 >
-                  {cat}
+                  {label}
                 </Link>
               ))}
               <Link to="/search/all" className="whitespace-nowrap text-orange-500 hover:text-orange-600 font-semibold ml-auto flex items-center gap-1">

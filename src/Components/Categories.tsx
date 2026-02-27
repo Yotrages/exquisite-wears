@@ -24,6 +24,10 @@ const categories = [
 const Categories = () => {
   const navigate = useNavigate();
 
+  const handleCategoryClick = (categoryName: string) => {
+    navigate(`/category/${encodeURIComponent(categoryName)}`);
+  };
+
   return (
     <section className="py-8 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -48,7 +52,7 @@ const Categories = () => {
           {categories.map((category) => (
             <button
               key={category.name}
-              onClick={() => navigate(`/search/${category.name}`)}
+              onClick={() => handleCategoryClick(category.name)}
               className="group flex flex-col items-center gap-2 p-3 rounded-xl cursor-pointer transition-all duration-200 hover:shadow-md"
               style={{ background: category.bg }}
             >

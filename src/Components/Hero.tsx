@@ -24,7 +24,7 @@ const SLIDES = [
     headline: ["Exclusive", "Deals", "Today Only"],
     sub: "Limited time offers on our most sought-after timepieces. Don't miss out.",
     cta: "Grab Deals",
-    ctaLink: "/search/flash sales",
+    ctaLink: "/flash-sales",
     ctaSecondary: "See All Offers",
     bgFrom: "#7b1fa2",
     bgTo: "#4a148c",

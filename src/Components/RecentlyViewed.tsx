@@ -63,11 +63,11 @@ export default function RecentlyViewed() {
                   <p className="text-green-600 font-bold text-lg">
                     ₦{product.price.toLocaleString()}
                   </p>
-                  {product.discount && product.discount > 0 && (
+                  {/* {product.discount && product.discount > 0 && (
                     <p className="text-gray-400 line-through text-sm">
                       ₦{Math.round(product.price / (1 - product.discount / 100)).toLocaleString()}
                     </p>
-                  )}
+                  )} */}
                 </div>
               </div>
 

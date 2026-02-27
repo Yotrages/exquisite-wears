@@ -12,6 +12,7 @@ import { getAuthToken } from '../utils/cookieManager'
 import apiClient from '../Api/axiosConfig';
 import ProductImageGallery from '../Components/ProductImageGallery'
 import ReviewSection from '../Components/ReviewSection'
+import StarRating from '../Components/StarRating'
 import RecommendedForYou from '../Components/RecommendedForYou'
 import { addToRecentlyViewed } from '../Components/RecentlyViewed'
 import { Product } from '../Types/Product'
@@ -134,7 +135,8 @@ export default function ProductDetailsPage() {
     return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
   }
 
-  const stars = (r = 0, size = 'text-sm') => [1,2,3,4,5].map(s => (
+  // Legacy helper kept for seller rating only; products now use <StarRating />
+  const starIcons = (r = 0, size = 'text-xs') => [1,2,3,4,5].map(s => (
     <FaStar key={s} className={`${size} ${s <= Math.round(r) ? 'text-amber-400' : 'text-gray-200'}`} />
   ))
 
@@ -224,9 +226,9 @@ export default function ProductDetailsPage() {
                       <MdVerified className="text-orange-500" /> {product.brand}
                     </span>
                   )}
-                  {product.discount && product.discount > 0 && (
+                  {/* {product.discount && product.discount > 0 && (
                     <span className="badge badge-danger">{product.discount}% OFF</span>
-                  )}
+                  )} */}
                   {!inStock && (
                     <span className="badge bg-gray-200 text-gray-600">Out of Stock</span>
                   )}
@@ -238,18 +240,15 @@ export default function ProductDetailsPage() {
                 </h1>
 
                 {/* Rating */}
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-1">
-                    <div className="flex">{stars(product.rating || product.averageRating || 0)}</div>
-                    <span className="text-sm font-semibold text-amber-500 ml-1">{(product.rating || product.averageRating || 0).toFixed(1)}</span>
-                  </div>
-                  <span className="text-gray-300">|</span>
-                  <span className="text-sm text-gray-500">{product.reviewsCount || product.totalReviews || 0} reviews</span>
+                <div className="flex items-center gap-3 flex-wrap">
+                  <StarRating
+                    rating={product.rating || product.averageRating || 0}
+                    size="md"
+                    showValue={(product.rating || product.averageRating || 0) > 0}
+                    showCount={product.reviewsCount || product.totalReviews || 0}
+                  />
                   {(product.reviewsCount || product.totalReviews || 0) > 50 && (
-                    <>
-                      <span className="text-gray-300">|</span>
-                      <span className="text-sm text-green-600 flex items-center gap-1"><FaCheckCircle className="text-xs" /> Popular item</span>
-                    </>
+                    <span className="text-sm text-green-600 flex items-center gap-1"><FaCheckCircle className="text-xs" /> Popular item</span>
                   )}
                 </div>
 
@@ -373,10 +372,7 @@ export default function ProductDetailsPage() {
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-gray-900">Sold by {product.seller.name}</p>
-                      <div className="flex items-center gap-1">
-                        <div className="flex">{stars(product.seller.rating ?? 0, 'text-xs')}</div>
-                        <span className="text-xs text-gray-500">{(product.seller.rating ?? 0).toFixed(1)}/5</span>
-                      </div>
+                      <StarRating rating={product.seller.rating ?? 0} size="xs" showValue={(product.seller.rating ?? 0) > 0} />
                     </div>
                   </div>
                 )}

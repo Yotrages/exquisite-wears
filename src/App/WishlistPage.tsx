@@ -183,7 +183,7 @@ const WishlistPage = () => {
                     <div className="relative aspect-square overflow-hidden bg-gray-50">
                       <img
                         src={(
-                          (item.product.image && item.product.image.startsWith('http') ? item.product.image : null) ||
+                          (item.product.image && (item.product.image.startsWith('http') || item.product.image.startsWith('/')) ? item.product.image : null) ||
                           ((item.product as any).images?.find?.((img: string) => img?.startsWith('http'))) ||
                           '/placeholder-product.jpg'
                         )}

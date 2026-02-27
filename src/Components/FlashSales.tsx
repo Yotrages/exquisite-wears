@@ -112,7 +112,7 @@ export default function FlashSales() {
             <button onClick={() => scroll('right')} className="w-8 h-8 rounded-full border border-gray-200 hover:border-orange-400 hover:bg-orange-50 flex items-center justify-center transition-all">
               <FaChevronRight className="text-gray-500 text-xs" />
             </button>
-            <Link to="/search/flash sales" className="hidden sm:flex items-center gap-1 text-sm font-semibold text-orange-500 hover:text-orange-600 transition-colors">
+            <Link to="/flash-sales" className="hidden sm:flex items-center gap-1 text-sm font-semibold text-orange-500 hover:text-orange-600 transition-colors">
               See all <FaChevronRight className="text-xs" />
             </Link>
           </div>

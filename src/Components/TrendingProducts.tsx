@@ -3,7 +3,8 @@ import { apiClient } from '../Api/axiosConfig';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import toast from 'react-hot-toast';
-import { FaFire, FaStar, FaHeart, FaRegHeart, FaShoppingCart, FaChevronRight } from 'react-icons/fa';
+import { FaFire, FaHeart, FaRegHeart, FaShoppingCart, FaChevronRight } from 'react-icons/fa';
+import StarRating from './StarRating';
 import { addItem, setCart } from '../redux/cartSlice';
 import { Product } from '../Types/Product';
 import { getAuthToken } from '../utils/cookieManager';
@@ -91,7 +92,7 @@ const TrendingProducts = () => {
               Trending Products
             </h2>
           </div>
-          <button onClick={() => navigate('/search/trending')} className="section-link">
+          <button onClick={() => navigate('/trending')} className="section-link">
             View all <FaChevronRight className="text-xs" />
           </button>
         </div>
@@ -142,16 +143,14 @@ const TrendingProducts = () => {
                 <h3 className="text-xs sm:text-sm font-semibold text-gray-800 line-clamp-2 mb-1 min-h-[2.5rem]">{product.name}</h3>
 
                 {/* Rating */}
-                {product.rating && (
-                  <div className="flex items-center gap-1 mb-1.5">
-                    <div className="flex">
-                      {[1,2,3,4,5].map(s => (
-                        <FaStar key={s} className={`text-[10px] ${s <= Math.round(product.rating!) ? 'text-amber-400' : 'text-gray-200'}`} />
-                      ))}
-                    </div>
-                    <span className="text-[10px] text-gray-500">({product.reviews || 0})</span>
-                  </div>
-                )}
+                <div className="mb-1.5">
+                  <StarRating
+                    rating={product.rating || product.averageRating || 0}
+                    size="xs"
+                    showValue={(product.rating || product.averageRating || 0) > 0}
+                    showCount={product.reviewsCount || product.reviews || 0}
+                  />
+                </div>
 
                 {/* Price */}
                 <div className="flex items-baseline gap-1.5 mb-2.5">

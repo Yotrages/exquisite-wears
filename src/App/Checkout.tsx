@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { usePaymentStore } from '../stores/paymentStore';
-import { FaSpinner, FaCheckCircle, FaExclamationCircle, FaLock, FaTruck, FaShieldAlt, FaChevronRight } from 'react-icons/fa';
+import { FaSpinner, FaCheckCircle, FaExclamationCircle, FaLock, FaTruck, FaShieldAlt, FaChevronRight, FaArrowLeft } from 'react-icons/fa';
 import Layout from '../Components/Layout';
 import { Link } from 'react-router-dom';
 
@@ -31,17 +31,16 @@ const Checkout = () => {
 
   // Support "buy now" flow: only checkout the single item from product page
   const buyNowState = location.state as { buyNow?: boolean; items?: any[] } | null;
-  // For buy-now, use passed items; otherwise use full cart
-  const checkoutItems = buyNowState?.buyNow && buyNowState.items?.length
+  // For buy-now, use passed items only; otherwise use full cart
+  const checkoutItems = (buyNowState?.buyNow && buyNowState.items?.length)
     ? buyNowState.items
     : cartItems;
 
   const [loading, setLoading] = useState(false);
   const [paystackLoaded, setPaystackLoaded] = useState(false);
-  const [paymentInitialized, setPaymentInitialized] = useState(false);
-  const [currentPaymentId, setCurrentPaymentId] = useState<string | null>(null);
+  const [paymentError, setPaymentError] = useState<string | null>(null);
 
-  const { initializePayment, verifyPayment, error: paymentError } = usePaymentStore();
+  const { initializePayment, verifyPayment } = usePaymentStore();
 
   const {
     register,
@@ -58,7 +57,6 @@ const Checkout = () => {
     }
   });
 
-  // Pre-fill user info
   useEffect(() => {
     if (user) {
       if (user.name) setValue('fullName', user.name);
@@ -91,24 +89,25 @@ const Checkout = () => {
     }
   }, [checkoutItems, token, navigate]);
 
-  const handlePaystackSuccess = async (reference: string) => {
-    setLoading(true);
+  const handlePaystackSuccess = async (reference: string, paymentId: string) => {
     try {
-      await verifyPayment(reference, currentPaymentId!);
-      navigate('/order-success', { state: { orderId: currentPaymentId } });
+      await verifyPayment(reference, paymentId);
+      navigate('/order-success', { state: { orderId: paymentId } });
     } catch {
       setLoading(false);
+      setPaymentError('Payment verification failed. Please contact support.');
     }
   };
 
   const onSubmit = async (data: CheckoutFormData) => {
     if (!checkoutItems || checkoutItems.length === 0) return;
     if (!paystackLoaded) {
-      alert('Payment system is loading. Please try again in a moment.');
+      setPaymentError('Payment system is loading. Please try again in a moment.');
       return;
     }
 
     setLoading(true);
+    setPaymentError(null);
     try {
       const shippingAddress = {
         fullName: data.fullName,
@@ -120,15 +119,13 @@ const Checkout = () => {
         country: data.country,
       };
 
-      // Map items to the format expected by backend: { product, quantity }
       const paymentItems = checkoutItems.map((item: any) => ({
         product: item.id || item._id || item.product,
         quantity: item.quantity,
       }));
 
       const result = await initializePayment(paymentItems, shippingAddress);
-      setCurrentPaymentId(result.paymentId);
-      setPaymentInitialized(true);
+      const paymentId = result.paymentId;
 
       const publicKey = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY;
 
@@ -138,7 +135,9 @@ const Checkout = () => {
         amount: totalPrice * 100, // in kobo
         ref: result.reference,
         currency: 'NGN',
-        // Only allow standard card/bank/ussd channels to avoid OPay fraud issues
+        // Card, bank transfer, USSD are reliable. 
+        // OPay via mobile_money is blocked by fraud system on many accounts.
+        // We expose all standard channels; user can choose from Paystack's UI.
         channels: ['card', 'bank', 'ussd', 'bank_transfer'],
         metadata: {
           custom_fields: [
@@ -147,15 +146,17 @@ const Checkout = () => {
           ],
         },
         onClose: () => {
+          // Payment popup was closed — do NOT hide the button, allow retry
           setLoading(false);
         },
         callback: (response: any) => {
-          handlePaystackSuccess(response.reference);
+          handlePaystackSuccess(response.reference, paymentId);
         },
       });
       handler.openIframe();
     } catch (err: any) {
       setLoading(false);
+      setPaymentError(err?.response?.data?.error || err?.message || 'Failed to initialize payment. Please try again.');
     }
   };
 
@@ -178,7 +179,7 @@ const Checkout = () => {
   const totalPrice = itemsPrice + taxPrice + shippingPrice;
 
   const inputClass =
-    'w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition bg-white';
+    'w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-sm focus:outline-none focus:border-orange-400 focus:ring-0 transition bg-white placeholder:text-gray-400';
 
   return (
     <Layout>
@@ -198,19 +199,22 @@ const Checkout = () => {
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
           {/* Header */}
-          <div className="mb-7">
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1" style={{ fontFamily: 'Outfit, sans-serif' }}>
-              Checkout
-            </h1>
-            <p className="text-gray-500 flex items-center gap-2 text-sm">
-              <FaLock className="text-green-500 text-xs" />
-              Secure, encrypted checkout
-              {buyNowState?.buyNow && (
-                <span className="ml-2 px-2 py-0.5 bg-orange-100 text-orange-600 text-xs font-semibold rounded-full">
-                  Buy Now
-                </span>
-              )}
-            </p>
+          <div className="mb-7 flex items-center gap-3">
+            <button onClick={() => navigate(-1)} className="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-500">
+              <FaArrowLeft />
+            </button>
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                Checkout
+                {buyNowState?.buyNow && (
+                  <span className="ml-3 text-sm px-3 py-1 bg-orange-100 text-orange-600 rounded-full font-semibold">Buy Now</span>
+                )}
+              </h1>
+              <p className="text-gray-500 flex items-center gap-2 text-sm mt-0.5">
+                <FaLock className="text-green-500 text-xs" />
+                Secure, encrypted checkout
+              </p>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-7">
@@ -274,44 +278,65 @@ const Checkout = () => {
                   </div>
                 </div>
 
-                {/* Payment */}
-                {!paymentInitialized && (
-                  <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                    <h2 className="text-base font-bold text-gray-900 mb-4 pb-3 border-b flex items-center gap-2">
-                      <span className="w-6 h-6 rounded-full bg-orange-500 text-white text-xs font-bold flex items-center justify-center">3</span>
-                      Payment
-                    </h2>
-                    <div className="flex items-center gap-3 p-4 bg-orange-50 rounded-xl border border-orange-100 mb-5">
-                      <FaShieldAlt className="text-orange-500 text-xl flex-shrink-0" />
+                {/* Payment — always visible, never hides after Paystack opens */}
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                  <h2 className="text-base font-bold text-gray-900 mb-4 pb-3 border-b flex items-center gap-2">
+                    <span className="w-6 h-6 rounded-full bg-orange-500 text-white text-xs font-bold flex items-center justify-center">3</span>
+                    Payment
+                  </h2>
+
+                  {/* Payment methods info */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-5">
+                    {['💳 Card', '🏦 Bank Transfer', '📱 USSD', '🔁 Bank'].map(m => (
+                      <div key={m} className="flex items-center justify-center gap-1.5 p-2.5 bg-gray-50 rounded-xl border border-gray-100 text-xs font-semibold text-gray-600">
+                        {m}
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="flex items-center gap-3 p-4 bg-orange-50 rounded-xl border border-orange-100 mb-5">
+                    <FaShieldAlt className="text-orange-500 text-xl flex-shrink-0" />
+                    <div>
+                      <p className="text-sm font-semibold text-orange-800">Powered by Paystack</p>
+                      <p className="text-xs text-orange-600">Pay with card, bank transfer, or USSD. 256-bit SSL encrypted.</p>
+                    </div>
+                  </div>
+
+                  {/* OPay notice */}
+                  <div className="flex items-start gap-2 p-3 bg-blue-50 border border-blue-100 rounded-xl mb-5 text-xs text-blue-700">
+                    <span className="text-base flex-shrink-0">ℹ️</span>
+                    <span>
+                      <strong>OPay users:</strong> Select "Pay with OPay" from Paystack's bank list. If you experience issues, use Bank Transfer or Card instead.
+                    </span>
+                  </div>
+
+                  {paymentError && (
+                    <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl flex gap-3">
+                      <FaExclamationCircle className="text-red-600 text-xl flex-shrink-0 mt-0.5" />
                       <div>
-                        <p className="text-sm font-semibold text-orange-800">Powered by Paystack</p>
-                        <p className="text-xs text-orange-600">Pay with card, bank transfer, or USSD. Safe & encrypted.</p>
+                        <h4 className="font-semibold text-red-900 text-sm">Payment Error</h4>
+                        <p className="text-sm text-red-700 mt-0.5">{paymentError}</p>
+                        <p className="text-xs text-red-500 mt-1">Please try again or use a different payment method.</p>
                       </div>
                     </div>
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className="w-full flex justify-center items-center gap-3 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 text-white font-bold py-4 px-4 rounded-xl transition-all active:scale-95 text-base shadow-lg shadow-orange-200"
-                    >
-                      {loading ? (
-                        <><FaSpinner className="animate-spin" /> Processing...</>
-                      ) : (
-                        <><FaLock className="text-sm" /> Pay ₦{totalPrice.toLocaleString()} Securely</>
-                      )}
-                    </button>
-                  </div>
-                )}
+                  )}
 
-                {paymentError && (
-                  <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl flex gap-3">
-                    <FaExclamationCircle className="text-red-600 text-xl flex-shrink-0 mt-0.5" />
-                    <div>
-                      <h4 className="font-semibold text-red-900 text-sm">Payment Error</h4>
-                      <p className="text-sm text-red-700 mt-0.5">{paymentError}</p>
-                      <p className="text-xs text-red-500 mt-1">Please try again or use a different payment method.</p>
-                    </div>
-                  </div>
-                )}
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full flex justify-center items-center gap-3 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 disabled:cursor-not-allowed text-white font-bold py-4 px-4 rounded-xl transition-all active:scale-95 text-base shadow-lg shadow-orange-200"
+                  >
+                    {loading ? (
+                      <><FaSpinner className="animate-spin" /> Processing Payment...</>
+                    ) : (
+                      <><FaLock className="text-sm" /> Pay ₦{totalPrice.toLocaleString()} Securely</>
+                    )}
+                  </button>
+
+                  <p className="text-xs text-center text-gray-400 mt-3">
+                    By clicking Pay, you agree to our Terms of Service and Privacy Policy.
+                  </p>
+                </div>
               </form>
             </div>
 
@@ -324,7 +349,7 @@ const Checkout = () => {
                 </h2>
 
                 {/* Items */}
-                <div className="space-y-3 mb-5 max-h-60 overflow-y-auto pr-1">
+                <div className="space-y-3 mb-5 max-h-60 overflow-y-auto pr-1 scrollbar-hide">
                   {checkoutItems.map((item: any, idx: number) => (
                     <div key={item.id || item._id || idx} className="flex gap-3">
                       {item.image && (
@@ -363,7 +388,7 @@ const Checkout = () => {
                     </span>
                   </div>
                   {shippingPrice > 0 && (
-                    <p className="text-[11px] text-gray-400 bg-orange-50 px-2 py-1 rounded">
+                    <p className="text-[11px] text-gray-400 bg-orange-50 px-2 py-1.5 rounded-lg">
                       💡 Add ₦{(50000 - itemsPrice).toLocaleString()} more for free shipping
                     </p>
                   )}

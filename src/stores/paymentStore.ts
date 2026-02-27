@@ -8,12 +8,13 @@ interface PaymentState {
   loading: boolean;
   error: string | null;
   success: boolean;
-  
+
   // Actions
-  initializePayment: (items: any[], shippingAddress: any) => Promise<{reference: string; paymentId: string; authorizationUrl: string}>;
+  initializePayment: (items: any[], shippingAddress: any) => Promise<{ reference: string; paymentId: string; authorizationUrl: string }>;
   verifyPayment: (reference: string, paymentId: string) => Promise<void>;
   clearError: () => void;
   resetPayment: () => void;
+  resetLoading: () => void;
 }
 
 export const usePaymentStore = create<PaymentState>((set) => ({
@@ -27,13 +28,12 @@ export const usePaymentStore = create<PaymentState>((set) => ({
   initializePayment: async (items: any[], shippingAddress: any) => {
     set({ loading: true, error: null });
     try {
-      const response = await apiClient.post(
-        '/payments/initialize',
-        { items, shippingAddress }
-      );
+      const response = await apiClient.post('/payments/initialize', { items, shippingAddress });
 
-      if (response.data.reference && response.data.authorizationUrl) {
-        set({ 
+      if (response.data.reference && response.data.paymentId) {
+        // ✅ Reset loading immediately after init — the Paystack popup handles the UX from here.
+        // The checkout component manages its own `loading` state for the button.
+        set({
           reference: response.data.reference,
           paymentId: response.data.paymentId,
           loading: false,
@@ -46,27 +46,20 @@ export const usePaymentStore = create<PaymentState>((set) => ({
       }
       throw new Error('Invalid response from payment initialization');
     } catch (error: any) {
-      const errorMsg = error.response?.data?.error || 'Failed to initialize payment';
-      set({
-        error: errorMsg,
-        loading: false,
-      });
+      const errorMsg = error.response?.data?.error || error.response?.data?.message || 'Failed to initialize payment';
+      set({ error: errorMsg, loading: false });
       throw error;
     }
   },
 
   verifyPayment: async (reference: string, paymentId: string) => {
-    set({ loading: true, error: null });
+    // Note: we intentionally do NOT set loading: true here.
+    // The checkout page manages the loading button state via its own useState.
+    // Setting store loading here can re-render and hide the pay button prematurely.
+    set({ error: null });
     try {
-      await apiClient.post(
-        '/payments/verify',
-        { reference, paymentId }
-      );
-
-      set({
-        success: true,
-        loading: false,
-      });
+      await apiClient.post('/payments/verify', { reference, paymentId });
+      set({ success: true, loading: false });
     } catch (error: any) {
       set({
         error: error.response?.data?.error || 'Failed to verify payment',
@@ -77,10 +70,15 @@ export const usePaymentStore = create<PaymentState>((set) => ({
   },
 
   clearError: () => set({ error: null }),
-  resetPayment: () => set({
-    reference: null,
-    paymentId: null,
-    success: false,
-    error: null,
-  }),
+
+  resetLoading: () => set({ loading: false }),
+
+  resetPayment: () =>
+    set({
+      reference: null,
+      paymentId: null,
+      success: false,
+      error: null,
+      loading: false,
+    }),
 }));

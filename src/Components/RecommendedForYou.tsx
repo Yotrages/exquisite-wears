@@ -187,11 +187,11 @@ const RecommendedForYou = () => {
                     : <FaRegHeart className="text-gray-400 text-sm" />}
                 </button>
                 {/* Discount badge */}
-                {product.discount && product.discount > 0 && (
+                {/* {product.discount && product.discount > 0 && (
                   <div className="absolute bottom-2 left-2">
                     <span className="badge badge-danger text-[10px]">-{product.discount}%</span>
                   </div>
-                )}
+                )} */}
                 {/* Out of stock overlay */}
                 {!(product.quantity || 0) && (
                   <div className="absolute inset-0 bg-white/60 flex items-center justify-center">
@@ -207,21 +207,19 @@ const RecommendedForYou = () => {
                 </h3>
 
                 {/* Rating */}
-                {(product.rating || product.averageRating) && (
-                  <div className="flex items-center gap-1 mb-1.5">
-                    <div className="flex">
-                      {[1, 2, 3, 4, 5].map(s => (
-                        <FaStar
-                          key={s}
-                          className={`text-[10px] ${s <= Math.round(product.rating || product.averageRating || 0) ? 'text-amber-400' : 'text-gray-200'}`}
-                        />
-                      ))}
-                    </div>
-                    <span className="text-[10px] text-gray-500">
-                      ({product.reviewsCount || product.totalReviews || 0})
-                    </span>
+                <div className="flex items-center gap-1 mb-1.5">
+                  <div className="flex">
+                    {[1, 2, 3, 4, 5].map(s => (
+                      <FaStar
+                        key={s}
+                        className={`text-[10px] ${s <= Math.round(product.rating || product.averageRating || 0) ? 'text-amber-400' : 'text-gray-200'}`}
+                      />
+                    ))}
                   </div>
-                )}
+                  <span className="text-[10px] text-gray-500">
+                    ({product.reviewsCount || product.totalReviews || 0})
+                  </span>
+                </div>
 
                 {/* Price */}
                 <div className="flex items-baseline gap-1.5 mb-2.5">

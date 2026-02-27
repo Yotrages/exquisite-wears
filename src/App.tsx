@@ -8,6 +8,9 @@ import ContactPage from "./App/ContactPage"
 import { RouteLoader, preloadCriticalRoutes, preloadSecondaryRoutes, preloadAdminRoutes, preloadOrderRoutes } from './App/lazyComponents'
 import WishlistPage from "./App/WishlistPage"
 import ComparePage from './App/ComparePage'
+import CategoryPage from './App/CategoryPage'
+import FlashSalesPage from './App/FlashSalesPage'
+import TrendingPage from './App/TrendingPage'
 import AdminReviews from "./App/AdminReviews"
 import AdminProducts from "./App/AdminProducts"
 import AdminUsers from "./App/AdminUsers"
@@ -84,6 +87,9 @@ const App = () => {
             <Route path="/contact" element={<ContactPage />}/>
             <Route path="/forgotpassword" element={<ForgotPassword />}/>
             <Route path="/search/:searchTerm" element={<SearchPage />}/>
+            <Route path="/category/:category" element={<CategoryPage />}/>
+            <Route path="/flash-sales" element={<FlashSalesPage />}/>
+            <Route path="/trending" element={<TrendingPage />}/>
             <Route path="/oauth-success" element={<OAuthSuccess />}/>
             <Route path="/orders" element={<Orders />}/>
             <Route path="/order/:orderId" element={<OrderTracking />}/>
