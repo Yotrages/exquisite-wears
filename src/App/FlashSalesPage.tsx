@@ -8,7 +8,6 @@ import { addItem, setCart } from '../redux/cartSlice';
 import { FaBolt, FaFire, FaStar, FaHeart, FaRegHeart, FaShoppingCart, FaChevronRight } from 'react-icons/fa';
 import { MdLocalOffer } from 'react-icons/md';
 import Layout from '../Components/Layout';
-import Countdown from '../Components/Countdown';
 
 interface FlashDeal {
   _id: string;

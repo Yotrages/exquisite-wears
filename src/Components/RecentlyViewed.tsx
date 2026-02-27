@@ -22,7 +22,7 @@ export default function RecentlyViewed() {
   if (products?.length === 0) return null
 
   return (
-    <section className="py-8 px-4">
+    <section className="py-8 max-w-7xl mx-auto px-4 sm:px-6">
       <div className="flex items-center gap-3 mb-6">
         <FaHistory className="text-2xl text-gray-600" />
         <h2 className="text-2xl font-bold text-gray-800">Recently Viewed</h2>
@@ -46,7 +46,7 @@ export default function RecentlyViewed() {
                 />
                 
                 {/* Discount Badge */}
-                {product.discount && product.discount > 0 && (
+                {product.discount && product.discount > 1 && (
                   <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">
                     -{product.discount}%
                   </div>
@@ -63,11 +63,11 @@ export default function RecentlyViewed() {
                   <p className="text-green-600 font-bold text-lg">
                     ₦{product.price.toLocaleString()}
                   </p>
-                  {/* {product.discount && product.discount > 0 && (
+                  {product.discount && product.discount > 1 && (
                     <p className="text-gray-400 line-through text-sm">
                       ₦{Math.round(product.price / (1 - product.discount / 100)).toLocaleString()}
                     </p>
-                  )} */}
+                  )}
                 </div>
               </div>
 

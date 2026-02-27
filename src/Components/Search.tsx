@@ -452,8 +452,8 @@ const Search = () => {
                         <div className="mb-2"><StarRating rating={item.rating || item.averageRating || 0} size="sm" showValue={(item.rating || 0) > 0} showCount={item.reviewsCount || item.reviews || 0} /></div>
                         <div className="flex items-center gap-3">
                           <span className="text-lg font-black text-gray-900">₦{item.price.toLocaleString()}</span>
-                          {/* {item.originalPrice && <span className="text-sm text-gray-400 line-through">₦{item.originalPrice.toLocaleString()}</span>} */}
-                          {/* {item.discount && item.discount > 0 && <span className="badge badge-danger">{item.discount}% off</span>} */}
+                          {item.originalPrice && <span className="text-sm text-gray-400 line-through">₦{item.originalPrice.toLocaleString()}</span>}
+                          {item.discount && item.discount > 0 && <span className="badge badge-danger">{item.discount}% off</span>}
                         </div>
                         <button
                           onClick={(e) => handleAddToCart(e, item)}

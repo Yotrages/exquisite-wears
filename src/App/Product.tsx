@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import {
-  FaShoppingCart, FaHeart, FaStar, FaShare, FaTruck,
+  FaShoppingCart, FaHeart, FaShare, FaTruck,
   FaShieldAlt, FaArrowLeft, FaChevronRight, FaMinus,
   FaPlus, FaRegHeart, FaCheckCircle
 } from 'react-icons/fa'
@@ -136,9 +136,9 @@ export default function ProductDetailsPage() {
   }
 
   // Legacy helper kept for seller rating only; products now use <StarRating />
-  const starIcons = (r = 0, size = 'text-xs') => [1,2,3,4,5].map(s => (
-    <FaStar key={s} className={`${size} ${s <= Math.round(r) ? 'text-amber-400' : 'text-gray-200'}`} />
-  ))
+  // const starIcons = (r = 0, size = 'text-xs') => [1,2,3,4,5].map(s => (
+  //   <FaStar key={s} className={`${size} ${s <= Math.round(r) ? 'text-amber-400' : 'text-gray-200'}`} />
+  // ))
 
   if (loading) {
     return (
@@ -226,9 +226,9 @@ export default function ProductDetailsPage() {
                       <MdVerified className="text-orange-500" /> {product.brand}
                     </span>
                   )}
-                  {/* {product.discount && product.discount > 0 && (
+                  {product.discount && product.discount > 0 && (
                     <span className="badge badge-danger">{product.discount}% OFF</span>
-                  )} */}
+                  )}
                   {!inStock && (
                     <span className="badge bg-gray-200 text-gray-600">Out of Stock</span>
                   )}

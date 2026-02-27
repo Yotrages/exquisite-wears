@@ -187,11 +187,11 @@ const RecommendedForYou = () => {
                     : <FaRegHeart className="text-gray-400 text-sm" />}
                 </button>
                 {/* Discount badge */}
-                {/* {product.discount && product.discount > 0 && (
+                {product.discount && product.discount > 0 && (
                   <div className="absolute bottom-2 left-2">
                     <span className="badge badge-danger text-[10px]">-{product.discount}%</span>
                   </div>
-                )} */}
+                )}
                 {/* Out of stock overlay */}
                 {!(product.quantity || 0) && (
                   <div className="absolute inset-0 bg-white/60 flex items-center justify-center">
