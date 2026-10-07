@@ -19,7 +19,7 @@ const OAuthSuccess = () => {
     const token = queryParams.get('token');
     const name = queryParams.get('name');
     const email = queryParams.get('email');
-    const userId = queryParams.get('_id');
+    const userId = queryParams.get('id');  // Fixed: backend sends 'id', not '_id'
     const isAdmin = queryParams.get('isAdmin') === 'true';
 
     console.log('Received OAuth token:', { userId, name, email, isAdmin });
