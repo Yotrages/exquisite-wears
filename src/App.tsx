@@ -1,12 +1,7 @@
 import { Routes, Route, useLocation } from "react-router-dom"
 import { Suspense, useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
-import { Home, Cart, Checkout, Product, Admin, LoginPage, RegisterPage, AdminDashboard, Edit, NotificationPage, AboutPage, ForgotPassword, SearchPage, Orders, OrderTracking, OrderSuccess, OAuthSuccess } from './App/lazyComponents'
-import Settings from "./App/Settings"
-import NotificationPreferences from "./App/NotificationPreferences"
-import ContactPage from "./App/ContactPage"
-import { RouteLoader, preloadCriticalRoutes, preloadSecondaryRoutes, preloadAdminRoutes, preloadOrderRoutes } from './App/lazyComponents'
-import WishlistPage from "./App/WishlistPage"
+import { Home, Cart, Checkout, Product, Admin, LoginPage, RegisterPage, AdminDashboard, Edit, NotificationPage, AboutPage, ForgotPassword, SearchPage, Orders, OrderTracking, OrderSuccess, OAuthSuccess, Settings, NotificationPreferences, ContactPage, WishlistPage, RouteLoader, preloadCriticalRoutes, preloadSecondaryRoutes, preloadAdminRoutes, preloadOrderRoutes } from './App/lazyComponents'
 import ComparePage from './App/ComparePage'
 import CategoryPage from './App/CategoryPage'
 import FlashSalesPage from './App/FlashSalesPage'
