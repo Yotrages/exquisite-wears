@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 import { getAuthToken } from '../utils/cookieManager';
 import { addItem, setCart } from '../redux/cartSlice';
+import { addToWishlist, removeFromWishlist, setWishlist } from '../redux/wishlistSlice';
 import { FaStar, FaHeart, FaRegHeart, FaShoppingCart, FaChevronRight, FaFilter, FaTh, FaList, FaChevronDown } from 'react-icons/fa';
 import Layout from '../Components/Layout';
 import { Product } from '../Types/Product';
@@ -15,16 +16,19 @@ const CategoryPage = () => {
   const dispatch = useDispatch();
   const authState = useSelector((state: any) => state.authSlice);
   const token = authState?.token || getAuthToken();
+  const cartItems = useSelector((state: any) => state.cart?.items || []);
+  const wishlist = useSelector((state: any) => state.wishlist?.items || []);
 
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [wishlist, setWishlist] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [sortBy, setSortBy] = useState('newest');
   const [priceMax, setPriceMax] = useState(1000000);
   const [inStockOnly, setInStockOnly] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+
+  const isInCart = (productId: string) => cartItems.some((item: any) => item.id === productId || item._id === productId || item.product === productId);
 
   useEffect(() => {
     if (!category) return;
@@ -49,7 +53,7 @@ const CategoryPage = () => {
 
     if (token) {
       apiClient.get('/wishlist')
-        .then(res => setWishlist((res.data.items || []).map((i: any) => i.product?._id).filter(Boolean)))
+        .then(res => dispatch(setWishlist((res.data.items || []).map((i: any) => i.product?._id).filter(Boolean))))
         .catch(() => {});
     }
   }, [category]);
@@ -83,10 +87,10 @@ const CategoryPage = () => {
     try {
       if (wishlist.includes(productId)) {
         await apiClient.delete(`/wishlist/product/${productId}`);
-        setWishlist(w => w.filter(id => id !== productId));
+        dispatch(removeFromWishlist(productId));
       } else {
         await apiClient.post(`/wishlist/product/${productId}`, { productId });
-        setWishlist(w => [...w, productId]);
+        dispatch(addToWishlist({ productId }));
         toast.success('Added to wishlist!');
       }
     } catch { }
@@ -216,8 +220,18 @@ const CategoryPage = () => {
                             <span className="text-sm font-black text-gray-900">₦{item.price.toLocaleString()}</span>
                             {item.originalPrice && <span className="text-[11px] text-gray-400 line-through">₦{item.originalPrice.toLocaleString()}</span>}
                           </div>
-                          <button onClick={e => handleAddToCart(e, item)} disabled={!(item.quantity || 0)} className={`w-full py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 ${(item.quantity || 0) ? 'bg-orange-500 hover:bg-orange-600 text-white' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}>
-                            {(item.quantity || 0) ? <><FaShoppingCart className="text-[11px]" /> Add to Cart</> : 'Out of Stock'}
+                          <button onClick={e => handleAddToCart(e, item)} disabled={!(item.quantity || 0) || isInCart(item._id)} className={`w-full py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 ${
+                            !(item.quantity || 0)
+                              ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                              : isInCart(item._id)
+                                ? 'bg-green-500 text-white cursor-default'
+                                : 'bg-orange-500 hover:bg-orange-600 text-white'
+                          }`}>
+                            {!(item.quantity || 0)
+                              ? 'Out of Stock'
+                              : isInCart(item._id)
+                                ? <><FaShoppingCart className="text-[11px]" /> In Cart</>
+                                : <><FaShoppingCart className="text-[11px]" /> Add to Cart</>}
                           </button>
                         </div>
                       </div>
@@ -234,8 +248,19 @@ const CategoryPage = () => {
                             {item.originalPrice && <span className="text-sm text-gray-400 line-through">₦{item.originalPrice.toLocaleString()}</span>}
                             {item.discount && item.discount > 0 && <span className="badge badge-danger">{item.discount}% off</span>}
                           </div>
-                          <button onClick={e => handleAddToCart(e, item)} disabled={!(item.quantity || 0)} className={`px-5 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-all active:scale-95 ${(item.quantity || 0) ? 'bg-orange-500 hover:bg-orange-600 text-white' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}>
-                            <FaShoppingCart className="text-xs" /> {(item.quantity || 0) ? 'Add to Cart' : 'Out of Stock'}
+                          <button onClick={e => handleAddToCart(e, item)} disabled={!(item.quantity || 0) || isInCart(item._id)} className={`px-5 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-all active:scale-95 ${
+                            !(item.quantity || 0)
+                              ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                              : isInCart(item._id)
+                                ? 'bg-green-500 text-white cursor-default'
+                                : 'bg-orange-500 hover:bg-orange-600 text-white'
+                          }`}>
+                            <FaShoppingCart className="text-xs" />
+                            {!(item.quantity || 0)
+                              ? 'Out of Stock'
+                              : isInCart(item._id)
+                                ? 'In Cart'
+                                : 'Add to Cart'}
                           </button>
                         </div>
                       </div>

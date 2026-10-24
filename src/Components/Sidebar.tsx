@@ -1,7 +1,7 @@
 import React from "react";
 import { IoMdClose } from "react-icons/io";
 import { Link, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { handleLogout } from "../constants";
 import {
   FaHome, FaHeart, FaShoppingCart, FaBell, FaBox,
@@ -17,6 +17,7 @@ interface sideBarProps {
 
 const Sidebar = ({ toggle, setToggle }: sideBarProps) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const authState = useSelector((state: any) => state.authSlice);
   const user = authState?.user;
   const cartCount = useSelector((state: any) => state.cart?.items?.length || 0);
@@ -113,7 +114,7 @@ const Sidebar = ({ toggle, setToggle }: sideBarProps) => {
         <div className="px-3 py-3 border-t border-gray-100">
           {user ? (
             <button
-              onClick={() => { close(); handleLogout(navigate); }}
+              onClick={() => { close(); handleLogout(navigate, dispatch); }}
               className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 transition-colors font-semibold text-sm"
             >
               <FaSignOutAlt className="w-5" />

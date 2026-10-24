@@ -380,8 +380,10 @@ const AdminDashboard = () => {
 // ─── Admin Tools: Migration + Notifications ──────────────────────────────────
 import { apiClient } from '../Api/axiosConfig';
 import toast from 'react-hot-toast';
+import { useAdminNotificationSocket } from '../hooks/useSocket';
 
 const AdminTools = () => {
+  const { isConnected: adminSocketConnected } = useAdminNotificationSocket();
   const [migrating, setMigrating] = useState(false);
   const [migResult, setMigResult] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
@@ -435,8 +437,16 @@ const AdminTools = () => {
 
       {/* Send Notification */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-        <h3 className="text-lg font-bold text-gray-900 mb-1">🔔 Send Notification</h3>
-        <p className="text-sm text-gray-500 mb-4">Send a notification to all users or a specific user.</p>
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <h3 className="text-lg font-bold text-gray-900 mb-1">🔔 Send Notification</h3>
+            <p className="text-sm text-gray-500">Send a notification to all users or a specific user.</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className={`w-2 h-2 rounded-full ${adminSocketConnected ? 'bg-green-500' : 'bg-red-500'}`} />
+            <span className="text-xs text-gray-500">{adminSocketConnected ? 'Live' : 'Offline'}</span>
+          </div>
+        </div>
         <div className="space-y-3">
           <input
             type="text" placeholder="Title (e.g. 🔥 Weekend Sale!)" value={notifForm.title}

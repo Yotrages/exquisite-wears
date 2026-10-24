@@ -10,8 +10,8 @@ interface PaymentState {
   success: boolean;
 
   // Actions
-  initializePayment: (items: any[], shippingAddress: any) => Promise<{ reference: string; paymentId: string; authorizationUrl: string }>;
-  verifyPayment: (reference: string, paymentId: string) => Promise<void>;
+  initializePayment: (items: any[], shippingAddress: any) => Promise<{ reference: string; paymentId: string; authorizationUrl: string; accessCode: string }>;
+  verifyPayment: (reference: string, paymentId: string) => Promise<{ order: any; payment: any }>;
   clearError: () => void;
   resetPayment: () => void;
   resetLoading: () => void;
@@ -42,6 +42,7 @@ export const usePaymentStore = create<PaymentState>((set) => ({
           reference: response.data.reference,
           paymentId: response.data.paymentId,
           authorizationUrl: response.data.authorizationUrl,
+          accessCode: response.data.accessCode,
         };
       }
       throw new Error('Invalid response from payment initialization');
@@ -58,8 +59,9 @@ export const usePaymentStore = create<PaymentState>((set) => ({
     // Setting store loading here can re-render and hide the pay button prematurely.
     set({ error: null });
     try {
-      await apiClient.post('/payments/verify', { reference, paymentId });
+      const response = await apiClient.post('/payments/verify', { reference, paymentId });
       set({ success: true, loading: false });
+      return response.data;
     } catch (error: any) {
       set({
         error: error.response?.data?.error || 'Failed to verify payment',

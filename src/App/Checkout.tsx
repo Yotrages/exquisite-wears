@@ -40,7 +40,7 @@ const Checkout = () => {
   const [paystackLoaded, setPaystackLoaded] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
 
-  const { initializePayment, verifyPayment } = usePaymentStore();
+  const { initializePayment, verifyPayment, resetPayment } = usePaymentStore();
 
   const {
     register,
@@ -91,8 +91,11 @@ const Checkout = () => {
 
   const handlePaystackSuccess = async (reference: string, paymentId: string) => {
     try {
-      await verifyPayment(reference, paymentId);
-      navigate('/order-success', { state: { orderId: paymentId } });
+      const result = await verifyPayment(reference, paymentId);
+      // The verifyPayment now returns { order, payment }
+      const orderId = result?.order?._id || paymentId;
+      resetPayment(); // Reset payment state for future transactions
+      navigate('/order-success', { state: { orderId } });
     } catch {
       setLoading(false);
       setPaymentError('Payment verification failed. Please contact support.');
@@ -105,6 +108,15 @@ const Checkout = () => {
       setPaymentError('Payment system is loading. Please try again in a moment.');
       return;
     }
+
+    // Calculate totals upfront so we can use them in the Paystack handler
+    const itemsPrice = checkoutItems.reduce(
+      (sum: number, item: any) => sum + (item.price || 0) * (item.quantity || 1),
+      0
+    );
+    const taxPrice = Math.round(itemsPrice * 0.07 * 100) / 100;
+    const shippingPrice = itemsPrice > 50000 ? 0 : 1500;
+    const totalPrice = itemsPrice + taxPrice + shippingPrice;
 
     setLoading(true);
     setPaymentError(null);
@@ -119,8 +131,9 @@ const Checkout = () => {
         country: data.country,
       };
 
+      // Backend expects "product" field (the product ID)
       const paymentItems = checkoutItems.map((item: any) => ({
-        product: item.id || item._id || item.product,
+        product: item.product || item.id || item._id,
         quantity: item.quantity,
       }));
 
@@ -135,7 +148,7 @@ const Checkout = () => {
         amount: totalPrice * 100, // in kobo
         ref: result.reference,
         currency: 'NGN',
-        // Card, bank transfer, USSD are reliable. 
+        // Card, bank transfer, USSD are reliable.
         // OPay via mobile_money is blocked by fraud system on many accounts.
         // We expose all standard channels; user can choose from Paystack's UI.
         channels: ['card', 'bank', 'ussd', 'bank_transfer'],

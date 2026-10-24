@@ -10,6 +10,7 @@ import { format } from 'date-fns'
 import { apiClient } from '../Api/axiosConfig'
 import Layout from '../Components/Layout'
 import toast from 'react-hot-toast'
+import { useNotificationSocket } from '../hooks/useSocket'
 
 const typeConfig: Record<string, { icon: React.ReactNode; color: string; bg: string }> = {
   order:      { icon: <FaBox />,    color: 'text-orange-600',  bg: 'bg-orange-100' },
@@ -24,6 +25,7 @@ const typeConfig: Record<string, { icon: React.ReactNode; color: string; bg: str
 const NotificationPage = () => {
   const { user } = useSelector((state: any) => state.authSlice)
   const navigate = useNavigate()
+  const { unreadCount: socketUnreadCount, markAsRead: socketMarkAsRead, markAllAsRead: socketMarkAllAsRead, isConnected } = useNotificationSocket()
 
   const [notifications, setNotifications] = useState<any[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
@@ -47,11 +49,18 @@ const NotificationPage = () => {
 
   useEffect(() => { fetchNotifications() }, [])
 
+  // Sync with socket unread count
+  useEffect(() => {
+    setUnreadCount(socketUnreadCount);
+  }, [socketUnreadCount]);
+
   const markAsRead = async (id: string) => {
     try {
       await apiClient.put(`/notifications/${id}/read`, {})
       setNotifications(prev => prev.map(n => n._id === id ? { ...n, read: true } : n))
       setUnreadCount(prev => Math.max(0, prev - 1))
+      // Emit to socket for cross-tab sync
+      socketMarkAsRead(id);
     } catch { }
   }
 
@@ -60,6 +69,8 @@ const NotificationPage = () => {
       await apiClient.put('/notifications/all/read', {})
       setNotifications(prev => prev.map(n => ({ ...n, read: true })))
       setUnreadCount(0)
+      // Emit to socket for cross-tab sync
+      socketMarkAllAsRead();
       toast.success('All notifications marked as read')
     } catch {
       toast.error('Failed to mark all as read')
@@ -122,6 +133,11 @@ const NotificationPage = () => {
                   Send Notification
                 </Link>
               )}
+              {/* Connection Status */}
+              <div className="flex items-center gap-1.5 ml-4">
+                <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
+                <span className="text-xs text-gray-500">{isConnected ? 'Live' : 'Offline'}</span>
+              </div>
             </div>
           </div>
         </div>

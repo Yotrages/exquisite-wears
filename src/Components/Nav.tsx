@@ -11,8 +11,10 @@ import SearchValidator from "../Api/Search";
 import { handleLogout } from "../constants";
 import SearchInput from "./SearchInput";
 import Sidebar from "./Sidebar";
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { apiClient } from '../Api/axiosConfig';
+import { setWishlist } from '../redux/wishlistSlice';
+import { useNotificationSocket } from '../hooks/useSocket';
 
 const Nav = ({
   // change,
@@ -36,14 +38,15 @@ const Nav = ({
     toggle,
   } = SearchValidator();
 
+  const { unreadCount, markAsRead } = useNotificationSocket();
+
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const cartCount = useSelector((state: any) => state.cart?.items?.length || 0);
   const cartTotal = useSelector((state: any) =>
     state.cart?.items?.reduce((s: number, i: any) => s + i.price * i.quantity, 0) || 0
   );
-
-  const [wishlistCount, setWishlistCount] = useState(0);
-  const [notificationCount, setNotificationCount] = useState(0);
+  const wishlistCount = useSelector((state: any) => state.wishlist?.items?.length || 0);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState<any[]>([]);
@@ -70,25 +73,34 @@ const Nav = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Sync wishlist with Redux on user login/change
   useEffect(() => {
     if (user) {
-      fetchWishlistCount();
+      fetchWishlist();
+      // Initial fetch for notifications dropdown
+      fetchNotifications();
+    } else {
+      dispatch(setWishlist([]));
+    }
+  }, [user, dispatch]);
+
+  // Keep local notifications in sync with socket unread count
+  useEffect(() => {
+    if (user) {
       fetchNotifications();
     }
-  }, [user]);
+  }, [unreadCount, user]);
 
-  const fetchWishlistCount = async () => {
+  const fetchWishlist = async () => {
     try {
       const res = await apiClient.get('/wishlist');
-      setWishlistCount(res.data.items?.length || 0);
+      dispatch(setWishlist(res.data.items || []));
     } catch { }
   };
 
   const fetchNotifications = async () => {
     try {
       const res = await apiClient.get('/notifications');
-      const unread = res.data.notifications?.filter((n: any) => !n.read) || [];
-      setNotificationCount(unread.length);
       setNotifications(res.data.notifications?.slice(0, 6) || []);
     } catch { }
   };
@@ -96,7 +108,8 @@ const Nav = ({
   const markNotificationAsRead = async (notificationId: string) => {
     try {
       await apiClient.put(`/notifications/${notificationId}/read`, {});
-      setNotificationCount(prev => Math.max(0, prev - 1));
+      // Also emit to socket for cross-tab sync
+      markAsRead(notificationId);
     } catch { }
   };
 
@@ -222,9 +235,9 @@ const Nav = ({
                       onClick={() => { setShowNotifications(v => !v); setShowUserMenu(false); }}
                     >
                       <FaBell className="text-gray-600 text-lg" />
-                      {notificationCount > 0 && (
+                      {unreadCount > 0 && (
                         <span className="absolute top-0 right-0 bg-orange-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center animate-pulse">
-                          {notificationCount > 9 ? '9+' : notificationCount}
+                          {unreadCount > 9 ? '9+' : unreadCount}
                         </span>
                       )}
                     </button>
@@ -233,8 +246,8 @@ const Nav = ({
                       <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border border-gray-100 z-[200] overflow-hidden animate-fade-in">
                         <div className="px-4 py-3 bg-gray-50 border-b flex justify-between items-center">
                           <h3 className="font-bold text-gray-900 text-sm">Notifications</h3>
-                          {notificationCount > 0 && (
-                            <span className="text-xs bg-orange-500 text-white px-2 py-0.5 rounded-full">{notificationCount} new</span>
+                          {unreadCount > 0 && (
+                            <span className="text-xs bg-orange-500 text-white px-2 py-0.5 rounded-full">{unreadCount} new</span>
                           )}
                         </div>
                         {notifications.length === 0 ? (
@@ -318,7 +331,7 @@ const Nav = ({
                           {[
                             { to: '/orders', icon: FaBox, label: 'My Orders' },
                             { to: '/wishlist', icon: FaHeart, label: 'Wishlist', badge: wishlistCount },
-                            { to: '/notification', icon: FaBell, label: 'Notifications', badge: notificationCount },
+                            { to: '/notification', icon: FaBell, label: 'Notifications', badge: unreadCount },
                             { to: '/settings', icon: FaCog, label: 'Account Settings' },
                           ].map(({ to, icon: Icon, label, badge }) => (
                             <Link key={to} to={to} className="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors text-gray-700 text-sm" onClick={() => setShowUserMenu(false)}>
@@ -331,7 +344,7 @@ const Nav = ({
                           ))}
                           <div className="border-t border-gray-100 mt-1 pt-1">
                             <button
-                              onClick={() => { setShowUserMenu(false); handleLogout(navigate); }}
+                              onClick={() => { setShowUserMenu(false); handleLogout(navigate, dispatch); }}
                               className="flex items-center gap-3 px-4 py-2.5 hover:bg-red-50 transition-colors text-red-500 w-full text-sm"
                             >
                               <FaSignOutAlt className="w-4" />
@@ -396,6 +409,33 @@ const Nav = ({
               <Link to="/search/all" className="whitespace-nowrap text-orange-500 hover:text-orange-600 font-semibold ml-auto flex items-center gap-1">
                 All Categories <FaChevronDown className="text-xs" />
               </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* === CATEGORY NAV BAR (mobile) === */}
+        <div className="md:hidden border-t border-gray-100 bg-white">
+          <div className="max-w-7xl mx-auto px-3">
+            <div className="flex items-center gap-3 py-2 text-sm overflow-x-auto scrollbar-hide pb-1">
+              {[
+                { label: 'Fashion', cat: 'Fashion' },
+                { label: 'Electronics', cat: 'Electronics' },
+                { label: 'Phones', cat: 'Phones' },
+                { label: 'Home', cat: 'Home' },
+                { label: 'Sports', cat: 'Sports' },
+                { label: 'Beauty', cat: 'Beauty' },
+                { label: 'Baby', cat: 'Baby' },
+                { label: 'Books', cat: 'Books' },
+                { label: 'Health', cat: 'Health' },
+              ].map(({ label, cat }) => (
+                <Link
+                  key={cat}
+                  to={`/category/${encodeURIComponent(cat)}`}
+                  className="whitespace-nowrap text-gray-600 hover:text-orange-500 font-medium transition-colors px-3 py-1.5 rounded-full bg-gray-50 hover:bg-orange-50 border border-gray-100 hover:border-orange-200"
+                >
+                  {label}
+                </Link>
+              ))}
             </div>
           </div>
         </div>

@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 import { getAuthToken } from '../utils/cookieManager';
 import { addItem, setCart } from '../redux/cartSlice';
+import { addToWishlist, removeFromWishlist, setWishlist } from '../redux/wishlistSlice';
 import { Product } from '../Types/Product';
 
 // Terms that are categories / special routes, not product names
@@ -43,14 +44,15 @@ const Search = () => {
   const dispatch = useDispatch();
   const authState = useSelector((state: any) => state.authSlice);
   const token = authState?.token || getAuthToken();
+  const cartItems = useSelector((state: any) => state.cart?.items || []);
 
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000000]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [minRating, setMinRating] = useState<number>(0);
   const [sortBy, setSortBy] = useState<string>('relevance');
   const [inStockOnly, setInStockOnly] = useState(false);
-  const [wishlistItems, setWishlistItems] = useState<string[]>([]);
   const [searchMode, setSearchMode] = useState<'text' | 'category' | 'all' | 'flash' | 'trending' | 'newest'>('text');
+  const wishlistItems = useSelector((state: any) => state.wishlist?.items?.map((i: any) => i.productId) || []);
 
   const categories = ['Electronics', 'Fashion', 'Home', 'Sports', 'Beauty', 'Books', 'Toys', 'Health', 'Phones', 'Kitchen'];
 
@@ -72,7 +74,7 @@ const Search = () => {
     }
     if (token) {
       apiClient.get('/wishlist').then(r => {
-        setWishlistItems((r.data.items || []).map((i: any) => i.product?._id).filter(Boolean));
+        dispatch(setWishlist((r.data.items || []).map((i: any) => i.product?._id).filter(Boolean)));
       }).catch(() => {});
     }
   }, [searchTerm]);
@@ -166,10 +168,10 @@ const Search = () => {
     try {
       if (wishlistItems.includes(productId)) {
         await apiClient.delete(`/wishlist/product/${productId}`);
-        setWishlistItems(w => w.filter(id => id !== productId));
+        dispatch(removeFromWishlist(productId));
       } else {
         await apiClient.post(`/wishlist/product/${productId}`, { productId });
-        setWishlistItems(w => [...w, productId]);
+        dispatch(addToWishlist({ productId }));
         toast.success('Added to wishlist!');
       }
     } catch { }
@@ -197,6 +199,8 @@ const Search = () => {
   ));
 
   const activeFiltersCount = selectedCategories.length + (minRating ? 1 : 0) + (inStockOnly ? 1 : 0) + (priceRange[1] < 1000000 ? 1 : 0);
+
+  const isInCart = (productId: string) => cartItems.some((item: any) => item.id === productId || item._id === productId || item.product === productId);
 
   const getPageTitle = () => {
     if (!searchTerm) return 'All Products';
@@ -430,10 +434,20 @@ const Search = () => {
                         </div>
                         <button
                           onClick={(e) => handleAddToCart(e, item)}
-                          disabled={!(item.quantity || 0)}
-                          className={`w-full py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 ${(item.quantity || 0) ? 'bg-orange-500 hover:bg-orange-600 text-white' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}
+                          disabled={!(item.quantity || 0) || isInCart(item._id)}
+                          className={`w-full py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 ${
+                            !(item.quantity || 0)
+                              ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                              : isInCart(item._id)
+                                ? 'bg-green-500 text-white cursor-default'
+                                : 'bg-orange-500 hover:bg-orange-600 text-white'
+                          }`}
                         >
-                          {(item.quantity || 0) ? <><FaShoppingCart className="text-[11px]" /> Add to Cart</> : 'Out of Stock'}
+                          {!(item.quantity || 0)
+                            ? 'Out of Stock'
+                            : isInCart(item._id)
+                              ? <><FaShoppingCart className="text-[11px]" /> In Cart</>
+                              : <><FaShoppingCart className="text-[11px]" /> Add to Cart</>}
                         </button>
                       </div>
                     </div>
@@ -457,11 +471,21 @@ const Search = () => {
                         </div>
                         <button
                           onClick={(e) => handleAddToCart(e, item)}
-                          disabled={!(item.quantity || 0)}
-                          className={`mt-3 px-5 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-all active:scale-95 ${(item.quantity || 0) ? 'bg-orange-500 hover:bg-orange-600 text-white' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}
+                          disabled={!(item.quantity || 0) || isInCart(item._id)}
+                          className={`mt-3 px-5 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-all active:scale-95 ${
+                            !(item.quantity || 0)
+                              ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                              : isInCart(item._id)
+                                ? 'bg-green-500 text-white cursor-default'
+                                : 'bg-orange-500 hover:bg-orange-600 text-white'
+                          }`}
                         >
                           <FaShoppingCart className="text-xs" />
-                          {(item.quantity || 0) ? 'Add to Cart' : 'Out of Stock'}
+                          {!(item.quantity || 0)
+                            ? 'Out of Stock'
+                            : isInCart(item._id)
+                              ? 'In Cart'
+                              : 'Add to Cart'}
                         </button>
                       </div>
                     </div>

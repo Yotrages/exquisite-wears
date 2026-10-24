@@ -1,4 +1,6 @@
 import { NavigateFunction } from "react-router-dom";
+import { appDispatch } from "../redux/store";
+import { logout } from "../redux/authSlice";
 
 export const steps = [
   [
@@ -18,13 +20,26 @@ export const steps = [
   ],
 ];
 
-export const handleLogout = (navigate: NavigateFunction) => {
+export const handleLogout = (navigate: NavigateFunction, dispatch: appDispatch) => {
+    // Dispatch Redux logout action to clear auth state
+    dispatch(logout());
+
+    // Clear localStorage
     window.localStorage.removeItem("userName");
     window.localStorage.removeItem("admin");
     localStorage.removeItem("adminToken");
-    if ( window.location.pathname === "/admin" ||
+    localStorage.removeItem("user");
+
+    // Navigate to login page for protected routes, otherwise reload
+    if (window.location.pathname === "/admin" ||
       window.location.pathname.startsWith("/edit") ||
-      window.location.pathname === "/notification") {
+      window.location.pathname === "/notification" ||
+      window.location.pathname === "/settings" ||
+      window.location.pathname === "/orders" ||
+      window.location.pathname.startsWith("/order/") ||
+      window.location.pathname === "/wishlist" ||
+      window.location.pathname === "/cart" ||
+      window.location.pathname === "/checkout") {
       navigate('/login')
     } else {
       window.location.reload()

@@ -1,7 +1,7 @@
 import { Routes, Route, useLocation } from "react-router-dom"
 import { Suspense, useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
-import { Home, Cart, Checkout, Product, Admin, LoginPage, RegisterPage, AdminDashboard, Edit, NotificationPage, AboutPage, ForgotPassword, SearchPage, Orders, OrderTracking, OrderSuccess, OAuthSuccess, Settings, NotificationPreferences, ContactPage, WishlistPage, RouteLoader, preloadCriticalRoutes, preloadSecondaryRoutes, preloadAdminRoutes, preloadOrderRoutes } from './App/lazyComponents'
+import { Home, Cart, Checkout, Product, Admin, LoginPage, RegisterPage, AdminDashboard, Edit, NotificationPage, AdminNotification, AboutPage, ForgotPassword, SearchPage, Orders, OrderTracking, OrderSuccess, OAuthSuccess, Settings, NotificationPreferences, ContactPage, WishlistPage, RouteLoader, preloadCriticalRoutes, preloadSecondaryRoutes, preloadAdminRoutes, preloadOrderRoutes } from './App/lazyComponents'
 import ComparePage from './App/ComparePage'
 import CategoryPage from './App/CategoryPage'
 import FlashSalesPage from './App/FlashSalesPage'
@@ -78,6 +78,7 @@ const App = () => {
             <Route path="/admin/users" element={<AdminUsers />}/>
             <Route path="/edit/:id" element={<Edit />}/>
             <Route path="/notification" element={<NotificationPage />}/>
+            <Route path="/admin/notifications" element={<AdminNotification />} />
             <Route path="/about" element={<AboutPage />}/>
             <Route path="/contact" element={<ContactPage />}/>
             <Route path="/forgotpassword" element={<ForgotPassword />}/>

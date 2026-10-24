@@ -27,6 +27,7 @@ export const RegisterPage = lazy(() => import('../App/RegisterPage'));
 export const AdminDashboard = lazy(() => import('../App/Admindashboard'));
 export const Edit = lazy(() => import('../App/Edit'));
 export const NotificationPage = lazy(() => import('../App/NotificationPage'));
+export const AdminNotification = lazy(() => import('../Components/AdminNotification'));
 export const AboutPage = lazy(() => import('../App/AboutPage'));
 export const ForgotPassword = lazy(() => import('../App/ForgotPassword'));
 export const SearchPage = lazy(() => import('../App/SearchPage'));
@@ -86,6 +87,7 @@ export default {
   AdminDashboard,
   Edit,
   NotificationPage,
+  AdminNotification,
   AboutPage,
   ForgotPassword,
   SearchPage,

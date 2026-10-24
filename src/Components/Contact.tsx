@@ -42,7 +42,7 @@ const Contact = () => {
         <div className="space-y-4 w-full">
           {[
             { icon: '📧', title: 'Email Us', sub: 'support@exquisite.ng' },
-            { icon: '📞', title: 'Call Us', sub: '+234 (0) 800 EXQUISITE' },
+            { icon: '📞', title: 'Call Us', sub: '+234 902 928 2035' },
             { icon: '💬', title: 'Live Chat', sub: 'Available Mon–Fri, 9am–6pm' },
           ].map(item => (
             <div key={item.title} className="flex items-center gap-4 p-4 bg-orange-50 rounded-xl border border-orange-100">

@@ -7,7 +7,7 @@ import {
 } from 'react-icons/fa'
 import { MdLocalOffer, MdVerified } from 'react-icons/md'
 import toast from 'react-hot-toast'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { getAuthToken } from '../utils/cookieManager'
 import apiClient from '../Api/axiosConfig';
 import ProductImageGallery from '../Components/ProductImageGallery'
@@ -23,6 +23,7 @@ export default function ProductDetailsPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const cartItems = useSelector((state: any) => state.cart?.items || [])
 
   const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(true)
@@ -31,6 +32,8 @@ export default function ProductDetailsPage() {
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([])
   const [addingToCart, setAddingToCart] = useState(false)
   const [activeTab, setActiveTab] = useState<'description' | 'specs' | 'reviews'>('description')
+
+  const isInCart = (productId: string) => cartItems.some((item: any) => item.id === productId || item._id === productId || item.product === productId);
 
   useEffect(() => {
     if (id) { fetchProduct(id); fetchRelatedProducts(id); }
@@ -310,15 +313,21 @@ export default function ProductDetailsPage() {
                   <div className="grid grid-cols-2 gap-3">
                     <button
                       onClick={handleAddToCart}
-                      disabled={!inStock || addingToCart}
-                      className={`py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all active:scale-95 ${inStock ? 'border-2 border-orange-500 text-orange-500 hover:bg-orange-50' : 'border-2 border-gray-200 text-gray-400 cursor-not-allowed'}`}
+                      disabled={!inStock || addingToCart || (product && isInCart(product._id))}
+                      className={`py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all active:scale-95 ${
+                        !inStock
+                          ? 'border-2 border-gray-200 text-gray-400 cursor-not-allowed'
+                          : product && isInCart(product._id)
+                            ? 'bg-green-500 text-white border-2 border-green-500 cursor-default'
+                            : 'border-2 border-orange-500 text-orange-500 hover:bg-orange-50'
+                      }`}
                     >
                       {addingToCart ? (
-                        <div className="w-4 h-4 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                       ) : (
                         <FaShoppingCart className="text-sm" />
                       )}
-                      Add to Cart
+                      {product && isInCart(product._id) ? 'In Cart' : 'Add to Cart'}
                     </button>
                     <button
                       onClick={handleBuyNow}

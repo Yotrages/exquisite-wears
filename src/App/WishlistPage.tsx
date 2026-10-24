@@ -5,6 +5,7 @@ import { apiClient } from '../Api/axiosConfig';
 import toast from 'react-hot-toast';
 import { getAuthToken } from '../utils/cookieManager';
 import { addItem, setCart } from '../redux/cartSlice';
+import { setWishlist, removeFromWishlist as removeFromWishlistAction } from '../redux/wishlistSlice';
 import Layout from '../Components/Layout';
 import { FaHeart, FaShoppingCart, FaStar, FaTrash, FaChevronRight } from 'react-icons/fa';
 import { HiOutlineShoppingBag } from 'react-icons/hi';
@@ -27,7 +28,6 @@ interface WishlistItem {
 }
 
 const WishlistPage = () => {
-  const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [removing, setRemoving] = useState<string | null>(null);
   const [addingToCart, setAddingToCart] = useState<string | null>(null);
@@ -35,15 +35,16 @@ const WishlistPage = () => {
   const dispatch = useDispatch();
   const authState = useSelector((state: any) => state.authSlice);
   const token = authState?.token || getAuthToken();
+  const wishlistItems = useSelector((state: any) => state.wishlist?.items || []);
 
-  useEffect(() => { fetchWishlist(); }, []);
+  useEffect(() => { fetchWishlist(); }, [token]);
 
   const fetchWishlist = async () => {
     const t = getAuthToken();
     if (!t) { navigate('/login'); return; }
     try {
       const res = await apiClient.get('/wishlist');
-      setWishlistItems(res.data.items || []);
+      dispatch(setWishlist(res.data.items || []));
     } catch (err: any) {
       console.error(err);
     } finally {
@@ -55,13 +56,13 @@ const WishlistPage = () => {
     setRemoving(productId);
     try {
       await apiClient.delete(`/wishlist/product/${productId}`);
-      setWishlistItems(w => w.filter(i => i.product._id !== productId));
+      dispatch(removeFromWishlistAction(productId));
       toast.success('Removed from wishlist');
     } catch { toast.error('Failed to remove'); }
     finally { setRemoving(null); }
   };
 
-  const addToCart = async (product: WishlistItem['product']) => {
+  const addToCart = async (product: WishlistItem['product']): Promise<void> => {
     if (!token) { toast.error('Please log in first'); navigate('/login?redirect=/wishlist'); return; }
     setAddingToCart(product._id);
     dispatch(addItem({ id: product._id, name: product.name, price: product.price, quantity: 1, image: product.image }));
@@ -81,10 +82,15 @@ const WishlistPage = () => {
   };
 
   const addAllToCart = async () => {
-    for (const item of wishlistItems) {
-      if (item.product.quantity > 0) await addToCart(item.product);
+    const inStockItems = wishlistItems.filter((item: WishlistItem) => item.product.quantity > 0);
+    for (const item of inStockItems) {
+      await addToCart(item.product);
     }
-    navigate('/cart');
+    if (inStockItems.length > 0) {
+      navigate('/cart');
+    } else {
+      toast.error('No in-stock items to add');
+    }
   };
 
   const stars = (r = 0) => (
@@ -177,7 +183,7 @@ const WishlistPage = () => {
 
               {/* Grid */}
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
-                {wishlistItems.map((item) => (
+                {wishlistItems.map((item: WishlistItem) => (
                   <div key={item._id} className="product-card group">
                     {/* Image */}
                     <div className="relative aspect-square overflow-hidden bg-gray-50">
